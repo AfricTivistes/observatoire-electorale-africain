@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #739FD9;
-  --color-secondary: #6DBFF2;
-  --color-accent: #808C26;
-  --color-warm: #D9A05B;
-  --color-dark: #732002;
+  --color-primary: #6EC770;
+  --color-secondary: #FFC24A;
+  --color-accent: #FF5836;
+  --color-blue: #2D83F5;
+  --color-dark: #000000;
   
   /* Fluid spacing scale */
   --space-xs: clamp(0.75rem, 0.69rem + 0.29vw, 0.9375rem);
@@ -33,13 +33,13 @@
   }
   
   body {
-    @apply text-africa-dark bg-white min-h-screen;
+    @apply text-farafina-dark bg-white min-h-screen;
     font-size: var(--text-base);
     line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold text-africa-dark tracking-tight;
+    @apply font-semibold text-farafina-dark tracking-tight;
   }
 
   h1 { 
@@ -60,7 +60,7 @@
   }
 
   p {
-    @apply text-africa-dark;
+    @apply text-farafina-dark;
   }
 
   .text-secondary {

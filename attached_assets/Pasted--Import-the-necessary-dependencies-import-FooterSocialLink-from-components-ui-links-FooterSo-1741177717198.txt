@@ -1,0 +1,138 @@
+---
+// Import the necessary dependencies
+import FooterSocialLink from "@components/ui/links/FooterSocialLink.astro";
+import EmailFooterInput from "@components/ui/forms/input/EmailFooterInput.astro";
+import enStrings from "@utils/navigation.ts";
+import frStrings from "@utils/fr/navigation.ts";
+import Icon from "@components/ui/icons/Icon.astro";
+import ue from "public/partenaires/eu-logo.png";
+import ue_fr from "public/partenaires/eu-logo-fr.png";
+import AfricTivistes from "public/partenaires/Africtivistes.svg";
+import { SITE } from "@data/constants";
+import Logo from "../../../images/logob.avif";
+import { Image } from "astro:assets";
+import PrimaryCTA from "@/components/ui/buttons/PrimaryCTA.astro";
+
+// Select the correct translation based on the page's lang prop:
+const strings = Astro.currentLocale === "fr" ? frStrings : enStrings;
+const homeUrl = Astro.currentLocale === "fr" ? "/fr" : "/";
+const ueLogo = Astro.currentLocale === "fr" ? ue_fr : ue;
+
+// Define the variables that will be used in this component
+const sectionThreeTitle: string =
+  Astro.currentLocale === "fr"
+    ? "Abonnez vous a notre newsletter"
+    : "Subscribe to our newsletter";
+const sectionThreeContent: string =
+  Astro.currentLocale === "fr"
+    ? "Inscrivez-vous pour recevoir des mises à jour sur l'amélioration de l'observation électorale et de l'intégrité en Afrique! 🗳️"
+    : "Sign up for enhancing electoral observation and integrity updates in Africa! 🗳️";
+const primaryBtn: string =
+  Astro.currentLocale === "fr" ? "S'abonner" : "Subscribe";
+const formlink =
+  Astro.currentLocale === "fr"
+    ? "https://landing.mailerlite.com/webforms/landing/s9v5l8"
+    : "https://landing.mailerlite.com/webforms/landing/c8s2a3";
+const description =
+  Astro.currentLocale === "fr"
+    ? "Ce site web a été créé et mis à jour avec le soutien financier de l'Union européenne. Son contenu relève de la seule responsabilité de AfricTivistes et de ses partenaires et ne reflète pas nécessairement les opinions de l'Union européenne. Les perceptions, commentaires et opinions émis dans de le cadre de la collecte de ces données relèvent de la responsabilité des répondants."
+    : "This website was created and maintained with the financial support of the European Union. Its contents are the sole responsibility of the AfricTivistes and its partners and do not necessarily reflect the views of the European Union. The perceptions, comments and opinions expressed in the course of collecting this data are the responsibility of the respondents.";
+
+const dev = Astro.currentLocale === "fr" ? "Par" : "By";
+---
+
+<section id="footer">
+  <footer class="w-full bg-neutral-300 dark:bg-neutral-900">
+    <div
+      class="mx-auto w-full max-w-[85rem] px-4 py-10 sm:px-6 lg:px-16 lg:pt-20 2xl:max-w-screen-2xl"
+    >
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Colonne 1 : Logo et Description -->
+        <div class="col-span-1">
+          <a
+            class="flex-none rounded-lg text-xl font-bold outline-none ring-zinc-500 focus-visible:ring dark:ring-zinc-200 dark:focus:outline-none"
+            href={homeUrl}
+            aria-label="Brand"
+          >
+            <Image src={Logo} alt="Logo" class="mb-4 h-auto w-32" />
+            <Image src={ueLogo} alt="EU Logo" class="h-auto w-32" />
+          </a>
+          <p class="mt-4 text-sm text-neutral-600 dark:text-neutral-400">
+            {description}
+          </p>
+        </div>
+
+        <!-- Colonne 2 : Liens utiles -->
+        {
+          strings.footerLinks.map((section) => (
+            <div class="col-span-1 text-center">
+              <h3 class="font-bold text-neutral-800 dark:text-neutral-200">
+                {section.section}
+              </h3>
+              <ul class="mt-3 grid space-y-3">
+                {section.links.map((link, index) => (
+                  <li>
+                    <a
+                      href={link.url}
+                      class="inline-flex gap-x-2 rounded-lg text-neutral-600 outline-none ring-zinc-500 transition duration-300 hover:text-neutral-500 focus-visible:ring dark:text-neutral-400 dark:ring-zinc-200 dark:hover:text-neutral-300 dark:focus:outline-none"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+        <!-- Colonne 3 : Newsletter -->
+        <div class="col-span-1">
+          <h3 class="font-bold text-neutral-800 dark:text-neutral-200">
+            {sectionThreeTitle}
+          </h3>
+          <form>
+            <div class="mt-7 grid w-full gap-3">
+              {primaryBtn && <PrimaryCTA title={primaryBtn} url={formlink} />}
+              <p class="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
+                {sectionThreeContent}
+              </p>
+            </div>
+          </form>
+          <p class="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
+            {dev}
+            <a href="https://africtivistes.org/" target="_blank">
+              <Image
+                src={AfricTivistes}
+                alt="AfricTivistes"
+                class="h-auto w-32"
+              />
+            </a>
+            © <span id="current-year"></span>
+            {SITE.title}
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="mt-9 grid gap-y-2 sm:mt-12 sm:flex sm:items-center sm:justify-between sm:gap-y-0"
+      >
+        <div class="flex space-x-4">
+          <FooterSocialLink url={strings.socialLinks.facebook}
+            ><Icon name="facebookFooter" /></FooterSocialLink
+          >
+          <FooterSocialLink url={strings.socialLinks.x}
+            ><Icon name="xFooter" /></FooterSocialLink
+          >
+          <FooterSocialLink url={strings.socialLinks.linkedin}
+            ><Icon name="linkedIn" /></FooterSocialLink
+          >
+        </div>
+      </div>
+
+      <script>
+        const year = new Date().getFullYear();
+        const element = document.getElementById("current-year");
+        element!.innerText = year.toString();
+      </script>
+    </div>
+  </footer>
+</section>

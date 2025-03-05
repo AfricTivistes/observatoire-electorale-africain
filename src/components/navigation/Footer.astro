@@ -1,61 +1,102 @@
----
-    const currentYear = new Date().getFullYear();
-    const socialLinks = [
-      { 
-        name: 'Twitter', 
-        url: 'https://twitter.com/africaelections', 
-        icon: '/icons/twitter.svg' 
-      },
-      { 
-        name: 'LinkedIn', 
-        url: 'https://linkedin.com/company/africaelections', 
-        icon: '/icons/linkedin.svg' 
-      }
-    ];
-    ---
 
-    <footer class="bg-africa-dark text-white py-8">
-      <div class="container mx-auto px-4 grid md:grid-cols-3 gap-8">
-        <div>
-          <h3 class="font-bold mb-4">À Propos</h3>
-          <p class="text-sm">
-            Plateforme de référence pour le suivi et l'analyse des processus électoraux en Afrique.
-          </p>
-        </div>
-        
-        <div>
-          <h3 class="font-bold mb-4">Liens Rapides</h3>
-          <ul class="space-y-2">
-            <li><a href="/legal" class="hover:text-africa-accent">Mentions Légales</a></li>
-            <li><a href="/privacy" class="hover:text-africa-accent">Politique de Confidentialité</a></li>
-            <li><a href="/contact" class="hover:text-africa-accent">Contact</a></li>
-          </ul>
-        </div>
-        
-        <div>
-          <h3 class="font-bold mb-4">Suivez-nous</h3>
-          <div class="flex space-x-4">
-            {socialLinks.map(link => (
-              <a 
-                href={link.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="hover:opacity-75"
-              >
-                <img 
-                  src={link.icon} 
-                  alt={link.name} 
-                  class="h-6 w-6"
-                />
-              </a>
-            ))}
-          </div>
-        </div>
+---
+const currentYear = new Date().getFullYear();
+const socialLinks = [
+  { 
+    name: 'Twitter', 
+    url: 'https://twitter.com/africaelections', 
+    icon: '/icons/twitter.svg' 
+  },
+  { 
+    name: 'LinkedIn', 
+    url: 'https://linkedin.com/company/africaelections', 
+    icon: '/icons/linkedin.svg' 
+  }
+];
+
+const description = "Ce site web a été créé et mis à jour avec le soutien financier de l'Union européenne. Son contenu relève de la seule responsabilité de AfricTivistes et de ses partenaires et ne reflète pas nécessairement les opinions de l'Union européenne.";
+---
+
+<footer class="bg-gray-100 text-farafina-dark py-8">
+  <div class="container mx-auto px-4 grid md:grid-cols-3 gap-8">
+    <div>
+      <div class="space-y-4">
+        <img src="/images/logob.avif" alt="Farafina Logo" class="h-16 w-auto mb-4" />
+        <img src="/images/eu-logo-fr.png" alt="EU Logo" class="h-12 w-auto" />
       </div>
-      
-      <div class="text-center mt-8 border-t border-gray-700 pt-4">
-        <p class="text-sm">
-          © {currentYear} Africa Elections. Tous droits réservés.
+      <p class="text-sm mt-4">
+        {description}
+      </p>
+    </div>
+    
+    <div>
+      <h3 class="font-bold mb-4">Liens Rapides</h3>
+      <ul class="space-y-2">
+        <li><a href="/countries" class="hover:text-farafina-primary">Pays</a></li>
+        <li><a href="/cso" class="hover:text-farafina-primary">Organisations</a></li>
+        <li><a href="/elections" class="hover:text-farafina-primary">Élections</a></li>
+        <li><a href="/about" class="hover:text-farafina-primary">À Propos</a></li>
+        <li><a href="/contact" class="hover:text-farafina-primary">Contact</a></li>
+      </ul>
+    </div>
+    
+    <div>
+      <h3 class="font-bold mb-4">Abonnez-vous à notre newsletter</h3>
+      <div class="mb-6">
+        <div class="flex flex-col sm:flex-row gap-2">
+          <a 
+            href="https://landing.mailerlite.com/webforms/landing/c8s2a3" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="px-4 py-2 bg-farafina-primary text-white rounded hover:bg-opacity-90 text-center"
+          >
+            S'abonner à notre newsletter
+          </a>
+        </div>
+        <p class="mt-2 text-sm">
+          Inscrivez-vous pour recevoir des mises à jour sur l'observation électorale en Afrique! 🗳️
         </p>
       </div>
-    </footer>
+      <div class="mt-4">
+        <p class="text-sm">Par</p>
+        <img src="/images/Africtivistes.svg" alt="AfricTivistes" class="h-10 w-auto mt-2" />
+        <p class="text-sm mt-2">© {currentYear} Africa Elections</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container mx-auto px-4 mt-8 border-t border-gray-200 pt-4">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <p class="text-sm">
+        Tous droits réservés.
+      </p>
+      <div class="flex space-x-4 mt-4 md:mt-0">
+        {socialLinks.map(link => (
+          <a 
+            href={link.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="hover:opacity-75"
+          >
+            <img 
+              src={link.icon} 
+              alt={link.name} 
+              class="h-6 w-6"
+            />
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Script to update current year dynamically
+  document.addEventListener('DOMContentLoaded', () => {
+    const yearElements = document.querySelectorAll('.current-year');
+    const currentYear = new Date().getFullYear();
+    yearElements.forEach(el => {
+      el.textContent = currentYear.toString();
+    });
+  });
+</script>

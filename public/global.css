@@ -4,22 +4,22 @@
 
 @layer base {
   body {
-    @apply text-africa-dark bg-white;
+    @apply text-farafina-dark bg-white;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   a {
-    @apply transition-colors duration-300 text-africa-primary hover:text-africa-secondary focus:outline-none focus:ring-2 focus:ring-africa-accent focus:ring-offset-2;
+    @apply transition-colors duration-300 text-farafina-primary hover:text-farafina-secondary focus:outline-none focus:ring-2 focus:ring-farafina-accent focus:ring-offset-2;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold text-africa-dark tracking-tight;
+    @apply font-semibold text-farafina-dark tracking-tight;
   }
 
   p {
-    @apply text-africa-dark;
+    @apply text-farafina-dark;
   }
 
   .caption, .metadata {
@@ -29,7 +29,7 @@
 
 @layer components {
   .form-checkbox {
-    @apply text-africa-accent focus:ring-2 focus:ring-africa-accent focus:ring-offset-2 rounded;
+    @apply text-farafina-accent focus:ring-2 focus:ring-farafina-accent focus:ring-offset-2 rounded;
   }
 
   .btn {
@@ -37,7 +37,7 @@
   }
 
   .btn-primary {
-    @apply bg-africa-primary text-white hover:bg-africa-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-africa-primary;
+    @apply bg-farafina-primary text-farafina-dark hover:bg-farafina-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-farafina-primary;
   }
 
   .card {

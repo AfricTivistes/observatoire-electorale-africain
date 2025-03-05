@@ -6,11 +6,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        'africa-primary': '#739FD9',    // Blue for primary elements
-        'africa-secondary': '#6DBFF2',  // Light blue for secondary elements
-        'africa-accent': '#808C26',     // Olive green for accents
-        'africa-warm': '#D9A05B',       // Warm tan for highlights
-        'africa-dark': '#732002',       // Deep red-brown for emphasis
+        'farafina-primary': '#6EC770',    // Vert - couleur principale
+        'farafina-secondary': '#FFC24A',  // Jaune - accent secondaire
+        'farafina-accent': '#FF5836',     // Orange - pour attirer l'attention
+        'farafina-blue': '#2D83F5',       // Bleu complémentaire
+        'farafina-dark': '#000000',       // Noir pour texte et contraste
+        'green': '#e8f6e6',               // Vert secondaire
         'africa-gray': {
           50: '#f8fafc',
           100: '#f1f5f9',
