@@ -1,0 +1,78 @@
+---
+import { Image } from "astro:assets";
+
+interface Partenaire {
+  logo: any;
+  name: string;
+  href: string;
+}
+
+// Define TypeScript interface for props
+interface Props {
+  title: string;
+  subTitle?: string;
+  partenaires: Partenaire[];
+}
+
+const { title, subTitle, partenaires } = Astro.props;
+---
+
+<section class="py-12 bg-white">
+  <!-- Title and description -->
+  <div class="container mx-auto max-w-3xl space-y-6 text-center">
+    <h2
+      class="block text-balance text-center text-3xl font-bold tracking-tight text-farafina-dark sm:text-4xl lg:text-5xl lg:leading-tight"
+    >
+      <!-- About Fragment: https://docs.astro.build/en/basics/astro-syntax/#fragments -->
+      <Fragment set:html={title} />
+    </h2>
+    {
+      subTitle && (
+        <p class="text-pretty text-lg leading-relaxed text-africa-gray-600">
+          {subTitle}
+        </p>
+      )
+    }
+    <div
+      class="flex flex-wrap items-center justify-center gap-8 overflow-x-auto py-8"
+    >
+      {
+        partenaires.length === 1 ? (
+          <a 
+            href={partenaires[0].href} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="transition-transform hover:scale-105"
+          >
+            <Image
+              src={partenaires[0].logo}
+              alt={`Logo de ${partenaires[0].name}`}
+              class="h-100 mx-auto w-80 object-center mb-10"
+              width={160}
+              height={80}
+              loading="lazy"
+            />
+          </a>
+        ) : (
+          partenaires.map((partenaire) => (
+            <a 
+              href={partenaire.href} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="transition-transform hover:scale-105"
+            >
+              <Image
+                src={partenaire.logo}
+                alt={`Logo de ${partenaire.name}`}
+                class="w-40 h-auto object-contain"
+                width={160}
+                height={80}
+                loading="lazy"
+              />
+            </a>
+          ))
+        )
+      }
+    </div>
+  </div>
+</section>

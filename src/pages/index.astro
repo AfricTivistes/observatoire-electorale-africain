@@ -5,6 +5,8 @@ import HomeCountryCard from '../components/countries/HomeCountryCard';
 import countriesData from '../data/countries-extended.json';
 import csoData from '../data/cso-extended.json';
 import electionsData from '../data/elections.json';
+import ClientsSection from "../components/common/ClientsSection.astro";
+import { africtivistes, africTivistes } from '../data/data.ts';
 
 const heroStats = [
   { 
@@ -68,7 +70,7 @@ const upcomingElections = electionsData.upcomingElections.slice(0, 3);
           Une plateforme collaborative pour renforcer la transparence, 
           l'intégrité et la participation démocratique à travers le continent.
         </p>
-        
+
         <div class="flex flex-wrap justify-center gap-4 mb-16">
           <a 
             href="/countries"
@@ -250,6 +252,11 @@ const upcomingElections = electionsData.upcomingElections.slice(0, 3);
       </div>
     </div>
   </div>
+  <ClientsSection
+    title=""
+    subTitle="Ce programme est soutenu et mis en œuvre par AfricTivistes dans le cadre du projet AHEAD Africa."
+    partenaires={africTivistes}
+  />
 
   <style>
     @keyframes fadeIn {

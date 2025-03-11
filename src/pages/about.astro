@@ -1,6 +1,8 @@
 ---
     import MainLayout from '../layouts/MainLayout.astro';
     import { FaGlobe, FaBalanceScale, FaUsers, FaChartLine } from 'react-icons/fa';
+    import ClientsSection from "../components/common/ClientsSection.astro";
+    import { partenaires } from '../data/data.ts';
 
     const missionDetails = [
       {
@@ -84,5 +86,11 @@
             </div>
           </div>
         </section>
+        
+  <ClientsSection
+    title="Partenaires"
+    subTitle="Le projet est co-financé par l’Union européenne et mis en oeuvre par un consortium constitué de réseaux d’observation électorale et de soutien à la démocratie."
+    partenaires={partenaires}
+  />
       </div>
     </MainLayout>
