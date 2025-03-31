@@ -11,12 +11,13 @@
             "typecheck": "astro check"
       },
       "dependencies": {
-            "@astrojs/react": "^3.6.2",
-            "@astrojs/tailwind": "^5.1.2",
+            "@astrojs/check": "^0.9.4",
+            "@astrojs/react": "^4.2.2",
+            "@astrojs/tailwind": "^6.0.2",
             "@types/react": "^18.3.12",
             "@types/react-dom": "^18.3.1",
             "@types/react-simple-maps": "^3.0.6",
-            "astro": "^4.16.13",
+            "astro": "^5.5.5",
             "astro-icon": "^1.1.2",
             "chart.js": "^4.4.6",
             "d3-geo": "^3.1.1",
@@ -28,6 +29,6 @@
             "tailwindcss": "^3.4.15"
       },
       "devDependencies": {
-            "typescript": "^5.6.3"
+            "typescript": "^5.8.2"
       }
 }

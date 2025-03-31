@@ -1,28 +1,178 @@
 ---
-import MainLayout from '../../layouts/MainLayout.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.tsx';
-import CountryList from '../../components/CountryList.tsx';
-import countriesData from '../../data/countries-extended.json';
+import Layout from '../../layouts/MainLayout.astro';
+import CountriesHero from '../../components/countries/CountriesHero';
+import CountryList from '../../components/CountryList';
+import CountrySidebar from '../../components/countries/CountrySidebar';
+import AfricaMap from '../../components/countries/AfricaMap';
+import { FaGlobeAfrica, FaVoteYea, FaUsers, FaSearch } from 'react-icons/fa';
 
-const countries = countriesData.countries;
+// Importer les données des pays
+import { countries } from '../../data/countries-extended.json';
+
+// Statistiques globales
+const totalPopulation = countries.reduce((sum, country) => sum + country.population, 0);
+const avgTurnout = countries.reduce((sum, country) => sum + (country.lastElection?.turnout || 0), 0) / countries.length;
+const upcomingElections = countries.filter(country => 
+  country.lastElection?.nextElectionYear && 
+  country.lastElection.nextElectionYear <= new Date().getFullYear() + 1
+).length;
+
+// Regrouper les pays par région pour les statistiques
+const regions = [
+  "Afrique du Nord",
+  "Afrique de l'Ouest",
+  "Afrique Centrale",
+  "Afrique de l'Est",
+  "Afrique Australe"
+];
+
+// Attribuer une région à chaque pays (simulation)
+const countriesByRegion = regions.map(region => {
+  const count = Math.floor(Math.random() * 15) + 5; // Entre 5 et 20 pays par région
+  return { region, count };
+});
+
+// Sélectionner quelques pays en vedette
+const featuredCountries = countries.slice(0, 3);
 ---
 
-<MainLayout 
-  title="Liste des Pays" 
-  activePage="countries"
->
+<Layout title="Pays | Observatoire des Élections en Afrique">
+  <CountriesHero client:load />
 
-  <div class="container mx-auto px-4">
-    <h1 class="text-3xl font-bold mb-6 text-africa-dark">
-      Pays Africains
-    </h1>
-
-    <div class="mb-8">
-      <p class="text-gray-600">
-        Découvrez les informations électorales détaillées pour {countries.length} pays africains.
-      </p>
+  <div class="container mx-auto px-4 py-12">
+    <!-- Statistiques globales -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Vue d'ensemble</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-farafina-primary/10 rounded-lg p-5 text-center">
+          <div class="flex justify-center mb-3">
+            <FaGlobeAfrica class="text-farafina-primary text-3xl" />
+          </div>
+          <span class="block text-3xl font-bold text-farafina-primary">{countries.length}</span>
+          <span class="text-gray-600">Pays africains</span>
+        </div>
+        
+        <div class="bg-farafina-secondary/10 rounded-lg p-5 text-center">
+          <div class="flex justify-center mb-3">
+            <FaUsers class="text-farafina-secondary text-3xl" />
+          </div>
+          <span class="block text-3xl font-bold text-farafina-secondary">
+            {Math.round(totalPopulation / 1000000)}M
+          </span>
+          <span class="text-gray-600">Population totale</span>
+        </div>
+        
+        <div class="bg-farafina-accent/10 rounded-lg p-5 text-center">
+          <div class="flex justify-center mb-3">
+            <FaVoteYea class="text-farafina-accent text-3xl" />
+          </div>
+          <span class="block text-3xl font-bold text-farafina-accent">{upcomingElections}</span>
+          <span class="text-gray-600">Élections à venir</span>
+        </div>
+        
+        <div class="bg-farafina-blue/10 rounded-lg p-5 text-center">
+          <div class="flex justify-center mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-farafina-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <span class="block text-3xl font-bold text-farafina-blue">{avgTurnout.toFixed(1)}%</span>
+          <span class="text-gray-600">Participation moyenne</span>
+        </div>
+      </div>
     </div>
 
-    <CountryList countries={countries} client:load />
+    <!-- Carte interactive et pays en vedette -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+      <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-2xl font-bold text-farafina-dark mb-6">Carte des pays africains</h2>
+        <div class="h-[400px] mb-6">
+          <AfricaMap client:load />
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {countriesByRegion.map(region => (
+            <div class="bg-gray-50 rounded-lg p-3 text-center">
+              <h3 class="font-medium text-farafina-dark text-sm mb-2">{region.region}</h3>
+              <div class="text-lg font-bold text-farafina-primary">{region.count}</div>
+              <div class="text-xs text-gray-500">pays</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-2xl font-bold text-farafina-dark mb-6">Pays en vedette</h2>
+        <div class="space-y-4">
+          {featuredCountries.map(country => (
+            <a href={`/countries/${country.code.toLowerCase()}`} class="block p-4 bg-gray-50 rounded-lg hover:bg-farafina-primary/5 transition-colors">
+              <div class="flex items-center">
+                <img 
+                  src={`https://flagcdn.com/48x36/${country.code.toLowerCase()}.png`} 
+                  alt={`Drapeau ${country.name}`} 
+                  class="w-10 h-6 mr-3"
+                />
+                <div>
+                  <h3 class="font-semibold text-farafina-dark">{country.name}</h3>
+                  <div class="text-sm text-gray-600">
+                    Prochaine élection: {country.lastElection.nextElectionYear}
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+        <div class="mt-6 pt-6 border-t border-gray-100">
+          <h3 class="font-semibold text-farafina-dark mb-4">Recherche rapide</h3>
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Rechercher un pays..."
+              class="w-full py-2 pl-10 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
+            />
+            <FaSearch class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des pays avec filtres -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Explorer tous les pays</h2>
+      <div class="flex flex-col lg:flex-row gap-8">
+        <div class="lg:w-1/4">
+          <CountrySidebar client:load />
+        </div>
+        <div class="lg:w-3/4">
+          <CountryList countries={countries} />
+        </div>
+      </div>
+    </div>
+
+    <!-- Ressources et outils -->
+    <div class="bg-gradient-to-r from-farafina-primary to-farafina-secondary rounded-xl shadow-md overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="p-8 text-white">
+          <h2 class="text-2xl font-bold mb-4">Ressources sur les systèmes électoraux</h2>
+          <p class="mb-6 text-white/90">
+            Accédez à notre base de données complète sur les cadres juridiques, les systèmes électoraux et les données démographiques des pays africains.
+          </p>
+          <a 
+            href="/resources" 
+            class="inline-block px-6 py-3 bg-white text-farafina-primary font-medium rounded-lg hover:bg-white/90 transition-colors"
+          >
+            Explorer les ressources
+          </a>
+        </div>
+        <div class="hidden md:block relative">
+          <img 
+            src="/placeholder.svg?height=300&width=400" 
+            alt="Ressources électorales" 
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-black/20"></div>
+        </div>
+      </div>
+    </div>
   </div>
-</MainLayout>
+</Layout>
+

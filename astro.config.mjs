@@ -10,7 +10,7 @@ export default defineConfig({
   output: 'static',
   vite: {
     server: {
-      allowedHosts: ["a22498e3-6a90-47ec-a7b1-c43dac13b9eb-00-22stm46m8as0q.janeway.replit.dev"]
+      allowedHosts: ["70370caa-448e-4e15-9c40-b24a18d38e38-00-tpxsv7xfb1yo.janeway.replit.dev"]
     },
     ssr: {
       noExternal: ["react-icons"],

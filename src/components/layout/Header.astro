@@ -1,0 +1,286 @@
+---
+import Logo from '../ui/Logo.astro';
+
+interface NavItem {
+  label: string;
+  href: string;
+  children?: NavItem[];
+}
+
+const navItems: NavItem[] = [
+  { label: "Accueil", href: "/" },
+  {
+    label: "Élections",
+    href: "/elections",
+    children: [
+      { label: "Calendrier Électoral", href: "/elections/calendar" },
+      { label: "Résultats", href: "/elections/results" },
+      { label: "Défis Électoraux", href: "/elections/challenges" },
+    ],
+  },
+  {
+    label: "Pays",
+    href: "/countries",
+    children: [
+      { label: "Profils des Pays", href: "/countries" },
+      { label: "Cadres Juridiques", href: "/countries/legal-frameworks" },
+      { label: "Statistiques", href: "/countries/statistics" },
+    ],
+  },
+  {
+    label: "Organisations",
+    href: "/organizations",
+    children: [
+      { label: "Observateurs", href: "/organizations/observers" },
+      { label: "Partenaires", href: "/organizations/partners" },
+    ],
+  },
+  { label: "Ressources", href: "/resources" },
+  { label: "À Propos", href: "/about" },
+];
+
+interface Props {
+  isHomePage?: boolean;
+  pageType?: "default" | "about" | "detail";
+}
+
+const { isHomePage = false, pageType = "default" } = Astro.props;
+
+// Determine header styles based on page type
+let headerStyles = "";
+if (isHomePage) {
+  headerStyles = "bg-white/80 backdrop-blur-sm";
+} else if (pageType === "about") {
+  headerStyles = "bg-farafina-primary/90 backdrop-blur-sm";
+} else if (pageType === "detail") {
+  headerStyles = "bg-white shadow-md";
+} else {
+  headerStyles = "bg-white/95 backdrop-blur-sm border-b border-gray-100";
+}
+
+// Determine text color based on page type
+const textColor = pageType === "about" ? "text-white hover:text-farafina-secondary" : "text-farafina-dark hover:text-farafina-primary";
+
+// Determine button style based on page type
+const buttonStyle = pageType === "about" 
+  ? "bg-white text-farafina-primary hover:bg-white/90" 
+  : "bg-farafina-primary text-white hover:bg-farafina-primary/90";
+
+// Déterminer la variante du logo en fonction du type de page
+const logoVariant = pageType === "about" ? "light" : "default";
+---
+
+<header class={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${headerStyles} py-3`} id="main-header">
+  <div class="container mx-auto px-4 flex items-center justify-between">
+    <!-- Logo avec la variante appropriée -->
+    <Logo variant={logoVariant} />
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden lg:flex items-center space-x-8">
+      {navItems.map((item) => (
+        <div class="relative group">
+          <a href={item.href} class={`font-medium transition-colors flex items-center ${textColor}`}>
+            {item.label}
+            {item.children && (
+              <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-3 w-3 opacity-70" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            )}
+          </a>
+
+          {item.children && (
+            <div class="absolute left-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+              <div class="bg-white rounded-lg shadow-xl py-2 border border-gray-100">
+                {item.children.map((child) => (
+                  <a
+                    href={child.href}
+                    class="block px-4 py-2 text-sm text-farafina-dark hover:bg-farafina-primary/10 hover:text-farafina-primary transition-colors"
+                  >
+                    {child.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </nav>
+
+    <!-- Search and Action Buttons -->
+    <div class="hidden lg:flex items-center space-x-4">
+      <button class={`p-2 transition-colors ${textColor}`} aria-label="Rechercher">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </button>
+      <a
+        href="/participate"
+        class={`px-6 py-2.5 ${buttonStyle} rounded-full font-medium transition-all transform hover:scale-105 hover:shadow-md`}
+      >
+        Participer
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button
+      class={`lg:hidden p-2 focus:outline-none ${pageType === "about" ? "text-white" : "text-farafina-dark"}`}
+      id="mobile-menu-button"
+      aria-label="Ouvrir le menu"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="menu-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile Menu (Outside the header for full-screen display) -->
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] hidden"></div>
+
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-[70] bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden"
+>
+  <div class="flex flex-col h-full">
+    <div class="p-5 border-b border-gray-200 flex justify-between items-center">
+      <h2 class="text-xl font-semibold text-farafina-dark">Menu</h2>
+      <button id="close-menu-button" class="p-2 rounded-md hover:bg-gray-100">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex-grow overflow-y-auto">
+      <nav class="p-5">
+        <ul class="space-y-4">
+          {navItems.map((item) => (
+            <li class="py-1">
+              {item.children ? (
+                <div>
+                  <button 
+                    class="mobile-submenu-toggle w-full flex items-center justify-between py-2 text-farafina-dark font-medium"
+                    data-target={item.label.toLowerCase().replace(/\s+/g, '-')}
+                  >
+                    <span>{item.label}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div id={item.label.toLowerCase().replace(/\s+/g, '-')} class="mobile-submenu hidden pl-4 mt-2 space-y-2 border-l-2 border-gray-100">
+                    {item.children.map((child) => (
+                      <a href={child.href} class="block py-2 text-gray-600 hover:text-farafina-primary">
+                        {child.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <a href={item.href} class="block py-2 text-farafina-dark font-medium hover:text-farafina-primary">
+                  {item.label}
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="p-5 border-t border-gray-200">
+      <div class="relative mb-4">
+        <input
+          type="text"
+          placeholder="Rechercher..."
+          class="w-full py-2 pl-10 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
+        />
+        <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <a
+        href="/participate"
+        class="block w-full py-3 text-center bg-farafina-primary text-white font-medium rounded-lg hover:bg-farafina-primary/90 transition-colors"
+      >
+        Participer
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Elements
+    const header = document.getElementById('main-header');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const closeMenuButton = document.getElementById('close-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+    const submenuToggles = document.querySelectorAll('.mobile-submenu-toggle');
+    
+    // Header scroll effect
+    function handleScroll() {
+      if (window.scrollY > 20) {
+        header?.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-lg');
+        header?.classList.remove('bg-white/80', 'backdrop-blur-sm');
+      } else {
+        header?.classList.remove('bg-white/95', 'backdrop-blur-md', 'shadow-lg');
+        header?.classList.add('bg-white/80', 'backdrop-blur-sm');
+      }
+    }
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    // Open mobile menu
+    mobileMenuButton?.addEventListener('click', () => {
+      mobileMenu?.classList.remove('translate-x-full');
+      mobileMenuOverlay?.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+    
+    // Close mobile menu
+    function closeMenu() {
+      mobileMenu?.classList.add('translate-x-full');
+      mobileMenuOverlay?.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+    
+    closeMenuButton?.addEventListener('click', closeMenu);
+    mobileMenuOverlay?.addEventListener('click', closeMenu);
+    
+    // Handle submenu toggles
+    submenuToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const targetId = toggle.getAttribute('data-target');
+        const submenu = document.getElementById(targetId);
+        const arrow = toggle.querySelector('svg');
+        
+        if (submenu?.classList.contains('hidden')) {
+          // Close all other submenus first
+          document.querySelectorAll('.mobile-submenu').forEach(menu => {
+            if (menu.id !== targetId) {
+              menu.classList.add('hidden');
+              const otherToggle = document.querySelector(`[data-target="${menu.id}"]`);
+              otherToggle?.querySelector('svg')?.classList.remove('rotate-180');
+            }
+          });
+          
+          // Open this submenu
+          submenu.classList.remove('hidden');
+          arrow?.classList.add('rotate-180');
+        } else {
+          // Close this submenu
+          submenu?.classList.add('hidden');
+          arrow?.classList.remove('rotate-180');
+        }
+      });
+    });
+    
+    // Close menu on window resize (if desktop size)
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) {
+        closeMenu();
+      }
+    });
+  });
+</script>
+

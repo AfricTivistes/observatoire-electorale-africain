@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import logoSvg from '../../assets/logo.svg';
+
+interface Props {
+  variant?: "default" | "light" | "primary";
+}
+
+const { variant = "default" } = Astro.props;
+
+// Déterminer les classes CSS en fonction de la variante
+let logoClass = "w-full h-full object-contain";
+
+switch (variant) {
+  case "light":
+    logoClass += " logo-light";
+    break;
+  case "primary":
+    logoClass += " logo-primary";
+    break;
+  default:
+    logoClass += " logo-default";
+}
+
+// Classe pour le texte à côté du logo
+const textColorClass = variant === "light" ? "text-white" : "text-farafina-dark";
+const accentColorClass = variant === "light" ? "text-white" : "text-farafina-primary";
+---
+
+<a href="/" class="flex items-center space-x-2">
+  <div class="w-40 flex items-center justify-center">
+    <Image 
+      src={logoSvg || "/placeholder.svg"} 
+      alt="FarafinaWatch Logo" 
+      class={logoClass}
+    />
+  </div>
+</a>
+
+<style>
+  /* Styles par défaut - pas de modification */
+  .logo-default {
+    filter: none;
+  }
+  
+  /* Style pour la variante light - adapté pour les fonds sombres */
+  .logo-light {
+    filter: brightness(0) invert(1); /* Convertit en blanc */
+  }
+  
+  /* Style pour la variante primary - teinte verte */
+  .logo-primary {
+    filter: brightness(0) saturate(100%) invert(48%) sepia(79%) 
+            saturate(2476%) hue-rotate(100deg) brightness(118%) contrast(119%);
+  }
+</style>

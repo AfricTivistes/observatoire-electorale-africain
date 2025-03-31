@@ -1,0 +1,177 @@
+---
+import Logo from '../ui/Logo.astro';
+
+// Définir les liens du footer
+const quickLinks = [
+  { label: 'Accueil', href: '/' },
+  { label: 'Élections', href: '/elections' },
+  { label: 'Pays', href: '/countries' },
+  { label: 'Organisations', href: '/organizations' },
+  { label: 'Ressources', href: '/resources' },
+  { label: 'À Propos', href: '/about' }
+];
+
+const resourceLinks = [
+  { label: 'Rapports', href: '/resources/reports' },
+  { label: 'Publications', href: '/resources/publications' },
+  { label: 'Cadres Juridiques', href: '/resources/legal-frameworks' },
+  { label: 'Données Ouvertes', href: '/resources/data' },
+  { label: 'Médiathèque', href: '/resources/media' },
+  { label: 'FAQ', href: '/resources/faq' }
+];
+
+const socialLinks = [
+  { name: 'Facebook', icon: 'facebook', href: '#' },
+  { name: 'Twitter', icon: 'twitter', href: '#' },
+  { name: 'LinkedIn', icon: 'linkedin', href: '#' },
+  { name: 'YouTube', icon: 'youtube', href: '#' }
+];
+
+const contactInfo = [
+  { 
+    type: 'address', 
+    icon: 'map-marker', 
+    content: '123 Avenue de la Démocratie<br>Dakar, Sénégal' 
+  },
+  { 
+    type: 'phone', 
+    icon: 'phone', 
+    content: '+221 12 345 6789', 
+    href: 'tel:+221123456789' 
+  },
+  { 
+    type: 'email', 
+    icon: 'envelope', 
+    content: 'contact@farafinawatch.org', 
+    href: 'mailto:contact@farafinawatch.org' 
+  }
+];
+
+const legalLinks = [
+  { label: 'Politique de Confidentialité', href: '/privacy' },
+  { label: 'Conditions d\'Utilisation', href: '/terms' },
+  { label: 'Politique de Cookies', href: '/cookies' }
+];
+
+// Fonction pour obtenir l'icône SVG
+const getSocialIcon = (icon: string) => {
+  switch (icon) {
+    case 'facebook':
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+              </svg>`;
+    case 'twitter':
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+              </svg>`;
+    case 'linkedin':
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
+              </svg>`;
+    case 'youtube':
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+              </svg>`;
+    case 'map-marker':
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>`;
+    case 'phone':
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>`;
+    case 'envelope':
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>`;
+    default:
+      return '';
+  }
+};
+---
+
+<footer class="bg-gray-900 text-white pt-16 pb-8">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+      <div>
+        <Logo variant="light" />
+        <p class="mt-4 text-gray-400 max-w-xs">
+          Une plateforme collaborative pour renforcer la transparence, l'intégrité et la participation démocratique
+          à travers l'Afrique.
+        </p>
+        <div class="flex space-x-4 mt-6">
+          {socialLinks.map((social) => (
+            <a href={social.href} class="text-gray-400 hover:text-farafina-primary transition-colors" aria-label={social.name}>
+              <Fragment set:html={getSocialIcon(social.icon)} />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-4">Liens Rapides</h3>
+        <ul class="space-y-3">
+          {quickLinks.map((link) => (
+            <li>
+              <a href={link.href} class="text-gray-400 hover:text-farafina-primary transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-4">Ressources</h3>
+        <ul class="space-y-3">
+          {resourceLinks.map((link) => (
+            <li>
+              <a href={link.href} class="text-gray-400 hover:text-farafina-primary transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-4">Contact</h3>
+        <ul class="space-y-4">
+          {contactInfo.map((info) => (
+            <li class="flex items-start">
+              <div class="text-farafina-primary mr-3 mt-1">
+                <Fragment set:html={getSocialIcon(info.icon)} />
+              </div>
+              {info.href ? (
+                <a href={info.href} class="text-gray-400 hover:text-farafina-primary transition-colors">
+                  <Fragment set:html={info.content} />
+                </a>
+              ) : (
+                <span class="text-gray-400">
+                  <Fragment set:html={info.content} />
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 pt-8">
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center">
+        <p class="text-gray-500 text-sm">
+          &copy; {new Date().getFullYear()} FarafinaWatch. Tous droits réservés.
+        </p>
+        <div class="flex space-x-4 mt-4 md:mt-0">
+          {legalLinks.map((link) => (
+            <a href={link.href} class="text-gray-500 text-sm hover:text-farafina-primary transition-colors">
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+

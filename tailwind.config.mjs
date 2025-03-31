@@ -1,17 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    './src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'
-  ],
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}", "*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
-        'farafina-primary': '#6EC770',    // Vert - couleur principale
-        'farafina-secondary': '#FFC24A',  // Jaune - accent secondaire
-        'farafina-accent': '#FF5836',     // Orange - pour attirer l'attention
+        'farafina-primary': '#6EC770',    // Vert principal du logo
+        'farafina-secondary': '#FFC24A',  // Jaune/Orange du logo
+        'farafina-accent': '#FF5836',     // Rouge/Orange accent du logo
         'farafina-blue': '#2D83F5',       // Bleu complémentaire
         'farafina-dark': '#000000',       // Noir pour texte et contraste
-        'green': '#e8f6e6',               // Vert secondaire
         'africa-gray': {
           50: '#f8fafc',
           100: '#f1f5f9',
@@ -56,7 +53,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter var', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       spacing: {
         'safe-top': 'env(safe-area-inset-top)',
@@ -79,3 +76,4 @@ export default {
   },
   plugins: []
 };
+

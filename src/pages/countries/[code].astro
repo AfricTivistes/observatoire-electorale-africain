@@ -1,12 +1,14 @@
 ---
-import MainLayout from '../../layouts/MainLayout.astro';
+import Layout from '../../layouts/MainLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.tsx';
+import PageHeader from '../../components/PageHeader.tsx';
 import CountryCard from '../../components/countries/CountryCard.tsx';
 import DemographicChart from '../../components/countries/DemographicChart.tsx';
 import LegalFramework from '../../components/countries/LegalFramework.tsx';
 import ElectionTimeline from '../../components/countries/ElectionTimeline.tsx';
 import AfricaMap from '../../components/countries/AfricaMap.tsx';
 import countriesData from '../../data/countries-extended.json';
+import { FaGlobeAfrica, FaVoteYea, FaBalanceScale, FaUsers, FaChartBar, FaCalendarAlt, FaNewspaper } from 'react-icons/fa';
 
 export function getStaticPaths() {
   return countriesData.countries.map(country => ({
@@ -62,106 +64,306 @@ const electionEvents = [
     description: `Prochaine élection ${country.lastElection.type.toLowerCase()} prévue`
   }
 ];
+
+// Données pour les statistiques clés
+const keyStats = [
+  {
+    label: "Population",
+    value: new Intl.NumberFormat('fr-FR').format(country.population),
+    icon: FaUsers,
+    color: "text-farafina-primary"
+  },
+  {
+    label: "Participation",
+    value: `${country.lastElection.turnout}%`,
+    icon: FaVoteYea,
+    color: "text-farafina-secondary"
+  },
+  {
+    label: "Électeurs inscrits",
+    value: new Intl.NumberFormat('fr-FR').format(country.demographics?.voterRegistration?.registered || 0),
+    icon: FaChartBar,
+    color: "text-farafina-accent"
+  },
+  {
+    label: "Prochaine élection",
+    value: country.lastElection.nextElectionYear,
+    icon: FaCalendarAlt,
+    color: "text-farafina-blue"
+  }
+];
+
+// Simuler des élections à venir
+const upcomingElections = [
+  {
+    type: country.lastElection.type,
+    date: `${country.lastElection.nextElectionYear}-05-15`,
+    daysRemaining: Math.floor(Math.random() * 365) + 30
+  }
+];
+
+// Simuler des articles récents
+const recentArticles = [
+  {
+    title: `Préparation des élections de ${country.lastElection.nextElectionYear} au ${country.name}`,
+    date: new Date().toLocaleDateString('fr-FR'),
+    excerpt: `Les préparatifs pour les prochaines élections ${country.lastElection.type.toLowerCase()} au ${country.name} ont commencé...`
+  },
+  {
+    title: `Analyse du système électoral ${country.name.toLowerCase()}`,
+    date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR'),
+    excerpt: `Une étude approfondie du système électoral ${country.name.toLowerCase()} révèle des défis et des opportunités...`
+  }
+];
 ---
 
-<MainLayout 
+<Layout 
   title={`${country.name} - Informations Électorales`} 
-  activePage="countries"
+  pageType="detail"
 >
-  <Breadcrumbs 
-    client:load 
-    items={[
+  <PageHeader
+    title={country.name}
+    subtitle={`Système politique: ${country.politicalSystem}`}
+    breadcrumbs={[
       { label: 'Accueil', href: '/' },
       { label: 'Pays', href: '/countries' },
       { label: country.name }
-    ]} 
-  />
+    ]}
+    client:load
+  >
+    <FaGlobeAfrica class="text-farafina-primary text-3xl" slot="icon" />
+  </PageHeader>
 
-  <div class="space-y-8">
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="md:col-span-1">
-        <CountryCard 
-          client:load 
-          country={{
-            code: country.code,
-            name: country.name,
-            population: country.population,
-            lastElection: country.lastElection,
-            politicalSystem: country.politicalSystem,
-            demographics: country.demographics
-          }} 
-        />
+  <div class="container mx-auto px-4 py-8">
+    <!-- Bannière du pays avec drapeau et statistiques clés -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+      <div class="relative h-40 bg-gradient-to-r from-farafina-primary to-farafina-secondary">
+        <div class="absolute inset-0 opacity-20" style={`background-image: url(https://flagcdn.com/w1280/${country.code.toLowerCase()}.png); background-size: cover; background-position: center;`}></div>
+        <div class="absolute inset-0 flex items-center px-8">
+          <div class="flex items-center">
+            <img 
+              src={`https://flagcdn.com/w160/${country.code.toLowerCase()}.png`} 
+              alt={`Drapeau ${country.name}`} 
+              class="w-24 h-16 object-cover rounded shadow-md mr-6"
+            />
+            <div class="text-white">
+              <h1 class="text-3xl font-bold">{country.name}</h1>
+              <p class="text-white/80">{country.politicalSystem}</p>
+            </div>
+          </div>
+        </div>
       </div>
       
-      <div class="md:col-span-2 h-full">
-        <div class="bg-white shadow-md rounded-lg p-6 h-full">
-          <h2 class="text-2xl font-bold mb-6 text-africa-primary">
-            Carte Interactive
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
+        {keyStats.map(stat => (
+          <div class="flex items-center">
+            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+              <stat.icon class={`text-xl ${stat.color}`} />
+            </div>
+            <div>
+              <span class="block text-sm text-gray-500">{stat.label}</span>
+              <span class="block text-xl font-bold text-farafina-dark">{stat.value}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <!-- Carte et informations générales -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Carte interactive -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-bold text-farafina-primary mb-6 flex items-center">
+            <FaGlobeAfrica class="mr-2" /> Localisation
           </h2>
-          <div class="h-[calc(100%-4rem)]">
+          <div class="h-[400px]">
             <AfricaMap
               client:load
               selectedCountry={country.code}
             />
           </div>
         </div>
+        
+        <!-- Données démographiques -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-bold text-farafina-primary mb-6 flex items-center">
+            <FaUsers class="mr-2" /> Données Démographiques
+          </h2>
+          <DemographicChart 
+            client:visible 
+            demographics={country.demographics} 
+          />
+        </div>
+      </div>
+
+      <!-- Sidebar avec informations et élections à venir -->
+      <div class="space-y-8">
+        <!-- Informations du pays -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-bold text-farafina-primary mb-6 flex items-center">
+            <FaGlobeAfrica class="mr-2" /> Informations
+          </h2>
+          <CountryCard 
+            client:load 
+            country={{
+              code: country.code,
+              name: country.name,
+              population: country.population,
+              lastElection: country.lastElection,
+              politicalSystem: country.politicalSystem,
+              demographics: country.demographics
+            }} 
+          />
+        </div>
+        
+        <!-- Élections à venir -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-bold text-farafina-secondary mb-6 flex items-center">
+            <FaCalendarAlt class="mr-2" /> Prochaine Élection
+          </h2>
+          
+          {upcomingElections.map(election => (
+            <div class="bg-farafina-secondary/5 rounded-lg p-4">
+              <div class="flex justify-between items-center mb-3">
+                <span class="font-semibold text-farafina-dark">{election.type}</span>
+                <span class="text-sm text-gray-500">{new Date(election.date).toLocaleDateString('fr-FR')}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-600">
+                  <span class="font-medium">Jours restants:</span>
+                </div>
+                <div class="text-2xl font-bold text-farafina-secondary">{election.daysRemaining}</div>
+              </div>
+              <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                  <div class="bg-farafina-secondary h-2.5 rounded-full" style={`width: ${100 - (election.daysRemaining / 365 * 100)}%`}></div>
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          <div class="mt-4">
+            <a href="/elections/calendar" class="text-farafina-secondary hover:text-farafina-secondary/80 transition-colors text-sm">
+              Voir le calendrier électoral complet →
+            </a>
+          </div>
+        </div>
+        
+        <!-- Articles récents -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-bold text-farafina-accent mb-6 flex items-center">
+            <FaNewspaper class="mr-2" /> Articles récents
+          </h2>
+          
+          <div class="space-y-4">
+            {recentArticles.map(article => (
+              <div class="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                <h3 class="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
+                  <a href="#">{article.title}</a>
+                </h3>
+                <p class="text-sm text-gray-500 mb-2">{article.date}</p>
+                <p class="text-sm text-gray-600">{article.excerpt}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div class="mt-4">
+            <a href="/resources" class="text-farafina-accent hover:text-farafina-accent/80 transition-colors text-sm">
+              Voir toutes les actualités →
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
-    {/* Demographic Data Section */}
-    <div class="bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-2xl font-bold mb-6 text-africa-primary">
-        Données Démographiques
-      </h2>
-      <DemographicChart 
-        client:visible 
-        demographics={country.demographics} 
-      />
-    </div>
-
-    {/* Electoral System and Timeline Grid */}
-    <div class="grid md:grid-cols-2 gap-6">
-      {/* Electoral System Section */}
-      <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold mb-6 text-africa-primary">
-          Système Électoral
+    <!-- Système électoral et cadre juridique -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Système électoral -->
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold text-farafina-primary mb-6 flex items-center">
+          <FaVoteYea class="mr-2" /> Système Électoral
         </h2>
-        <div class="space-y-4">
-          <div>
-            <h3 class="font-semibold text-lg text-africa-secondary">Système Politique</h3>
+        <div class="space-y-6">
+          <div class="bg-farafina-primary/5 rounded-lg p-4">
+            <h3 class="font-semibold text-farafina-primary mb-2">Système Politique</h3>
             <p class="text-gray-700">{country.politicalSystem}</p>
           </div>
+          
           {country.electoralFramework && (
-            <div>
-              <h3 class="font-semibold text-lg text-africa-secondary">Constitution</h3>
-              <p class="text-gray-700">{country.electoralFramework.constitution}</p>
-              <h3 class="font-semibold text-lg text-africa-secondary mt-4">Code Électoral</h3>
-              <p class="text-gray-700">{country.electoralFramework.electoralCode}</p>
+            <div class="space-y-4">
+              <div class="bg-farafina-secondary/5 rounded-lg p-4">
+                <h3 class="font-semibold text-farafina-secondary mb-2">Constitution</h3>
+                <p class="text-gray-700">{country.electoralFramework.constitution}</p>
+              </div>
+              
+              <div class="bg-farafina-accent/5 rounded-lg p-4">
+                <h3 class="font-semibold text-farafina-accent mb-2">Code Électoral</h3>
+                <p class="text-gray-700">{country.electoralFramework.electoralCode}</p>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Election Timeline Section */}
-      <div class="h-full">
-        <ElectionTimeline 
+      <!-- Cadre juridique -->
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold text-farafina-secondary mb-6 flex items-center">
+          <FaBalanceScale class="mr-2" /> Cadre Juridique
+        </h2>
+        <LegalFramework 
           client:visible 
-          events={electionEvents}
-          countryName={country.name}
+          documents={country.legalFramework?.documents || legalFramework.documents}
+          timeline={country.legalFramework?.timeline || legalFramework.timeline}
         />
       </div>
     </div>
 
-    {/* Legal Framework Section */}
-    <div>
-      <h2 class="text-2xl font-bold mb-6 text-africa-primary">
-        Cadre Juridique
+    <!-- Chronologie électorale -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+      <h2 class="text-xl font-bold text-farafina-accent mb-6 flex items-center">
+        <FaCalendarAlt class="mr-2" /> Chronologie Électorale
       </h2>
-      <LegalFramework 
+      <ElectionTimeline 
         client:visible 
-        documents={country.legalFramework?.documents || legalFramework.documents}
-        timeline={country.legalFramework?.timeline || legalFramework.timeline}
+        events={electionEvents}
+        countryName={country.name}
       />
     </div>
+
+    <!-- Ressources et liens utiles -->
+    <div class="bg-gradient-to-r from-farafina-primary to-farafina-secondary rounded-xl shadow-md overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="p-8 text-white">
+          <h2 class="text-2xl font-bold mb-4">Ressources supplémentaires</h2>
+          <p class="mb-6 text-white/90">
+            Accédez à notre base de données complète sur les élections, les résultats et les analyses concernant {country.name}.
+          </p>
+          <div class="space-y-3">
+            <a 
+              href={`/elections?country=${country.code.toLowerCase()}`} 
+              class="block px-6 py-3 bg-white text-farafina-primary font-medium rounded-lg hover:bg-white/90 transition-colors"
+            >
+              Voir les élections de {country.name}
+            </a>
+            <a 
+              href="/resources" 
+              class="block px-6 py-3 bg-white/20 text-white font-medium rounded-lg hover:bg-white/30 transition-colors"
+            >
+              Consulter les rapports d'analyse
+            </a>
+          </div>
+        </div>
+        <div class="hidden md:block relative">
+          <img 
+            src="/placeholder.svg?height=300&width=400" 
+            alt={`Ressources sur ${country.name}`} 
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-black/20"></div>
+        </div>
+      </div>
+    </div>
   </div>
-</MainLayout>
+</Layout>
+

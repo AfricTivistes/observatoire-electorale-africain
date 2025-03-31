@@ -1,0 +1,219 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.tsx';
+import PageHeader from '../../components/PageHeader.tsx';
+import { FaChartBar, FaSearch, FaDownload, FaExternalLinkAlt } from 'react-icons/fa';
+
+// Importer les données des élections
+import { recentElections } from '../../data/elections.json';
+
+// Créer des données étendues pour les résultats des élections
+const electionResults = recentElections.map(election => {
+  // Générer des données fictives pour les résultats
+  const candidates = [];
+  const totalVotes = Math.floor(Math.random() * 10000000) + 5000000;
+  
+  // Nombre de candidats (entre 2 et 5)
+  const numCandidates = election.candidates || Math.floor(Math.random() * 4) + 2;
+  
+  // Générer des résultats pour chaque candidat
+  let remainingPercentage = 100;
+  for (let i = 0; i < numCandidates; i++) {
+    const isWinner = i === 0;
+    const percentage = isWinner 
+      ? Math.floor(Math.random() * 30) + 40 // Le gagnant obtient entre 40% et 70%
+      : (i === numCandidates - 1) 
+        ? remainingPercentage // Le dernier candidat prend le reste
+        : Math.floor(Math.random() * remainingPercentage / 2);
+    
+    remainingPercentage -= percentage;
+    
+    candidates.push({
+      name: isWinner ? election.winner || `Candidat ${i+1}` : `Candidat ${i+1}`,
+      party: `Parti ${String.fromCharCode(65 + i)}`,
+      votes: Math.floor(totalVotes * percentage / 100),
+      percentage,
+      isWinner
+    });
+  }
+  
+  return {
+    ...election,
+    totalVotes,
+    candidates,
+    turnout: election.turnout || Math.floor(Math.random() * 30) + 40, // Entre 40% et 70%
+    contested: election.challenges || Math.random() > 0.7, // 30% de chance d'être contesté
+    observerReports: Math.floor(Math.random() * 5) + 1 // Entre 1 et 5 rapports
+  };
+});
+
+// Fonction pour formater les nombres
+function formatNumber(num) {
+  return new Intl.NumberFormat('fr-FR').format(num);
+}
+---
+
+<Layout title="Résultats des Élections | Observatoire des Élections en Afrique">
+  <PageHeader
+    title="Résultats des Élections"
+    subtitle="Consultez les résultats des élections récentes à travers le continent africain"
+    breadcrumbs={[
+      { label: 'Accueil', href: '/' },
+      { label: 'Élections', href: '/elections' },
+      { label: 'Résultats' }
+    ]}
+  >
+    <FaChartBar class="text-farafina-primary text-3xl" slot="icon" />
+  </PageHeader>
+
+  <div class="container mx-auto px-4 py-8">
+    <!-- Barre de recherche -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div class="max-w-3xl mx-auto">
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Rechercher par pays, type d'élection ou année..."
+            class="w-full py-3 pl-12 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
+          />
+          <FaSearch class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <button class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-farafina-primary text-white px-4 py-1 rounded-md hover:bg-farafina-primary/90 transition-colors">
+            Rechercher
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2 mt-4">
+          <span class="text-sm text-gray-500">Filtres rapides:</span>
+          <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+            Présidentielles
+          </button>
+          <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+            Législatives
+          </button>
+          <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+            2023
+          </button>
+          <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
+            Résultats contestés
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Résultats des élections -->
+    <div class="space-y-8">
+      {electionResults.map(election => (
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="bg-farafina-secondary text-white px-6 py-3 flex justify-between items-center">
+            <h3 class="text-xl font-semibold">{election.country} - {election.type} ({new Date(election.date).getFullYear()})</h3>
+            <div class="flex space-x-2">
+              <button class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Télécharger les résultats">
+                <FaDownload class="text-white" />
+              </button>
+              <a href={`/elections/${election.id}`} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Voir les détails">
+                <FaExternalLinkAlt class="text-white" />
+              </a>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <!-- Informations générales -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div class="bg-gray-50 rounded-lg p-4">
+                <span class="block text-sm text-gray-500">Date</span>
+                <span class="font-medium">{new Date(election.date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'long', year: 'numeric'})}</span>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <span class="block text-sm text-gray-500">Participation</span>
+                <span class="font-medium">{election.turnout}%</span>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <span class="block text-sm text-gray-500">Votes exprimés</span>
+                <span class="font-medium">{formatNumber(election.totalVotes)}</span>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <span class="block text-sm text-gray-500">Statut</span>
+                <span class={`font-medium ${election.contested ? 'text-farafina-accent' : 'text-green-600'}`}>
+                  {election.contested ? 'Résultats contestés' : 'Résultats validés'}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Résultats des candidats -->
+            <h4 class="font-semibold text-farafina-dark mb-4">Résultats par candidat</h4>
+            <div class="space-y-4">
+              {election.candidates.map((candidate, index) => (
+                <div class="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow">
+                  <div class="flex flex-col md:flex-row md:items-center">
+                    <div class="md:w-1/4 mb-2 md:mb-0">
+                      <span class="font-semibold text-farafina-dark">
+                        {candidate.name}
+                        {candidate.isWinner && (
+                          <span class="ml-2 inline-block px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
+                            Élu
+                          </span>
+                        )}
+                      </span>
+                      <div class="text-sm text-gray-500">{candidate.party}</div>
+                    </div>
+                    <div class="md:w-1/2">
+                      <div class="relative pt-1">
+                        <div class="flex mb-2 items-center justify-between">
+                          <div>
+                            <span class="text-xs font-semibold inline-block text-farafina-primary">
+                              {candidate.percentage}%
+                            </span>
+                          </div>
+                          <div class="text-right">
+                            <span class="text-xs font-semibold inline-block text-gray-600">
+                              {formatNumber(candidate.votes)} votes
+                            </span>
+                          </div>
+                        </div>
+                        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                          <div 
+                            style={`width: ${candidate.percentage}%`} 
+                            class={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${candidate.isWinner ? 'bg-farafina-primary' : 'bg-farafina-secondary/70'}`}>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="md:w-1/4 text-right">
+                      <span class={`text-lg font-bold ${candidate.isWinner ? 'text-farafina-primary' : 'text-gray-700'}`}>
+                        {candidate.percentage}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <!-- Rapports d'observation -->
+            <div class="mt-6 pt-6 border-t border-gray-100">
+              <h4 class="font-semibold text-farafina-dark mb-4">Rapports d'observation</h4>
+              <div class="flex flex-wrap gap-3">
+                {Array.from({ length: election.observerReports }).map((_, i) => (
+                  <a href="#" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                    <span class="mr-2">Rapport {i+1}</span>
+                    <FaDownload class="text-gray-600" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+    
+    <!-- Pagination -->
+    <div class="mt-8 flex justify-center">
+      <nav class="inline-flex rounded-md shadow">
+        <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</a>
+        <a href="#" class="py-2 px-4 bg-farafina-primary text-white border border-farafina-primary">1</a>
+        <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">2</a>
+        <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">3</a>
+        <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">Suivant</a>
+      </nav>
+    </div>
+  </div>
+</Layout>
+

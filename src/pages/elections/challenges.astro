@@ -1,0 +1,263 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.tsx';
+import PageHeader from '../../components/PageHeader.tsx';
+import { FaExclamationTriangle, FaMapMarkerAlt, FaNewspaper, FaChartLine, FaUsers } from 'react-icons/fa';
+
+// Importer les données des défis électoraux
+import { electoralChallenges } from '../../data/elections.json';
+
+// Créer des données étendues pour les défis électoraux
+const extendedChallenges = [
+  ...electoralChallenges,
+  {
+    country: "Mali",
+    type: "Report d'Élections",
+    description: "Report des élections présidentielles en raison de l'instabilité politique",
+    status: "En cours"
+  },
+  {
+    country: "Tchad",
+    type: "Accès limité",
+    description: "Difficultés d'accès pour les observateurs internationaux dans certaines régions",
+    status: "Résolu"
+  },
+  {
+    country: "Guinée",
+    type: "Violences Électorales",
+    description: "Incidents violents signalés dans plusieurs bureaux de vote",
+    status: "Critique"
+  }
+];
+
+// Catégories de défis pour les statistiques
+const challengeCategories = [
+  { name: "Contestation Judiciaire", count: 12, icon: FaNewspaper },
+  { name: "Tensions Politiques", count: 18, icon: FaUsers },
+  { name: "Violences Électorales", count: 8, icon: FaExclamationTriangle },
+  { name: "Problèmes Logistiques", count: 15, icon: FaMapMarkerAlt },
+  { name: "Report d'Élections", count: 5, icon: FaChartLine }
+];
+
+// Fonction pour obtenir la classe de couleur en fonction du statut
+function getStatusColorClass(status) {
+  switch(status.toLowerCase()) {
+    case 'critique':
+      return 'bg-red-100 text-red-800';
+    case 'en cours':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'résolu':
+      return 'bg-green-100 text-green-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+}
+
+// Données pour la carte des défis
+const regionsWithChallenges = [
+  { region: "Afrique du Nord", count: 3 },
+  { region: "Afrique de l'Ouest", count: 8 },
+  { region: "Afrique Centrale", count: 5 },
+  { region: "Afrique de l'Est", count: 4 },
+  { region: "Afrique Australe", count: 2 }
+];
+
+// Études de cas
+const casesStudies = [
+  {
+    country: "Nigeria",
+    title: "Élection présidentielle 2023",
+    description: "Analyse des contestations judiciaires suite à l'élection présidentielle nigériane de 2023.",
+    image: "/placeholder.svg?height=200&width=300"
+  },
+  {
+    country: "Kenya",
+    title: "Réformes électorales post-2022",
+    description: "Comment le Kenya a réformé son système électoral suite aux défis rencontrés lors des élections de 2022.",
+    image: "/placeholder.svg?height=200&width=300"
+  },
+  {
+    country: "Côte d'Ivoire",
+    title: "Réconciliation post-électorale",
+    description: "Processus de réconciliation nationale après les tensions électorales de 2020.",
+    image: "/placeholder.svg?height=200&width=300"
+  }
+];
+---
+
+<Layout title="Défis Électoraux | Observatoire des Élections en Afrique">
+  <PageHeader
+    title="Défis Électoraux"
+    subtitle="Analyse des défis et obstacles rencontrés lors des processus électoraux en Afrique"
+    breadcrumbs={[
+      { label: 'Accueil', href: '/' },
+      { label: 'Élections', href: '/elections' },
+      { label: 'Défis Électoraux' }
+    ]}
+  >
+    <FaExclamationTriangle class="text-farafina-accent text-3xl" slot="icon" />
+  </PageHeader>
+
+  <div class="container mx-auto px-4 py-8">
+    <!-- Introduction -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-4">Vue d'ensemble des défis électoraux</h2>
+      <p class="text-gray-700 mb-6">
+        Les processus électoraux en Afrique font face à divers défis qui peuvent affecter leur intégrité, leur transparence et leur inclusivité. 
+        Cette section présente une analyse des principaux obstacles rencontrés, des études de cas et des recommandations pour renforcer 
+        les systèmes électoraux à travers le continent.
+      </p>
+
+      <!-- Statistiques -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        {challengeCategories.map(category => (
+          <div class="bg-farafina-primary/5 rounded-lg p-4 text-center">
+            <div class="flex justify-center mb-2">
+              <category.icon class="text-farafina-primary text-2xl" />
+            </div>
+            <span class="block text-2xl font-bold text-farafina-primary">{category.count}</span>
+            <span class="text-sm text-gray-600">{category.name}</span>
+          </div>
+        ))}
+      </div>
+
+      <!-- Carte des défis -->
+      <div class="border-t border-gray-100 pt-6">
+        <h3 class="font-semibold mb-4 text-farafina-dark">Répartition géographique des défis</h3>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {regionsWithChallenges.map(region => (
+            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
+              <h4 class="font-semibold text-farafina-dark">{region.region}</h4>
+              <div class="mt-2 text-2xl font-bold text-farafina-secondary">{region.count}</div>
+              <div class="text-sm text-gray-600">défis identifiés</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des défis électoraux -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Défis électoraux actuels</h2>
+
+      <div class="space-y-6">
+        {extendedChallenges.map(challenge => (
+          <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
+            <div class="flex flex-col md:flex-row md:items-center">
+              <div class="md:w-1/4 mb-3 md:mb-0">
+                <span class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColorClass(challenge.status)}`}>
+                  {challenge.status}
+                </span>
+                <h3 class="font-semibold text-farafina-dark mt-2">{challenge.country}</h3>
+              </div>
+              <div class="md:w-1/4 mb-3 md:mb-0">
+                <span class="text-sm text-gray-500">Type de défi</span>
+                <p class="font-medium text-farafina-secondary">{challenge.type}</p>
+              </div>
+              <div class="md:w-2/4">
+                <span class="text-sm text-gray-500">Description</span>
+                <p class="text-gray-700">{challenge.description}</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+              <a href="#" class="text-farafina-primary hover:text-farafina-secondary transition-colors">
+                Voir l'analyse complète →
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-8 flex justify-center">
+        <nav class="inline-flex rounded-md shadow">
+          <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</a>
+          <a href="#" class="py-2 px-4 bg-farafina-primary text-white border border-farafina-primary">1</a>
+          <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">2</a>
+          <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">Suivant</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Études de cas -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Études de cas</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {casesStudies.map(study => (
+          <div class="border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all transform hover:translate-y-[-5px]">
+            <div class="h-40 overflow-hidden">
+              <img src={study.image || "/placeholder.svg"} alt={study.title} class="w-full h-full object-cover" />
+            </div>
+            <div class="p-4">
+              <span class="text-sm text-farafina-secondary font-medium">{study.country}</span>
+              <h3 class="font-semibold text-farafina-dark mt-1 mb-2">{study.title}</h3>
+              <p class="text-gray-600 text-sm">{study.description}</p>
+              <a href="#" class="mt-4 inline-block text-farafina-primary hover:text-farafina-secondary transition-colors">
+                Lire l'étude complète →
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Recommandations -->
+    <div class="bg-farafina-primary/5 rounded-lg p-6">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Recommandations</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg p-5 shadow-sm">
+          <h3 class="font-semibold text-farafina-primary mb-3">Pour les organismes électoraux</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li class="flex items-start">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-farafina-primary mt-2 mr-2"></span>
+              Renforcer l'indépendance et la transparence des commissions électorales
+            </li>
+            <li class="flex items-start">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-farafina-primary mt-2 mr-2"></span>
+              Améliorer la formation du personnel électoral
+            </li>
+            <li class="flex items-start">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-farafina-primary mt-2 mr-2"></span>
+              Adopter des technologies sécurisées pour le processus électoral
+            </li>
+            <li class="flex items-start">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-farafina-primary mt-2 mr-2"></span>
+              Publier les résultats détaillés par bureau de vote
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-white rounded-lg p-5 shadow-sm">
+          <h3 class="font-semibold text-farafina-secondary mb-3">Pour les acteurs politiques</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li class="flex items-start">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-farafina-secondary mt-2 mr-2"></span>
+              S'engager à respecter les résultats des élections
+            </li>
+            <li class="flex items-start">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-farafina-secondary mt-2 mr-2"></span>
+              Promouvoir un discours politique responsable et non-violent
+            </li>
+            <li class="flex items-start">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-farafina-secondary mt-2 mr-2"></span>
+              Participer activement aux réformes électorales
+            </li>
+            <li class="flex items-start">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-farafina-secondary mt-2 mr-2"></span>
+              Encourager la participation des femmes et des jeunes
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <a href="#" class="inline-block px-6 py-3 bg-farafina-primary text-white font-medium rounded-lg hover:bg-farafina-primary/90 transition-colors">
+          Télécharger le rapport complet sur les défis électoraux
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
+

@@ -1,0 +1,225 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.tsx';
+import PageHeader from '../../components/PageHeader.tsx';
+import { FaCalendarAlt, FaFilter, FaDownload, FaSync } from 'react-icons/fa';
+
+// Importer les données des élections
+import { upcomingElections, recentElections } from '../../data/elections.json';
+
+// Créer un calendrier pour les 24 prochains mois
+const currentDate = new Date();
+const months = [];
+for (let i = 0; i < 24; i++) {
+  const date = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
+  months.push({
+    month: date.toLocaleString('fr-FR', { month: 'long' }),
+    year: date.getFullYear(),
+    date: date
+  });
+}
+
+// Organiser les élections par mois
+const allElections = [...upcomingElections, ...recentElections];
+const electionsByMonth = months.map(month => {
+  const monthElections = allElections.filter(election => {
+    const electionDate = new Date(election.date);
+    return electionDate.getMonth() === month.date.getMonth() && 
+           electionDate.getFullYear() === month.date.getFullYear();
+  });
+
+  return {
+    ...month,
+    elections: monthElections
+  };
+});
+
+// Créer des données pour le graphique de répartition des élections par type
+const electionTypes = ['Présidentielle', 'Législative', 'Locales', 'Référendum'];
+const electionTypeData = electionTypes.map(type => {
+  return {
+    type,
+    count: allElections.filter(e => e.type === type).length
+  };
+});
+
+// Régions africaines pour le filtre
+const regions = [
+  "Afrique du Nord",
+  "Afrique de l'Ouest",
+  "Afrique Centrale",
+  "Afrique de l'Est",
+  "Afrique Australe"
+];
+---
+
+<Layout title="Calendrier Électoral | Observatoire des Élections en Afrique">
+  <PageHeader
+    title="Calendrier Électoral"
+    subtitle="Consultez les dates des élections à venir et passées à travers le continent africain"
+    breadcrumbs={[
+      { label: 'Accueil', href: '/' },
+      { label: 'Élections', href: '/elections' },
+      { label: 'Calendrier Électoral' }
+    ]}
+  >
+    <FaCalendarAlt class="text-farafina-primary text-3xl" slot="icon" />
+  </PageHeader>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Sidebar avec filtres -->
+      <div class="lg:w-1/4">
+        <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+          <div class="flex items-center mb-6">
+            <FaFilter class="text-farafina-primary mr-2" />
+            <h2 class="text-xl font-bold text-farafina-dark">Filtres</h2>
+          </div>
+
+          <div class="space-y-6">
+            <!-- Filtre par année -->
+            <div>
+              <h3 class="font-semibold mb-3 text-farafina-secondary">Année</h3>
+              <div class="flex space-x-2">
+                <select class="form-select w-full rounded-md border-gray-300 focus:border-farafina-primary focus:ring focus:ring-farafina-primary/20">
+                  <option value="">Toutes les années</option>
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                  <option value="2026">2026</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Filtre par type d'élection -->
+            <div>
+              <h3 class="font-semibold mb-3 text-farafina-secondary">Type d'Élection</h3>
+              <div class="space-y-2">
+                {electionTypes.map(type => (
+                  <label class="flex items-center">
+                    <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
+                    <span class="ml-2 text-gray-700">{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <!-- Filtre par région -->
+            <div>
+              <h3 class="font-semibold mb-3 text-farafina-secondary">Région</h3>
+              <div class="space-y-2">
+                {regions.map(region => (
+                  <label class="flex items-center">
+                    <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
+                    <span class="ml-2 text-gray-700">{region}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="pt-4 border-t border-gray-200 flex flex-col space-y-3">
+              <button class="btn-primary flex items-center justify-center">
+                <FaSync class="mr-2" />
+                Appliquer les filtres
+              </button>
+              <button class="btn bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center justify-center">
+                <FaDownload class="mr-2" />
+                Exporter le calendrier
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenu principal -->
+      <div class="lg:w-3/4">
+        <!-- Vue d'ensemble -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 class="text-2xl font-bold text-farafina-dark mb-4">Vue d'ensemble</h2>
+          <div class="grid md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-farafina-primary/10 rounded-lg p-4 text-center">
+              <span class="block text-3xl font-bold text-farafina-primary">{upcomingElections.length}</span>
+              <span class="text-gray-600">Élections à venir</span>
+            </div>
+            <div class="bg-farafina-secondary/10 rounded-lg p-4 text-center">
+              <span class="block text-3xl font-bold text-farafina-secondary">{recentElections.length}</span>
+              <span class="text-gray-600">Élections récentes</span>
+            </div>
+            <div class="bg-farafina-accent/10 rounded-lg p-4 text-center">
+              <span class="block text-3xl font-bold text-farafina-accent">15</span>
+              <span class="text-gray-600">Pays concernés</span>
+            </div>
+            <div class="bg-farafina-blue/10 rounded-lg p-4 text-center">
+              <span class="block text-3xl font-bold text-farafina-blue">4</span>
+              <span class="text-gray-600">Types d'élections</span>
+            </div>
+          </div>
+
+          <!-- Graphique de répartition -->
+          <div class="border-t border-gray-100 pt-6">
+            <h3 class="font-semibold mb-4 text-farafina-dark">Répartition par type d'élection</h3>
+            <div class="flex items-end h-40 space-x-6">
+              {electionTypeData.map(data => (
+                <div class="flex flex-col items-center flex-1">
+                  <div class="w-full bg-farafina-primary/80 rounded-t-lg" style={`height: ${data.count * 20}px`}></div>
+                  <span class="mt-2 text-sm font-medium text-gray-700">{data.type}</span>
+                  <span class="text-xs text-gray-500">{data.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendrier des élections -->
+        <div class="space-y-8">
+          {electionsByMonth.filter(month => month.elections.length > 0).map(month => (
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+              <div class="bg-farafina-primary text-white px-6 py-3">
+                <h3 class="text-xl font-semibold">{month.month} {month.year}</h3>
+              </div>
+              <div class="p-6">
+                <div class="space-y-4">
+                  {month.elections.map(election => (
+                    <div class="flex flex-col md:flex-row md:items-center p-4 border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
+                      <div class="md:w-1/6 mb-2 md:mb-0">
+                        <span class="text-lg font-bold text-farafina-dark">
+                          {new Date(election.date).toLocaleDateString('fr-FR', {day: 'numeric'})}
+                        </span>
+                      </div>
+                      <div class="md:w-2/6 mb-2 md:mb-0">
+                        <span class="font-semibold text-farafina-secondary">{election.country}</span>
+                      </div>
+                      <div class="md:w-2/6 mb-2 md:mb-0">
+                        <span class="inline-block px-3 py-1 bg-farafina-primary/10 text-farafina-primary rounded-full text-sm">
+                          {election.type}
+                        </span>
+                      </div>
+                      <div class="md:w-1/6 text-right">
+                        <a href={`/elections/${election.id}`} class="text-farafina-primary hover:text-farafina-secondary transition-colors">
+                          Détails →
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Mois sans élections -->
+        <div class="mt-8 bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <h3 class="text-lg font-semibold text-farafina-dark mb-4">Mois sans élections programmées</h3>
+          <div class="flex flex-wrap gap-2">
+            {electionsByMonth.filter(month => month.elections.length === 0).map(month => (
+              <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">
+                {month.month} {month.year}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+

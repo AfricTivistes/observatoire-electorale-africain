@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #6ec770; /* Vert principal */
+    --color-secondary: #ffc24a; /* Jaune/Orange secondaire */
+    --color-accent: #ff5836; /* Rouge/Orange accent */
+    --color-blue: #2d83f5; /* Bleu complémentaire */
+    --color-dark: #000000; /* Noir pour texte et contraste */
+  }
+
+  html {
+    @apply antialiased scroll-smooth;
+    font-family: "Inter", sans-serif;
+  }
+
+  body {
+    @apply text-gray-700 bg-white;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold text-farafina-dark tracking-tight;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center px-6 py-3 bg-farafina-primary text-white font-medium rounded-full hover:bg-farafina-primary/90 transition-all shadow-md transform hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center px-6 py-3 bg-farafina-secondary text-farafina-dark font-medium rounded-full hover:bg-farafina-secondary/90 transition-all shadow-md transform hover:scale-105;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-100;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent;
+  }
+
+  /* Particle Animation */
+  .particle-container {
+    @apply absolute inset-0 overflow-hidden;
+  }
+
+  .particle {
+    @apply absolute rounded-full bg-white;
+    animation: float-around linear infinite;
+  }
+}
+
+@layer utilities {
+  .bg-grid-pattern {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-float-delay {
+    animation: float 3s ease-in-out 1s infinite;
+  }
+
+  .animate-float-long {
+    animation: float 4s ease-in-out 0.5s infinite;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  @keyframes float-around {
+    0% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(100px, 50px);
+    }
+    50% {
+      transform: translate(50px, 100px);
+    }
+    75% {
+      transform: translate(-50px, 50px);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+}
+

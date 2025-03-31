@@ -1,96 +1,147 @@
 ---
-    import MainLayout from '../layouts/MainLayout.astro';
-    import { FaGlobe, FaBalanceScale, FaUsers, FaChartLine } from 'react-icons/fa';
-    import ClientsSection from "../components/common/ClientsSection.astro";
-    import { partenaires } from '../data/data.ts';
+import Layout from '../layouts/MainLayout.astro';
+import AboutHero from '../components/about/AboutHero';
+import { FaUsers, FaGlobeAfrica, FaChartBar, FaHandshake } from 'react-icons/fa';
 
-    const missionDetails = [
-      {
-        title: "Centralisation des Informations",
-        description: "Créer un référentiel unique et exhaustif des processus électoraux africains, facilitant l'accès à des informations précises et actualisées.",
-        icon: FaGlobe
-      },
-      {
-        title: "Transparence et Intégrité",
-        description: "Promouvoir la transparence des processus électoraux en fournissant un accès ouvert aux cadres juridiques, aux résultats et aux analyses.",
-        icon: FaBalanceScale
-      },
-      {
-        title: "Renforcement de la Société Civile",
-        description: "Créer un réseau dynamique d'organisations de la société civile travaillant ensemble pour renforcer les processus démocratiques.",
-        icon: FaUsers
-      },
-      {
-        title: "Veille et Analyse",
-        description: "Développer un système de monitoring en temps réel pour suivre, analyser et alerter sur les enjeux électoraux à travers le continent.",
-        icon: FaChartLine
-      }
-    ];
-    ---
+const teamMembers = [
+  {
+    name: "Amadou Diallo",
+    role: "Directeur Exécutif",
+    image: "/placeholder.svg?height=200&width=200",
+    bio: "Expert en gouvernance démocratique avec plus de 15 ans d'expérience dans l'observation électorale en Afrique."
+  },
+  {
+    name: "Fatima Ndiaye",
+    role: "Responsable des Programmes",
+    image: "/placeholder.svg?height=200&width=200",
+    bio: "Spécialiste en droit électoral et en renforcement des capacités des organisations de la société civile."
+  },
+  {
+    name: "Jean-Pierre Kouassi",
+    role: "Analyste de Données",
+    image: "/placeholder.svg?height=200&width=200",
+    bio: "Expert en analyse statistique et visualisation de données électorales avec une expérience dans plusieurs pays africains."
+  },
+  {
+    name: "Amina Toure",
+    role: "Coordinatrice Régionale",
+    image: "/placeholder.svg?height=200&width=200",
+    bio: "Coordinatrice des réseaux d'observateurs en Afrique de l'Ouest et du Centre."
+  }
+];
 
-    <MainLayout title="À Propos - Africa Elections" activePage="about">
-      <div class="container mx-auto px-4 py-16">
-        <section class="text-center mb-16">
-          <h1 class="text-4xl font-bold mb-6 text-africa-dark">
-            Notre Mission
-          </h1>
-          <p class="text-xl max-w-4xl mx-auto text-gray-700">
-            Africa Elections est une initiative collaborative visant à renforcer la transparence, 
-            l'intégrité et la participation démocratique à travers le continent africain. 
-            Nous croyons en la force de l'information ouverte et du réseau pour promouvoir 
-            des élections libres, justes et crédibles.
+const values = [
+  {
+    icon: FaGlobeAfrica,
+    title: "Transparence",
+    description: "Nous promouvons la transparence dans tous les processus électoraux pour renforcer la confiance des citoyens."
+  },
+  {
+    icon: FaUsers,
+    title: "Inclusion",
+    description: "Nous défendons l'inclusion de tous les citoyens dans le processus démocratique, sans discrimination."
+  },
+  {
+    icon: FaChartBar,
+    title: "Rigueur",
+    description: "Nous nous engageons à fournir des analyses rigoureuses et factuelles sur les processus électoraux."
+  },
+  {
+    icon: FaHandshake,
+    title: "Collaboration",
+    description: "Nous travaillons en partenariat avec les acteurs locaux, régionaux et internationaux pour maximiser notre impact."
+  }
+];
+---
+
+<Layout title="À Propos | Observatoire des Élections en Afrique" pageType="about">
+  <AboutHero client:load />
+  
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h2 class="text-3xl font-bold text-farafina-dark mb-4">Notre Histoire</h2>
+        <p class="text-lg text-gray-600">
+          Fondé en 2020, FarafinaWatch est né de la volonté de renforcer la démocratie en Afrique à travers 
+          l'observation électorale, l'analyse des données et le renforcement des capacités des acteurs locaux.
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <p class="text-gray-700 mb-4">
+            Notre observatoire a été créé par un consortium d'organisations de la société civile africaine, 
+            avec le soutien de partenaires internationaux engagés dans la promotion de la démocratie.
           </p>
-        </section>
-
-        <section class="grid md:grid-cols-2 gap-8 mb-16">
-          {missionDetails.map(detail => (
-            <div class="bg-white shadow-md rounded-lg p-6 flex items-start">
-              <detail.icon class="text-4xl text-africa-accent mr-6 mt-2" />
-              <div>
-                <h3 class="text-2xl font-semibold mb-4 text-africa-primary">
-                  {detail.title}
-                </h3>
-                <p class="text-gray-700">
-                  {detail.description}
-                </p>
-              </div>
+          <p class="text-gray-700 mb-4">
+            Depuis sa création, FarafinaWatch a observé plus de 120 élections dans 35 pays africains, 
+            formé plus de 5000 observateurs locaux et publié des dizaines de rapports d'analyse.
+          </p>
+          <p class="text-gray-700">
+            Notre approche combine l'expertise locale, les technologies innovantes et les méthodologies 
+            rigoureuses pour fournir des analyses objectives et des recommandations pertinentes.
+          </p>
+        </div>
+        <div class="rounded-lg overflow-hidden shadow-lg">
+          <img 
+            src="/placeholder.svg?height=400&width=600" 
+            alt="Équipe de FarafinaWatch lors d'une mission d'observation" 
+            class="w-full h-auto"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h2 class="text-3xl font-bold text-farafina-dark mb-4">Nos Valeurs</h2>
+        <p class="text-lg text-gray-600">
+          Les principes qui guident notre travail et notre engagement pour la démocratie en Afrique.
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {values.map(value => (
+          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div class="w-14 h-14 rounded-lg bg-farafina-primary/10 flex items-center justify-center mb-4">
+              <value.icon className="text-farafina-primary text-2xl" />
             </div>
-          ))}
-        </section>
-
-        <section class="text-center">
-          <h2 class="text-3xl font-bold mb-8 text-africa-dark">
-            Notre Approche
-          </h2>
-          <div class="max-w-4xl mx-auto space-y-6">
-            <div class="bg-gray-50 p-6 rounded-lg">
-              <h3 class="text-xl font-semibold mb-4 text-africa-secondary">
-                Collaboration Panafricaine
-              </h3>
-              <p class="text-gray-700">
-                Nous travaillons en étroite collaboration avec des organisations 
-                de la société civile, des institutions électorales et des 
-                observateurs internationaux pour créer un écosystème d'information 
-                transparent et fiable.
-              </p>
-            </div>
-            <div class="bg-gray-50 p-6 rounded-lg">
-              <h3 class="text-xl font-semibold mb-4 text-africa-secondary">
-                Technologie et Innovation
-              </h3>
-              <p class="text-gray-700">
-                En utilisant les dernières technologies web et des méthodes 
-                d'analyse de données avancées, nous rendons l'information 
-                électorale accessible, compréhensible et exploitable.
-              </p>
+            <h3 class="text-xl font-semibold mb-3 text-farafina-dark">{value.title}</h3>
+            <p class="text-gray-600">{value.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h2 class="text-3xl font-bold text-farafina-dark mb-4">Notre Équipe</h2>
+        <p class="text-lg text-gray-600">
+          Des experts passionnés et engagés pour la promotion de la démocratie en Afrique.
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {teamMembers.map(member => (
+          <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all transform hover:translate-y-[-5px]">
+            <img 
+              src={member.image || "/placeholder.svg"} 
+              alt={`Photo de ${member.name}`} 
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold text-farafina-dark">{member.name}</h3>
+              <p class="text-farafina-primary font-medium mb-3">{member.role}</p>
+              <p class="text-gray-600 text-sm">{member.bio}</p>
             </div>
           </div>
-        </section>
-        
-  <ClientsSection
-    title="Partenaires"
-    subTitle="Le projet est co-financé par l’Union européenne et mis en oeuvre par un consortium constitué de réseaux d’observation électorale et de soutien à la démocratie."
-    partenaires={partenaires}
-  />
+        ))}
       </div>
-    </MainLayout>
+    </div>
+  </section>
+</Layout>
+
