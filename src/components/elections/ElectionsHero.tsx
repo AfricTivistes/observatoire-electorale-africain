@@ -29,5 +29,5 @@ const ElectionsHero: React.FC = () => {
   )
 }
 
-export default ElectionsHero;nsHero
+export default ElectionsHero;
 

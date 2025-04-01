@@ -9,7 +9,7 @@ interface ElectionEvent {
   description?: string;
 }
 
-interface Election {
+interface ElectionEvent {
   date: string;
   type: string;
   description: string;
