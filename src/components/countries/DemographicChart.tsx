@@ -174,10 +174,16 @@ const DemographicChart: React.FC<DemographicChartProps> = ({ demographics }) => 
       }
     },
     scales: {
+      x: {
+        display: true,
+      },
       y: {
+        display: true,
         beginAtZero: true,
         ticks: {
-          callback: (value: number) => `${value}%`
+          callback: function(value: number) {
+            return value + '%';
+          }
         }
       }
     }
