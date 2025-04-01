@@ -56,4 +56,4 @@ import React from 'react';
       );
     };
 
-    export default ElectionChallengesWidget;
+    export default ElectionChallengesWidget;t;

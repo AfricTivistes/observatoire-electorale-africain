@@ -9,6 +9,12 @@ interface ElectionEvent {
   description?: string;
 }
 
+interface Election {
+  date: string;
+  type: string;
+  description: string;
+}
+
 interface ElectionTimelineProps {
   events: ElectionEvent[];
   countryName: string;
