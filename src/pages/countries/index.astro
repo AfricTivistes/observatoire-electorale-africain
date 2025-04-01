@@ -46,30 +46,30 @@ const featuredCountries = countries.slice(0, 3);
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="bg-farafina-primary/10 rounded-lg p-5 text-center">
           <div class="flex justify-center mb-3">
-            <FaGlobeAfrica class="text-farafina-primary text-3xl" />
+            <FaGlobeAfrica className="text-farafina-primary text-3xl" />
           </div>
           <span class="block text-3xl font-bold text-farafina-primary">{countries.length}</span>
           <span class="text-gray-600">Pays africains</span>
         </div>
-        
+
         <div class="bg-farafina-secondary/10 rounded-lg p-5 text-center">
           <div class="flex justify-center mb-3">
-            <FaUsers class="text-farafina-secondary text-3xl" />
+            <FaUsers className="text-farafina-secondary text-3xl" />
           </div>
           <span class="block text-3xl font-bold text-farafina-secondary">
             {Math.round(totalPopulation / 1000000)}M
           </span>
           <span class="text-gray-600">Population totale</span>
         </div>
-        
+
         <div class="bg-farafina-accent/10 rounded-lg p-5 text-center">
           <div class="flex justify-center mb-3">
-            <FaVoteYea class="text-farafina-accent text-3xl" />
+            <FaVoteYea className="text-farafina-accent text-3xl" />
           </div>
           <span class="block text-3xl font-bold text-farafina-accent">{upcomingElections}</span>
           <span class="text-gray-600">Élections à venir</span>
         </div>
-        
+
         <div class="bg-farafina-blue/10 rounded-lg p-5 text-center">
           <div class="flex justify-center mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-farafina-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,7 +129,7 @@ const featuredCountries = countries.slice(0, 3);
               placeholder="Rechercher un pays..."
               class="w-full py-2 pl-10 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
             />
-            <FaSearch class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
         </div>
       </div>
@@ -175,4 +175,3 @@ const featuredCountries = countries.slice(0, 3);
     </div>
   </div>
 </Layout>
-
