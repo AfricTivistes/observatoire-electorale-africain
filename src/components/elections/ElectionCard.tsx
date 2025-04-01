@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaCalendar, FaUsers, FaCheckCircle } from 'react-icons/fa';
+
 
 interface ElectionCardProps {
   election: {
