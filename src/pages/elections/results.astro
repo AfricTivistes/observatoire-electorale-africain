@@ -67,7 +67,7 @@ function formatNumber(num) {
   </PageHeader>
 
   <div className="container mx-auto px-4 py-8">
-    <!-- Barre de recherche -->
+    {/* Barre de recherche */}
     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
       <div className="max-w-3xl mx-auto">
         <div className="relative">
@@ -99,7 +99,7 @@ function formatNumber(num) {
       </div>
     </div>
 
-    <!-- Résultats des élections -->
+    {/* Résultats des élections */}
     <div className="space-y-8">
       {electionResults.map(election => (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -116,7 +116,7 @@ function formatNumber(num) {
           </div>
 
           <div className="p-6">
-            <!-- Informations générales -->
+            {/* Informations générales */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-gray-50 rounded-lg p-4">
                 <span className="block text-sm text-gray-500">Date</span>
@@ -138,7 +138,7 @@ function formatNumber(num) {
               </div>
             </div>
 
-            <!-- Résultats des candidats -->
+            {/* Résultats des candidats */}
             <h4 className="font-semibold text-farafina-dark mb-4">Résultats par candidat</h4>
             <div className="space-y-4">
               {election.candidates.map((candidate, index) => (
@@ -187,7 +187,7 @@ function formatNumber(num) {
               ))}
             </div>
 
-            <!-- Rapports d'observation -->
+            {/* Rapports d'observation */}
             <div className="mt-6 pt-6 border-t border-gray-100">
               <h4 className="font-semibold text-farafina-dark mb-4">Rapports d'observation</h4>
               <div className="flex flex-wrap gap-3">
@@ -204,7 +204,7 @@ function formatNumber(num) {
       ))}
     </div>
 
-    <!-- Pagination -->
+    {/* Pagination */}
     <div className="mt-8 flex justify-center">
       <nav className="inline-flex rounded-md shadow">
         <a href="#" className="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</a>
