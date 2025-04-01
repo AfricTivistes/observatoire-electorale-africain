@@ -1,0 +1,106 @@
+---
+import { FaUsers, FaGlobeAfrica, FaMapMarkerAlt, FaExternalLinkAlt } from 'react-icons/fa';
+
+const networks = [
+  {
+    id: "afeonet",
+    name: "African Election Observation Network (AfEONET)",
+    regions: ["Afrique de l'Est", "Afrique Australe"],
+    countries: 14,
+    observers: 2500,
+    logo: "/images/partenaires/afeonet.png",
+    website: "https://acfim.org/afeonet/"
+  },
+  {
+    id: "waeon",
+    name: "West Africa Election Observers Network (WAEON)",
+    regions: ["Afrique de l'Ouest"],
+    countries: 15,
+    observers: 1800,
+    logo: "/images/partenaires/WAEON.png",
+    website: "https://www.waeon.org/"
+  },
+  {
+    id: "ehorn",
+    name: "Eastern Horn Observer Network (E-HORN)",
+    regions: ["Afrique de l'Est"],
+    countries: 6,
+    observers: 950,
+    logo: "/images/partenaires/e-horn.png",
+    website: "https://ehorn.org/"
+  }
+];
+---
+
+<div class="bg-white rounded-xl shadow-md p-6">
+  <h2 class="text-2xl font-bold text-farafina-dark mb-6">Réseaux d'Observateurs</h2>
+
+  <div class="space-y-6">
+    {networks.map(network => (
+      <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-start md:items-center flex-col md:flex-row md:justify-between">
+          <div class="flex items-center mb-4 md:mb-0">
+            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mr-4 p-2">
+              <img 
+                src={network.logo || "/placeholder.svg"} 
+                alt={`Logo ${network.name}`} 
+                class="max-w-full max-h-full object-contain"
+              />
+            </div>
+            <div>
+              <h3 class="font-semibold text-farafina-dark text-lg">{network.name}</h3>
+              <div class="flex items-center text-sm text-gray-600 mt-1">
+                <FaGlobeAfrica className="mr-1 text-farafina-secondary" />
+                <span>{network.regions.join(", ")}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex space-x-6">
+            <div class="text-center">
+              <span class="block text-2xl font-bold text-farafina-primary">{network.countries}</span>
+              <span class="text-xs text-gray-600">Pays</span>
+            </div>
+            <div class="text-center">
+              <span class="block text-2xl font-bold text-farafina-secondary">{network.observers}</span>
+              <span class="text-xs text-gray-600">Observateurs</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+          <div class="flex items-center text-sm text-gray-600">
+            <FaMapMarkerAlt className="mr-1 text-farafina-accent" />
+            <span>Couvre {network.countries} pays</span>
+          </div>
+          <div class="flex space-x-3">
+            <a 
+              href={network.website} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="text-farafina-secondary hover:text-farafina-secondary/80 transition-colors text-sm flex items-center"
+            >
+              Site web <FaExternalLinkAlt className="ml-1" />
+            </a>
+            <a 
+              href={`/organizations/${network.id}`} 
+              class="px-4 py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors text-sm"
+            >
+              Voir le profil
+            </a>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="mt-6 text-center">
+    <a 
+      href="/organizations/observers" 
+      class="inline-block px-6 py-3 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors"
+    >
+      Voir tous les réseaux d'observateurs
+    </a>
+  </div>
+</div>
+

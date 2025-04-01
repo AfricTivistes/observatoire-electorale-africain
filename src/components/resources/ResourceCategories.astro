@@ -1,0 +1,78 @@
+---
+import { FaFileAlt, FaBook, FaChartBar, FaVideo, FaGraduationCap, FaDatabase } from 'react-icons/fa';
+
+const categories = [
+  {
+    icon: FaFileAlt,
+    title: "Rapports d'Observation",
+    description: "Rapports détaillés sur les missions d'observation électorale à travers l'Afrique",
+    count: 87,
+    color: "bg-farafina-primary/10",
+    textColor: "text-farafina-primary"
+  },
+  {
+    icon: FaBook,
+    title: "Publications",
+    description: "Études, analyses et recherches sur les processus électoraux et démocratiques",
+    count: 124,
+    color: "bg-farafina-secondary/10",
+    textColor: "text-farafina-secondary"
+  },
+  {
+    icon: FaChartBar,
+    title: "Données Électorales",
+    description: "Statistiques et données sur les élections passées et à venir",
+    count: 56,
+    color: "bg-farafina-accent/10",
+    textColor: "text-farafina-accent"
+  },
+  {
+    icon: FaVideo,
+    title: "Médias",
+    description: "Vidéos, podcasts et contenus multimédias sur les élections africaines",
+    count: 42,
+    color: "bg-farafina-blue/10",
+    textColor: "text-farafina-blue"
+  },
+  {
+    icon: FaGraduationCap,
+    title: "Formations",
+    description: "Matériels de formation pour les observateurs électoraux et les acteurs démocratiques",
+    count: 35,
+    color: "bg-green-100",
+    textColor: "text-green-700"
+  },
+  {
+    icon: FaDatabase,
+    title: "Bases de Données",
+    description: "Accès aux bases de données sur les systèmes électoraux et les résultats",
+    count: 18,
+    color: "bg-purple-100",
+    textColor: "text-purple-700"
+  }
+];
+---
+
+<div class="bg-white rounded-xl shadow-md p-6 mb-12">
+  <h2 class="text-2xl font-bold text-farafina-dark mb-6">Catégories de Ressources</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {categories.map(category => (
+      <a href={`/resources/${category.title.toLowerCase().replace(/\s+/g, '-')}`} class="block">
+        <div class={`${category.color} rounded-lg p-5 hover:shadow-md transition-shadow h-full`}>
+          <div class="flex items-start mb-3">
+            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center mr-4 flex-shrink-0">
+              <category.icon className={`${category.textColor} text-xl`} />
+            </div>
+            <div>
+              <h3 class="font-semibold text-farafina-dark">{category.title}</h3>
+              <span class={`text-sm ${category.textColor}`}>{category.count} ressources</span>
+            </div>
+          </div>
+          <p class="text-gray-600 text-sm">{category.description}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</div>
+

@@ -1,31 +1,31 @@
 ---
 import Layout from '../layouts/MainLayout.astro';
-import AboutHero from '../components/about/AboutHero';
+import AboutHero from '../components/about/AboutHero.astro';
 import { FaUsers, FaGlobeAfrica, FaChartBar, FaHandshake } from 'react-icons/fa';
 
 const teamMembers = [
   {
     name: "Amadou Diallo",
     role: "Directeur Exécutif",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "images/placeholder.svg?height=200&width=200",
     bio: "Expert en gouvernance démocratique avec plus de 15 ans d'expérience dans l'observation électorale en Afrique."
   },
   {
     name: "Fatima Ndiaye",
     role: "Responsable des Programmes",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "images/placeholder.svg?height=200&width=200",
     bio: "Spécialiste en droit électoral et en renforcement des capacités des organisations de la société civile."
   },
   {
     name: "Jean-Pierre Kouassi",
     role: "Analyste de Données",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "images/placeholder.svg?height=200&width=200",
     bio: "Expert en analyse statistique et visualisation de données électorales avec une expérience dans plusieurs pays africains."
   },
   {
     name: "Amina Toure",
     role: "Coordinatrice Régionale",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "images/placeholder.svg?height=200&width=200",
     bio: "Coordinatrice des réseaux d'observateurs en Afrique de l'Ouest et du Centre."
   }
 ];
@@ -55,7 +55,7 @@ const values = [
 ---
 
 <Layout title="À Propos | Observatoire des Élections en Afrique" pageType="about">
-  <AboutHero client:load />
+  <AboutHero />
   
   <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
@@ -84,7 +84,7 @@ const values = [
         </div>
         <div class="rounded-lg overflow-hidden shadow-lg">
           <img 
-            src="/placeholder.svg?height=400&width=600" 
+            src="images/placeholder.svg?height=400&width=600" 
             alt="Équipe de FarafinaWatch lors d'une mission d'observation" 
             class="w-full h-auto"
           />

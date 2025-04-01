@@ -1,0 +1,51 @@
+---
+import { FaChartBar, FaGlobeAfrica, FaUsers, FaFileAlt } from "react-icons/fa";
+
+const features = [
+  {
+    icon: FaGlobeAfrica,
+    title: "Cartographie Électorale",
+    description: "Visualisez les élections passées, présentes et futures à travers le continent africain."
+  },
+  {
+    icon: FaChartBar,
+    title: "Analyse des Données",
+    description: "Accédez à des analyses détaillées des tendances électorales et des statistiques démographiques."
+  },
+  {
+    icon: FaUsers,
+    title: "Réseau d'Observateurs",
+    description: "Connectez-vous avec des organisations d'observation électorale à travers l'Afrique."
+  },
+  {
+    icon: FaFileAlt,
+    title: "Ressources Juridiques",
+    description: "Consultez les cadres juridiques électoraux et les meilleures pratiques internationales."
+  }
+];
+---
+
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-3xl font-bold text-farafina-dark mb-4">Renforcer la Démocratie à travers l'Afrique</h2>
+      <p class="text-gray-600 text-lg">
+        Notre plateforme offre des outils et des ressources pour promouvoir des élections transparentes et
+        inclusives
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {features.map(feature => (
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-100">
+          <div class="w-14 h-14 rounded-lg bg-farafina-primary/10 flex items-center justify-center mb-4">
+            <feature.icon className="text-farafina-primary text-2xl" />
+          </div>
+          <h3 class="text-xl font-semibold mb-3 text-farafina-dark">{feature.title}</h3>
+          <p class="text-gray-600">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+

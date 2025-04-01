@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/MainLayout.astro';
+import ResourcesHero from '../components/resources/ResourcesHero.astro';
+import ResourceCategories from '../components/resources/ResourceCategories.astro';
+import FeaturedResources from '../components/resources/FeaturedResources.astro';
+import DownloadableResources from '../components/resources/DownloadableResources.astro';
+import ResourcesLibrary from '../components/resources/ResourcesLibrary.astro';
+import ResourcesCallToAction from '../components/resources/ResourcesCallToAction.astro';
+import { FaBook, FaFileAlt, FaChartBar, FaVideo } from 'react-icons/fa';
+
+// Statistiques
+const stats = [
+  { 
+    icon: FaFileAlt, 
+    value: "350+", 
+    label: "Rapports et Publications",
+    color: "bg-farafina-primary/10",
+    textColor: "text-farafina-primary"
+  },
+  { 
+    icon: FaBook, 
+    value: "120", 
+    label: "Guides et Manuels",
+    color: "bg-farafina-secondary/10",
+    textColor: "text-farafina-secondary"
+  },
+  { 
+    icon: FaChartBar, 
+    value: "85", 
+    label: "Ensembles de Données",
+    color: "bg-farafina-accent/10",
+    textColor: "text-farafina-accent"
+  },
+  { 
+    icon: FaVideo, 
+    value: "60+", 
+    label: "Ressources Multimédias",
+    color: "bg-farafina-blue/10",
+    textColor: "text-farafina-blue"
+  }
+];
+---
+
+<Layout title="Centre de Ressources | Observatoire des Élections en Afrique">
+  <ResourcesHero />
+
+  <div class="container mx-auto px-4 py-12">
+    <!-- Statistiques -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Notre Bibliothèque</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div class={`${stat.color} rounded-lg p-5 text-center`}>
+            <div class="flex justify-center mb-3">
+              <stat.icon className={`${stat.textColor} text-3xl`} />
+            </div>
+            <span class={`block text-3xl font-bold ${stat.textColor}`}>{stat.value}</span>
+            <span class="text-gray-600">{stat.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Catégories de ressources -->
+    <ResourceCategories />
+
+    <!-- Ressources en vedette -->
+    <FeaturedResources />
+
+    <!-- Ressources téléchargeables -->
+    <DownloadableResources />
+
+    <!-- Bibliothèque de ressources -->
+    <ResourcesLibrary />
+
+    <!-- Appel à l'action -->
+    <ResourcesCallToAction />
+  </div>
+</Layout>
+

@@ -1,0 +1,193 @@
+---
+import { FaFilter, FaSearch, FaSortAmountDown } from 'react-icons/fa';
+
+// Types de ressources pour le filtre
+const resourceTypes = [
+  { label: "Rapports", count: 45 },
+  { label: "Guides", count: 23 },
+  { label: "Études", count: 34 },
+  { label: "Manuels", count: 18 },
+  { label: "Données", count: 29 },
+  { label: "Présentations", count: 15 }
+];
+
+// Années pour le filtre
+const years = [
+  { label: "2024", count: 12 },
+  { label: "2023", count: 48 },
+  { label: "2022", count: 37 },
+  { label: "2021", count: 29 },
+  { label: "2020", count: 25 }
+];
+
+// Langues pour le filtre
+const languages = [
+  { label: "Français", count: 87 },
+  { label: "Anglais", count: 102 },
+  { label: "Arabe", count: 34 },
+  { label: "Portugais", count: 18 },
+  { label: "Swahili", count: 12 }
+];
+
+// Ressources (simulées)
+const libraryResources = Array.from({ length: 6 }, (_, i) => ({
+  id: `resource-${i+1}`,
+  title: [
+    "Guide d'Observation Électorale",
+    "Rapport sur les Élections Présidentielles",
+    "Étude sur la Participation des Femmes",
+    "Manuel de Formation des Observateurs",
+    "Analyse des Systèmes Électoraux",
+    "Données sur la Participation Électorale"
+  ][i],
+  type: ["Guide", "Rapport", "Étude", "Manuel", "Analyse", "Données"][i],
+  date: new Date(2023, i, 15 + i).toLocaleDateString('fr-FR'),
+  language: ["Français", "Anglais", "Français", "Anglais", "Français", "Anglais"][i],
+  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}));
+---
+
+<div class="bg-white rounded-xl shadow-md p-6 mb-12">
+  <h2 class="text-2xl font-bold text-farafina-dark mb-6">Bibliothèque de Ressources</h2>
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Filtres -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow-sm p-6 sticky top-24">
+        <div class="flex items-center mb-6">
+          <FaFilter className="text-farafina-primary mr-2" />
+          <h3 class="text-lg font-semibold text-farafina-dark">Filtres</h3>
+        </div>
+
+        <!-- Barre de recherche -->
+        <div class="mb-6">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              class="w-full py-2 pl-10 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
+            />
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
+        </div>
+
+        <!-- Type de ressource -->
+        <div class="mb-6">
+          <h4 class="font-medium text-farafina-dark mb-3">Type de ressource</h4>
+          <div class="space-y-2 max-h-48 overflow-y-auto pr-2">
+            {resourceTypes.map(type => (
+              <label class="flex items-center">
+                <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
+                <span class="ml-2 text-gray-700 text-sm">{type.label}</span>
+                <span class="ml-auto text-xs text-gray-500">({type.count})</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <!-- Année -->
+        <div class="mb-6">
+          <h4 class="font-medium text-farafina-dark mb-3">Année</h4>
+          <div class="space-y-2">
+            {years.map(year => (
+              <label class="flex items-center">
+                <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
+                <span class="ml-2 text-gray-700 text-sm">{year.label}</span>
+                <span class="ml-auto text-xs text-gray-500">({year.count})</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <!-- Langue -->
+        <div class="mb-6">
+          <h4 class="font-medium text-farafina-dark mb-3">Langue</h4>
+          <div class="space-y-2">
+            {languages.map(language => (
+              <label class="flex items-center">
+                <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
+                <span class="ml-2 text-gray-700 text-sm">{language.label}</span>
+                <span class="ml-auto text-xs text-gray-500">({language.count})</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="pt-4 border-t border-gray-200 flex flex-col space-y-3">
+          <button class="w-full py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors">
+            Appliquer les filtres
+          </button>
+          <button class="w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+            Réinitialiser
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des ressources -->
+    <div class="lg:col-span-3">
+      <div class="flex justify-between items-center mb-6">
+        <div class="text-sm text-gray-600">
+          Affichage de <span class="font-medium">{libraryResources.length}</span> ressources sur <span class="font-medium">152</span>
+        </div>
+        <div class="flex items-center">
+          <span class="text-sm text-gray-600 mr-2">Trier par:</span>
+          <select class="text-sm border-gray-200 rounded-md focus:ring-farafina-primary focus:border-farafina-primary">
+            <option value="recent">Plus récentes</option>
+            <option value="oldest">Plus anciennes</option>
+            <option value="az">A-Z</option>
+            <option value="za">Z-A</option>
+            <option value="popular">Popularité</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        {libraryResources.map(resource => (
+          <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="font-semibold text-farafina-dark">{resource.title}</h3>
+              <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full">
+                {resource.type}
+              </span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">{resource.description}</p>
+            <div class="flex flex-wrap justify-between items-center">
+              <div class="flex items-center text-xs text-gray-500 space-x-4">
+                <span>{resource.date}</span>
+                <span>{resource.language}</span>
+              </div>
+              <div class="flex space-x-2 mt-2 sm:mt-0">
+                <a 
+                  href={`/resources/${resource.id}`} 
+                  class="px-3 py-1 text-farafina-primary border border-farafina-primary rounded-md hover:bg-farafina-primary hover:text-white transition-colors text-sm"
+                >
+                  Voir les détails
+                </a>
+                <a 
+                  href="#" 
+                  class="px-3 py-1 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm"
+                >
+                  Télécharger
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-8 flex justify-center">
+        <nav class="inline-flex rounded-md shadow">
+          <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</a>
+          <a href="#" class="py-2 px-4 bg-farafina-primary text-white border border-farafina-primary">1</a>
+          <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">2</a>
+          <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">3</a>
+          <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">Suivant</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+

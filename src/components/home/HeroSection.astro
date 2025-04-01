@@ -1,0 +1,98 @@
+---
+import { FaArrowRight, FaChartBar, FaGlobeAfrica, FaUsers } from "react-icons/fa";
+---
+
+<section class="relative pt-28 pb-20 overflow-hidden">
+  <!-- Background Image with Overlay -->
+  <div class="absolute inset-0 z-0">
+    <img
+      src="https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+      alt="Carte de l'Afrique"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-white/80"></div>
+
+    <!-- Decorative Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute -right-20 -top-20 w-96 h-96 bg-farafina-primary/10 rounded-full blur-3xl"></div>
+      <div class="absolute -left-20 top-40 w-80 h-80 bg-farafina-secondary/10 rounded-full blur-3xl"></div>
+      <div class="absolute right-1/4 bottom-10 w-64 h-64 bg-farafina-accent/10 rounded-full blur-3xl"></div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Text Content -->
+      <div class="space-y-8">
+        <div>
+          <div class="inline-block px-4 py-2 bg-farafina-primary/10 rounded-full text-farafina-primary font-medium mb-4">
+            Observatoire des Élections en Afrique
+          </div>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-farafina-dark leading-tight">
+            Transparence et Intégrité <span class="text-farafina-primary">Électorale</span>
+          </h1>
+        </div>
+
+        <p class="text-lg text-gray-700 max-w-xl">
+          Une plateforme collaborative pour renforcer la transparence, l'intégrité et la participation démocratique
+          à travers le continent africain.
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="/elections" class="btn-primary group">
+            Explorer les Élections
+            <FaArrowRight className="ml-2 transform group-hover:translate-x-1 transition-transform" />
+          </a>
+          <a href="/about" class="btn-secondary">
+            En savoir plus
+          </a>
+        </div>
+
+        <!-- Feature Icons -->
+        <div class="grid grid-cols-3 gap-4 pt-6">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-farafina-primary">54</div>
+            <div class="text-sm text-gray-600">Pays</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-farafina-primary">120+</div>
+            <div class="text-sm text-gray-600">Élections</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-farafina-primary">250+</div>
+            <div class="text-sm text-gray-600">Organisations</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Illustration -->
+      <div class="relative">
+        <div class="relative z-10 flex justify-center">
+          <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-xl transform hover:rotate-1 transition-transform duration-500">
+            <img
+              src="https://placeholder.pics/svg/400x300/eee/eee-eee"
+              alt="Illustration de données électorales"
+              class="max-w-full h-auto"
+            />
+
+            <!-- Floating Elements -->
+            <div class="absolute top-10 left-10 bg-white p-3 rounded-lg shadow-lg animate-float">
+              <FaChartBar className="text-farafina-primary text-2xl" />
+            </div>
+            <div class="absolute bottom-20 left-0 bg-white p-3 rounded-lg shadow-lg animate-float-delay">
+              <FaGlobeAfrica className="text-farafina-blue text-2xl" />
+            </div>
+            <div class="absolute top-1/4 right-0 bg-white p-3 rounded-lg shadow-lg animate-float-long">
+              <FaUsers className="text-farafina-secondary text-2xl" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Decorative Elements -->
+        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-farafina-primary/10 rounded-full"></div>
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-farafina-secondary/10 rounded-full"></div>
+      </div>
+    </div>
+  </div>
+</section>
+

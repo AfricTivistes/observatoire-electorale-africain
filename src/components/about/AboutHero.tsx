@@ -56,7 +56,7 @@ const AboutHero: React.FC = () => {
             <div className="relative z-10 flex justify-center">
               <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 shadow-xl">
                 <img
-                  src="/images/about-illustration.svg"
+                  src="https://placeholder.pics/svg/400x300/eee/eee-eee"
                   alt="Illustration de l'Observatoire des Élections en Afrique"
                   className="max-w-full h-auto"
                 />
