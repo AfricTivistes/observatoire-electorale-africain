@@ -1,0 +1,94 @@
+---
+import { FaFileAlt, FaFilePdf, FaFileExcel, FaFileWord, FaFilePowerpoint, FaDownload } from 'react-icons/fa';
+
+const resources = [
+  {
+    title: "Manuel de Formation des Observateurs",
+    type: "PDF",
+    size: "2.4 MB",
+    date: "15 janvier 2024",
+    icon: FaFilePdf,
+    iconColor: "text-red-500",
+    downloadUrl: "#"
+  },
+  {
+    title: "Base de Données des Élections 2023",
+    type: "Excel",
+    size: "1.8 MB",
+    date: "10 décembre 2023",
+    icon: FaFileExcel,
+    iconColor: "text-green-600",
+    downloadUrl: "#"
+  },
+  {
+    title: "Rapport sur les Défis Électoraux",
+    type: "Word",
+    size: "3.2 MB",
+    date: "5 novembre 2023",
+    icon: FaFileWord,
+    iconColor: "text-blue-600",
+    downloadUrl: "#"
+  },
+  {
+    title: "Présentation sur les Systèmes Électoraux",
+    type: "PowerPoint",
+    size: "5.7 MB",
+    date: "20 octobre 2023",
+    icon: FaFilePowerpoint,
+    iconColor: "text-orange-600",
+    downloadUrl: "#"
+  },
+  {
+    title: "Guide des Bonnes Pratiques d'Observation",
+    type: "PDF",
+    size: "1.5 MB",
+    date: "15 septembre 2023",
+    icon: FaFilePdf,
+    iconColor: "text-red-500",
+    downloadUrl: "#"
+  }
+];
+---
+
+<div class="bg-white rounded-xl shadow-md p-6 mb-12">
+  <h2 class="text-2xl font-bold text-farafina-dark mb-6">Ressources Téléchargeables</h2>
+
+  <div class="space-y-4">
+    {resources.map(resource => (
+      <div class="border border-gray-100 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center mr-4">
+              <resource.icon className={`${resource.iconColor} text-xl`} />
+            </div>
+            <div>
+              <h3 class="font-medium text-farafina-dark">{resource.title}</h3>
+              <div class="flex items-center text-xs text-gray-500 mt-1">
+                <span class="mr-3">{resource.type}</span>
+                <span class="mr-3">{resource.size}</span>
+                <span>{resource.date}</span>
+              </div>
+            </div>
+          </div>
+          <a 
+            href={resource.downloadUrl} 
+            class="p-2 text-farafina-primary hover:bg-farafina-primary/10 rounded-full transition-colors"
+            title="Télécharger"
+          >
+            <FaDownload />
+          </a>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="mt-6 text-center">
+    <a 
+      href="/resources/downloads" 
+      class="inline-block px-6 py-3 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors"
+    >
+      Voir toutes les ressources téléchargeables
+    </a>
+  </div>
+</div>
+

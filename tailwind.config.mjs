@@ -9,6 +9,7 @@ export default {
         'farafina-accent': '#FF5836',     // Rouge/Orange accent du logo
         'farafina-blue': '#2D83F5',       // Bleu complémentaire
         'farafina-dark': '#000000',       // Noir pour texte et contraste
+        'farafina-light': '#8ED995',
         'africa-gray': {
           50: '#f8fafc',
           100: '#f1f5f9',

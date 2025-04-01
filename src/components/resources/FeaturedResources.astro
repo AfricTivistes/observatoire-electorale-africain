@@ -1,0 +1,81 @@
+---
+import { FaFileAlt, FaDownload, FaExternalLinkAlt, FaEye } from 'react-icons/fa';
+
+const featuredResources = [
+  {
+    id: "report-2023",
+    title: "Rapport Annuel 2023 sur l'État des Élections en Afrique",
+    type: "Rapport",
+    date: "15 janvier 2024",
+    description: "Une analyse complète des élections qui se sont tenues en Afrique en 2023, avec des recommandations pour améliorer les processus électoraux.",
+    thumbnail: "/placeholder.svg?height=200&width=300",
+    downloadUrl: "#",
+    views: 1245
+  },
+  {
+    id: "guide-observers",
+    title: "Guide Pratique pour les Observateurs Électoraux",
+    type: "Manuel",
+    date: "10 novembre 2023",
+    description: "Un guide complet pour les observateurs électoraux, couvrant les méthodologies, les bonnes pratiques et les défis courants.",
+    thumbnail: "/placeholder.svg?height=200&width=300",
+    downloadUrl: "#",
+    views: 876
+  },
+  {
+    id: "data-visualization",
+    title: "Visualisation des Données Électorales en Afrique de l'Ouest",
+    type: "Étude",
+    date: "5 décembre 2023",
+    description: "Une étude approfondie utilisant des visualisations de données pour analyser les tendances électorales en Afrique de l'Ouest.",
+    thumbnail: "/placeholder.svg?height=200&width=300",
+    downloadUrl: "#",
+    views: 932
+  }
+];
+---
+
+<div class="bg-white rounded-xl shadow-md p-6 mb-12">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-farafina-dark">Ressources en Vedette</h2>
+    <a href="/resources/all" class="text-farafina-primary hover:text-farafina-primary/80 transition-colors">
+      Voir toutes les ressources →
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {featuredResources.map(resource => (
+      <div class="border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all transform hover:translate-y-[-5px]">
+        <div class="h-40 overflow-hidden">
+          <img src={resource.thumbnail || "/placeholder.svg"} alt={resource.title} class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full">
+              {resource.type}
+            </span>
+            <span class="text-xs text-gray-500">{resource.date}</span>
+          </div>
+          <h3 class="font-semibold text-farafina-dark mb-2">{resource.title}</h3>
+          <p class="text-gray-600 text-sm mb-4 line-clamp-2">{resource.description}</p>
+
+          <div class="flex justify-between items-center">
+            <div class="flex items-center text-xs text-gray-500">
+              <FaEye className="mr-1" />
+              <span>{resource.views} vues</span>
+            </div>
+            <div class="flex space-x-2">
+              <a href={`/resources/${resource.id}`} class="p-2 text-farafina-primary hover:bg-farafina-primary/10 rounded-full transition-colors" title="Voir les détails">
+                <FaExternalLinkAlt />
+              </a>
+              <a href={resource.downloadUrl} class="p-2 text-farafina-secondary hover:bg-farafina-secondary/10 rounded-full transition-colors" title="Télécharger">
+                <FaDownload />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+

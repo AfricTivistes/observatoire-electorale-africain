@@ -1,0 +1,45 @@
+---
+import { FaVoteYea, FaUsers, FaGlobeAfrica, FaCalendarAlt } from "react-icons/fa";
+
+const stats = [
+  {
+    icon: FaGlobeAfrica,
+    value: "54",
+    label: "Pays Africains"
+  },
+  {
+    icon: FaVoteYea,
+    value: "120+",
+    label: "Élections Observées"
+  },
+  {
+    icon: FaUsers,
+    value: "250+",
+    label: "Organisations Partenaires"
+  },
+  {
+    icon: FaCalendarAlt,
+    value: "15+",
+    label: "Élections à Venir en 2024"
+  }
+];
+---
+
+<section class="bg-gradient-to-r from-farafina-primary via-farafina-secondary to-farafina-primary py-8 shadow-lg">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {stats.map(stat => (
+        <div class="flex items-center space-x-4">
+          <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-white text-farafina-primary shadow-md">
+            <stat.icon className="w-6 h-6" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-white">{stat.value}</div>
+            <div class="text-white/80 text-sm">{stat.label}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+

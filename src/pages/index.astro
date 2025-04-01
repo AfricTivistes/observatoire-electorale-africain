@@ -1,17 +1,17 @@
 ---
 import Layout from '../layouts/MainLayout.astro';
-import HeroSection from '../components/home/HeroSection';
-import StatsBar from '../components/home/StatsBar';
-import FeaturesSection from '../components/home/FeaturesSection';
-import UpcomingElectionsSection from '../components/home/UpcomingElectionsSection';
+import HeroSection from '../components/home/HeroSection.astro';
+import StatsBar from '../components/home/StatsBar.astro';
+import FeaturesSection from '../components/home/FeaturesSection.astro';
+import UpcomingElectionsSection from '../components/home/UpcomingElectionsSection.astro';
 import CountriesMapSection from '../components/home/CountriesMapSection';
-import OrganizationsSection from '../components/home/OrganizationsSection';
-import CallToActionSection from '../components/home/CallToActionSection';
-import NewsletterSection from '../components/home/NewsletterSection';
+import OrganizationsSection from '../components/home/OrganizationsSection.astro';
+import CallToActionSection from '../components/home/CallToActionSection.astro';
+import NewsletterSection from '../components/home/NewsletterSection.astro';
 ---
 
 <Layout title="Observatoire des Élections en Afrique | FarafinaWatch" isHomePage={true}>
-  <HeroSection client:load />
+  <HeroSection />
   <StatsBar />
   <FeaturesSection />
   <UpcomingElectionsSection />

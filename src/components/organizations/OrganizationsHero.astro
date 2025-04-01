@@ -1,0 +1,27 @@
+---
+import { FaUsers, FaSearch } from 'react-icons/fa';
+---
+
+<section class="pt-28 pb-12 bg-gray-50 border-b border-gray-200">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-farafina-primary/10 rounded-full mb-4">
+        <FaUsers className="text-farafina-primary text-3xl" />
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold text-farafina-dark mb-4">Organisations Partenaires</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Découvrez les organisations qui contribuent à la transparence électorale et à la promotion de la démocratie en Afrique.
+      </p>
+
+      <div class="relative max-w-xl mx-auto">
+        <input
+          type="text"
+          placeholder="Rechercher une organisation..."
+          class="w-full py-4 pl-12 pr-4 rounded-full border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent shadow-sm"
+        />
+        <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      </div>
+    </div>
+  </div>
+</section>
+

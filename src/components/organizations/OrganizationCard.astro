@@ -1,0 +1,140 @@
+---
+import { FaUsers, FaGlobeAfrica, FaEnvelope, FaPhone, FaMapMarkerAlt, FaExternalLinkAlt } from 'react-icons/fa';
+
+interface Props {
+  organization: {
+    id: string;
+    name: string;
+    country: string;
+    type: string;
+    expertise: string[];
+    logo?: string;
+    website?: string;
+    description?: string;
+    contacts?: {
+      email?: string;
+      phone?: string;
+      address?: string;
+    };
+  };
+  variant?: 'default' | 'compact';
+}
+
+const { organization, variant = 'default' } = Astro.props;
+---
+
+{variant === 'default' ? (
+  <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-5px] overflow-hidden border border-gray-100">
+    <div class="p-6">
+      <div class="flex items-center mb-4">
+        <div class="w-16 h-16 bg-farafina-primary/10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+          {organization.logo ? (
+            <img src={organization.logo || "/placeholder.svg"} alt={`Logo ${organization.name}`} class="w-10 h-10 object-contain" />
+          ) : (
+            <FaUsers className="text-farafina-primary text-2xl" />
+          )}
+        </div>
+        <div>
+          <h3 class="font-semibold text-farafina-dark text-xl">{organization.name}</h3>
+          <div class="flex items-center text-sm text-gray-600">
+            <FaGlobeAfrica className="mr-1 text-farafina-secondary" />
+            <span>{organization.country}</span>
+          </div>
+        </div>
+      </div>
+
+      {organization.description && (
+        <p class="text-gray-600 mb-4 line-clamp-3">{organization.description}</p>
+      )}
+
+      <div class="mb-4">
+        <h4 class="text-sm text-gray-600 mb-2">Domaines d'expertise</h4>
+        <div class="flex flex-wrap gap-2">
+          {organization.expertise.map(exp => (
+            <span class="px-3 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full">
+              {exp}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {organization.contacts && (
+        <div class="space-y-2 text-sm text-gray-600 mb-4">
+          {organization.contacts.email && (
+            <div class="flex items-center">
+              <FaEnvelope className="mr-2 text-farafina-secondary" />
+              <a href={`mailto:${organization.contacts.email}`} class="hover:text-farafina-primary transition-colors">
+                {organization.contacts.email}
+              </a>
+            </div>
+          )}
+          {organization.contacts.phone && (
+            <div class="flex items-center">
+              <FaPhone className="mr-2 text-farafina-secondary" />
+              <a href={`tel:${organization.contacts.phone}`} class="hover:text-farafina-primary transition-colors">
+                {organization.contacts.phone}
+              </a>
+            </div>
+          )}
+          {organization.contacts.address && (
+            <div class="flex items-center">
+              <FaMapMarkerAlt className="mr-2 text-farafina-secondary" />
+              <span>{organization.contacts.address}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+        {organization.website && (
+          <a 
+            href={organization.website} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="text-farafina-secondary hover:text-farafina-secondary/80 transition-colors text-sm flex items-center"
+          >
+            Visiter le site web <FaExternalLinkAlt className="ml-1" />
+          </a>
+        )}
+        <a 
+          href={`/organizations/${organization.id}`} 
+          class="px-4 py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors text-sm"
+        >
+          Voir le profil
+        </a>
+      </div>
+    </div>
+  </div>
+) : (
+  <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 border border-gray-100">
+    <div class="flex items-center">
+      <div class="w-12 h-12 bg-farafina-primary/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+        {organization.logo ? (
+          <img src={organization.logo || "/placeholder.svg"} alt={`Logo ${organization.name}`} class="w-8 h-8 object-contain" />
+        ) : (
+          <FaUsers className="text-farafina-primary text-lg" />
+        )}
+      </div>
+      <div>
+        <h3 class="font-semibold text-farafina-dark">{organization.name}</h3>
+        <div class="flex items-center text-xs text-gray-600">
+          <FaGlobeAfrica className="mr-1 text-farafina-secondary" />
+          <span>{organization.country}</span>
+        </div>
+      </div>
+    </div>
+    <div class="mt-3 flex flex-wrap gap-1">
+      {organization.expertise.slice(0, 2).map(exp => (
+        <span class="px-2 py-0.5 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full">
+          {exp}
+        </span>
+      ))}
+      {organization.expertise.length > 2 && (
+        <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+          +{organization.expertise.length - 2}
+        </span>
+      )}
+    </div>
+  </div>
+)}
+

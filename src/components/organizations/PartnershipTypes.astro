@@ -1,0 +1,58 @@
+---
+import { FaHandshake, FaGlobeAfrica, FaUniversity, FaUsers, FaLandmark } from 'react-icons/fa';
+
+const partnershipTypes = [
+  {
+    icon: FaHandshake,
+    title: "Partenaires Techniques",
+    description: "Organisations qui fournissent une expertise technique et un soutien méthodologique pour l'observation électorale.",
+    count: 45
+  },
+  {
+    icon: FaGlobeAfrica,
+    title: "Réseaux Régionaux",
+    description: "Réseaux d'organisations couvrant des régions spécifiques du continent africain.",
+    count: 12
+  },
+  {
+    icon: FaUniversity,
+    title: "Institutions Académiques",
+    description: "Universités et centres de recherche contribuant à l'analyse des processus électoraux.",
+    count: 18
+  },
+  {
+    icon: FaUsers,
+    title: "Organisations de la Société Civile",
+    description: "ONG locales et internationales engagées dans la promotion de la démocratie.",
+    count: 87
+  },
+  {
+    icon: FaLandmark,
+    title: "Institutions Gouvernementales",
+    description: "Organismes gouvernementaux et commissions électorales collaborant avec l'observatoire.",
+    count: 23
+  }
+];
+---
+
+<div class="bg-white rounded-xl shadow-md p-6">
+  <h2 class="text-2xl font-bold text-farafina-dark mb-6">Types de Partenariats</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {partnershipTypes.map(type => (
+      <div class="bg-gray-50 rounded-lg p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-center mb-3">
+          <div class="w-12 h-12 rounded-full bg-farafina-primary/10 flex items-center justify-center mr-3">
+            <type.icon className="text-farafina-primary text-xl" />
+          </div>
+          <div>
+            <h3 class="font-semibold text-farafina-dark">{type.title}</h3>
+            <span class="text-sm text-farafina-secondary">{type.count} organisations</span>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm">{type.description}</p>
+      </div>
+    ))}
+  </div>
+</div>
+

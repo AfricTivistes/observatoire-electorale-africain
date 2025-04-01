@@ -1,0 +1,250 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import PageHeader from '../../components/PageHeader.tsx';
+import OrganizationCard from '../../components/organizations/OrganizationCard.astro';
+import OrganizationFilter from '../../components/organizations/OrganizationFilter.astro';
+import PartnershipTypes from '../../components/organizations/PartnershipTypes.astro';
+import { FaHandshake, FaSearch, FaUniversity, FaGlobeAfrica, FaLandmark } from 'react-icons/fa';
+
+// Données des organisations partenaires (simulées)
+const partnerOrganizations = [
+  {
+    id: "partner-eu-001",
+    name: "Union Européenne - Mission d'Observation Électorale",
+    country: "International",
+    type: "Organisation Internationale",
+    expertise: ["Observation Électorale", "Assistance Technique", "Formation"],
+    logo: "/images/partenaires/eu-logo.png",
+    website: "https://europa.eu/",
+    description: "Les missions d'observation électorale de l'UE contribuent à renforcer les institutions démocratiques, à consolider l'état de droit et à promouvoir les droits de l'homme.",
+    contacts: {
+      email: "contact@eueom.eu",
+      phone: "+32 2 XXX XXXX",
+      address: "Bruxelles, Belgique"
+    }
+  },
+  {
+    id: "partner-epd-001",
+    name: "European Partnership for Democracy (EPD)",
+    country: "International",
+    type: "ONG Internationale",
+    expertise: ["Démocratie", "Gouvernance", "Assistance Électorale"],
+    logo: "/images/partenaires/EPD.png",
+    website: "https://epd.eu/",
+    description: "EPD est un réseau d'organisations européennes qui soutiennent la démocratie dans le monde entier, y compris en Afrique.",
+    contacts: {
+      email: "info@epd.eu",
+      phone: "+32 2 XXX XXXX",
+      address: "Bruxelles, Belgique"
+    }
+  },
+  {
+    id: "partner-dri-001",
+    name: "Democracy Reporting International",
+    country: "International",
+    type: "ONG Internationale",
+    expertise: ["Analyse Électorale", "Réformes Démocratiques", "État de Droit"],
+    logo: "/images/partenaires/dri.png",
+    website: "https://democracy-reporting.org/",
+    description: "DRI travaille à renforcer la démocratie en fournissant une analyse et des conseils sur les processus démocratiques.",
+    contacts: {
+      email: "info@democracy-reporting.org",
+      phone: "+49 30 XXX XXXX",
+      address: "Berlin, Allemagne"
+    }
+  },
+  {
+    id: "partner-esn-001",
+    name: "Electoral Support Network of Southern Africa (ESN-SA)",
+    country: "Afrique Australe",
+    type: "Réseau Régional",
+    expertise: ["Observation Électorale", "Renforcement des Capacités", "Plaidoyer"],
+    logo: "/images/partenaires/esn-sa.png",
+    website: "https://www.esn-sa.org/",
+    description: "ESN-SA est un réseau d'organisations de la société civile en Afrique australe qui travaillent sur les questions électorales.",
+    contacts: {
+      email: "info@esn-sa.org",
+      phone: "+27 11 XXX XXXX",
+      address: "Johannesburg, Afrique du Sud"
+    }
+  },
+  {
+    id: "partner-africtivistes-001",
+    name: "AfricTivistes",
+    country: "Afrique",
+    type: "Réseau Régional",
+    expertise: ["Technologie Civique", "Médias", "Transparence"],
+    logo: "/images/partenaires/Africtivistes.svg",
+    website: "https://africtivistes.com/",
+    description: "AfricTivistes est une ligue de blogueurs et de cyber-activistes africains qui promeuvent la démocratie, la transparence et les droits humains.",
+    contacts: {
+      email: "contact@africtivistes.com",
+      phone: "+221 33 XXX XXXX",
+      address: "Dakar, Sénégal"
+    }
+  }
+];
+
+// Partenaires par type
+const partnerTypes = [
+  { 
+    type: "Organisations Internationales", 
+    count: 12,
+    icon: FaGlobeAfrica,
+    color: "bg-farafina-primary/10",
+    textColor: "text-farafina-primary"
+  },
+  { 
+    type: "Institutions Académiques", 
+    count: 18,
+    icon: FaUniversity,
+    color: "bg-farafina-secondary/10",
+    textColor: "text-farafina-secondary"
+  },
+  { 
+    type: "Réseaux Régionaux", 
+    count: 8,
+    icon: FaHandshake,
+    color: "bg-farafina-accent/10",
+    textColor: "text-farafina-accent"
+  },
+  { 
+    type: "Institutions Gouvernementales", 
+    count: 15,
+    icon: FaLandmark,
+    color: "bg-farafina-blue/10",
+    textColor: "text-farafina-blue"
+  }
+];
+
+// Partenaires en vedette
+const featuredPartners = partnerOrganizations.slice(0, 3);
+---
+
+<Layout title="Partenaires | Observatoire des Élections en Afrique">
+  <PageHeader
+    title="Partenaires Techniques"
+    subtitle="Découvrez les organisations qui collaborent avec nous pour renforcer la démocratie en Afrique"
+    breadcrumbs={[
+      { label: 'Accueil', href: '/' },
+      { label: 'Organisations', href: '/organizations' },
+      { label: 'Partenaires Techniques' }
+    ]}
+  >
+    <FaHandshake class="text-farafina-primary text-3xl" slot="icon" />
+  </PageHeader>
+
+  <div class="container mx-auto px-4 py-12">
+    <!-- Barre de recherche -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <div class="max-w-3xl mx-auto">
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Rechercher un partenaire technique..."
+            class="w-full py-3 pl-12 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
+          />
+          <FaSearch class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <button class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-farafina-primary text-white px-4 py-1 rounded-md hover:bg-farafina-primary/90 transition-colors">
+            Rechercher
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistiques par type -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Partenaires par Type</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {partnerTypes.map(type => (
+          <div class={`${type.color} rounded-lg p-5 text-center`}>
+            <div class="flex justify-center mb-3">
+              <type.icon className={`${type.textColor} text-3xl`} />
+            </div>
+            <span class={`block text-2xl font-bold ${type.textColor}`}>{type.count}</span>
+            <span class="text-gray-600">{type.type}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Types de partenariats -->
+    <div class="mb-12">
+      <PartnershipTypes />
+    </div>
+
+    <!-- Liste des partenaires -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Filtres -->
+      <div class="lg:col-span-1">
+        <OrganizationFilter showRegions={false} />
+      </div>
+      
+      <!-- Liste des organisations -->
+      <div class="lg:col-span-3">
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-semibold text-farafina-dark">Partenaires en Vedette</h3>
+            <div class="text-sm text-gray-600">
+              Affichage de {featuredPartners.length} sur {partnerOrganizations.length} partenaires
+            </div>
+          </div>
+          
+          <div class="space-y-6">
+            {featuredPartners.map(partner => (
+              <OrganizationCard organization={partner} />
+            ))}
+          </div>
+          
+          <div class="mt-8 border-t border-gray-100 pt-8">
+            <h3 class="text-xl font-semibold text-farafina-dark mb-6">Tous les Partenaires</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {partnerOrganizations.map(partner => (
+                <OrganizationCard organization={partner} variant="compact" />
+              ))}
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-8 flex justify-center">
+              <nav class="inline-flex rounded-md shadow">
+                <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</a>
+                <a href="#" class="py-2 px-4 bg-farafina-primary text-white border border-farafina-primary">1</a>
+                <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">2</a>
+                <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">3</a>
+                <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">Suivant</a>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Appel à l'action -->
+    <div class="mt-12 bg-gradient-to-r from-farafina-primary to-farafina-secondary rounded-xl shadow-md overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="p-8 text-white">
+          <h2 class="text-2xl font-bold mb-4">Devenez Partenaire</h2>
+          <p class="mb-6 text-white/90">
+            Votre organisation souhaite contribuer à la promotion de la démocratie et de la transparence électorale en Afrique ? Rejoignez notre réseau de partenaires techniques.
+          </p>
+          <a 
+            href="/contact" 
+            class="inline-block px-6 py-3 bg-white text-farafina-primary font-medium rounded-lg hover:bg-white/90 transition-colors"
+          >
+            Nous contacter
+          </a>
+        </div>
+        <div class="hidden md:block relative">
+          <img 
+            src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+            alt="Partenariat et collaboration" 
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-black/20"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
