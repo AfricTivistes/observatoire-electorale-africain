@@ -1,5 +1,6 @@
+
 ---
-import Icon from 'astro-icon';
+import { Icon } from 'astro-icon';
 
 interface Props {
   activePage?: string;
@@ -17,49 +18,34 @@ const menuItems = [
 ---
 
 <script>
-  // Utiliser un ID unique pour cette fonction pour éviter les conflits
-  window.farafinaToggleMenu = function() {
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    
-    const isHidden = mobileMenu?.classList.contains('translate-x-full');
-
-    if (isHidden) {
-      mobileMenu?.classList.remove('translate-x-full', 'opacity-0');
-      mobileMenu?.classList.add('translate-x-0', 'opacity-100');
-      document.body.style.overflow = 'hidden';
-      mobileMenuButton?.setAttribute('aria-expanded', 'true');
-    } else {
-      mobileMenu?.classList.add('translate-x-full', 'opacity-0');
-      mobileMenu?.classList.remove('translate-x-0', 'opacity-100');
-      document.body.style.overflow = '';
-      mobileMenuButton?.setAttribute('aria-expanded', 'false');
-    }
-  };
-
-  // Fonction pour initialiser tous les événements
   const initializeMenu = () => {
     const mobileMenu = document.getElementById('mobile-menu');
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const closeMenuButton = document.getElementById('close-menu-button');
     
-    // Réinitialiser les événements pour éviter les doublons
-    mobileMenuButton?.removeEventListener('click', window.farafinaToggleMenu);
-    closeMenuButton?.removeEventListener('click', window.farafinaToggleMenu);
-    
-    // Ajouter les gestionnaires d'événements
-    mobileMenuButton?.addEventListener('click', window.farafinaToggleMenu);
-    closeMenuButton?.addEventListener('click', window.farafinaToggleMenu);
-
-    // Fermer le menu lorsqu'on clique sur un lien à l'intérieur
-    const mobileMenuLinks = mobileMenu?.querySelectorAll('a');
-    mobileMenuLinks?.forEach(link => {
-      link.addEventListener('click', () => {
+    const toggleMenu = () => {
+      const isHidden = mobileMenu?.classList.contains('translate-x-full');
+      
+      if (isHidden) {
+        mobileMenu?.classList.remove('translate-x-full', 'opacity-0');
+        mobileMenu?.classList.add('translate-x-0', 'opacity-100');
+        document.body.style.overflow = 'hidden';
+        mobileMenuButton?.setAttribute('aria-expanded', 'true');
+      } else {
         mobileMenu?.classList.add('translate-x-full', 'opacity-0');
         mobileMenu?.classList.remove('translate-x-0', 'opacity-100');
         document.body.style.overflow = '';
         mobileMenuButton?.setAttribute('aria-expanded', 'false');
-      });
+      }
+    };
+
+    mobileMenuButton?.addEventListener('click', toggleMenu);
+    closeMenuButton?.addEventListener('click', toggleMenu);
+
+    // Fermer le menu quand on clique sur un lien
+    const mobileMenuLinks = mobileMenu?.querySelectorAll('a');
+    mobileMenuLinks?.forEach(link => {
+      link.addEventListener('click', toggleMenu);
     });
 
     // Fermer le menu quand on clique en dehors
@@ -68,27 +54,24 @@ const menuItems = [
           !mobileMenu.contains(e.target as Node) && 
           !mobileMenuButton.contains(e.target as Node) &&
           !mobileMenu.classList.contains('translate-x-full')) {
-        mobileMenu.classList.add('translate-x-full', 'opacity-0');
-        mobileMenu.classList.remove('translate-x-0', 'opacity-100');
-        document.body.style.overflow = '';
-        mobileMenuButton.setAttribute('aria-expanded', 'false');
+        toggleMenu();
       }
     });
   };
   
-  // Initialiser le menu au chargement de la page
+  // Initialiser le menu au chargement
   document.addEventListener('DOMContentLoaded', initializeMenu);
   
-  // Important: Astro View Transitions - réinitialiser le menu après chaque navigation
+  // Réinitialiser après navigation Astro
   document.addEventListener('astro:page-load', initializeMenu);
 </script>
 
 <header class="bg-green text-farafina-dark py-4 fixed w-full top-0 z-50 shadow-sm">
   <div class="container mx-auto flex justify-between items-center px-4">
     <div class="flex items-center">
-    <a href="/">
-      <img src="/images/Farafina-logo.svg" alt="Farafina Logo" class="h-auto w-28"/>
-    </a>
+      <a href="/">
+        <img src="/images/Farafina-logo.svg" alt="Farafina Logo" class="h-auto w-28"/>
+      </a>
     </div>
 
     <!-- Desktop Navigation -->
@@ -120,7 +103,7 @@ const menuItems = [
       aria-expanded="false"
     >
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
     </button>
   </div>
