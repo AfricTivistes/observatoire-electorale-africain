@@ -28,7 +28,7 @@ const upcomingElections = [
   },
 ];
 
-const formatDate = (dateString) => {
+const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "long",
