@@ -26,7 +26,6 @@ const AfricaMap: React.FC<AfricaMapProps> = ({
   const [mapData, setMapData] = useState<any>(null);
   const [tooltipContent, setTooltipContent] = useState("");
   const [retryCount, setRetryCount] = useState(0);
-  const [isOffline, setIsOffline] = useState(false);
 
   const fetchMapData = useCallback(async () => {
     try {
@@ -65,30 +64,20 @@ const AfricaMap: React.FC<AfricaMapProps> = ({
   }, [retryCount]);
 
   useEffect(() => {
-    const updateOnlineStatus = () => {
-      if (typeof window !== 'undefined') {
-        setIsOffline(!window.navigator.onLine);
-      }
-    };
-
-    updateOnlineStatus();
-
     if (typeof window !== 'undefined') {
       window.addEventListener('online', () => {
-        setIsOffline(false);
         setError(null);
         setRetryCount(0);
         fetchMapData();
       });
 
       window.addEventListener('offline', () => {
-        setIsOffline(true);
         setError('Connection lost. Waiting for connection to restore...');
       });
 
       return () => {
-        window.removeEventListener('online', updateOnlineStatus);
-        window.removeEventListener('offline', updateOnlineStatus);
+        window.removeEventListener('online', () => {});
+        window.removeEventListener('offline', () => {});
       };
     }
   }, [fetchMapData]);

@@ -8,7 +8,9 @@ import {
   FaEnvelope as Envelope,
   FaPhone as Phone,
   FaSearch as Search,
-  FaCalendar as Calendar
+  FaCalendar as Calendar,
+  FaTimes as Close,
+  FaFilter as Filter
 } from 'react-icons/fa';
 
 type IconName = 
@@ -20,7 +22,9 @@ type IconName =
   | 'email' 
   | 'phone'
   | 'search'
-  | 'calendar';
+  | 'calendar'
+  | 'close'
+  | 'filter';
 
 interface IconProps {
   name: IconName;
@@ -36,7 +40,9 @@ const iconMap = {
   email: Envelope,
   phone: Phone,
   search: Search,
-  calendar: Calendar
+  calendar: Calendar,
+  close: Close,
+  filter: Filter
 };
 
 const Icon: React.FC<IconProps> = ({ name, className = '' }) => {
