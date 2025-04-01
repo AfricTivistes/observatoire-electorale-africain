@@ -1,5 +1,5 @@
 import type React from "react"
-import { FaUsers, FaGlobeAfrica, FaChartBar } from "react-icons/fa"
+import { FaGlobeAfrica } from "react-icons/fa"
 
 const AboutHero: React.FC = () => {
   return (
@@ -29,26 +29,6 @@ const AboutHero: React.FC = () => {
               africain.
             </p>
 
-            <div className="grid grid-cols-3 gap-6 pt-8">
-              <div className="text-center">
-                <div className="w-12 h-12 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-2">
-                  <FaGlobeAfrica className="text-white text-xl" />
-                </div>
-                <div className="text-sm font-medium">54 Pays</div>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-2">
-                  <FaChartBar className="text-white text-xl" />
-                </div>
-                <div className="text-sm font-medium">120+ Élections</div>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-2">
-                  <FaUsers className="text-white text-xl" />
-                </div>
-                <div className="text-sm font-medium">250+ Organisations</div>
-              </div>
-            </div>
           </div>
 
           {/* Image */}
@@ -71,7 +51,6 @@ const AboutHero: React.FC = () => {
       </div>
     </section>
   )
-}
+};
 
 export default AboutHero
-
