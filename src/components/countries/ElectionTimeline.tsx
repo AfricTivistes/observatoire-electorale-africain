@@ -6,12 +6,6 @@ interface ElectionEvent {
   type: string;
   status: 'completed' | 'upcoming' | 'ongoing';
   turnout?: number;
-  description?: string;
-}
-
-interface ElectionEvent {
-  date: string;
-  type: string;
   description: string;
 }
 

@@ -28,5 +28,5 @@ const CountriesHero: React.FC = () => {
   )
 }
 
-export default CountriesHero
+export default CountriesHero;Hero
 
