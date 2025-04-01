@@ -41,11 +41,11 @@ const filterSections = [
       aria-label="Toggle filters"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
       </svg>
     </button>
   </div>
-  
+
   <div id="filter-content" class="overflow-y-auto max-h-[calc(100vh-6rem)]">
     {filterSections.map((section, index) => (
       <div class="filter-section mb-6" data-section-id={index}>
@@ -61,7 +61,7 @@ const filterSections = [
             stroke="currentColor" 
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
           </svg>
         </button>
         <div 
@@ -92,7 +92,7 @@ const filterSections = [
   const toggleFilters = () => {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
-    
+
     if (sidebar?.classList.contains('-translate-x-full')) {
       sidebar.classList.remove('-translate-x-full');
       overlay?.classList.remove('hidden');
@@ -108,11 +108,11 @@ const filterSections = [
     const section = header.closest('.filter-section');
     const content = section?.querySelector('.filter-section-content') as HTMLElement;
     const arrow = header.querySelector('svg');
-    
+
     if (!content || !arrow) return;
-    
+
     const isExpanded = content.classList.contains('expanded');
-    
+
     if (isExpanded) {
       content.style.maxHeight = '0px';
       content.classList.remove('expanded');
@@ -130,14 +130,14 @@ const filterSections = [
   document.querySelectorAll('.filter-section-header').forEach((header) => {
     const content = header.closest('.filter-section')?.querySelector('.filter-section-content') as HTMLElement;
     const arrow = header.querySelector('svg');
-    
+
     if (content && arrow) {
       // Start collapsed
       content.style.maxHeight = '0px';
       arrow.classList.add('rotate-180');
       header.setAttribute('aria-expanded', 'false');
     }
-    
+
     header.addEventListener('click', () => toggleSection(header as HTMLElement));
   });
 
