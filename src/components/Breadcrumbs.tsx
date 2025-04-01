@@ -16,7 +16,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
       className="overflow-x-auto whitespace-nowrap py-2 scrollbar-none"
     >
       <ol className="flex items-center space-x-2 text-sm">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <li key={item.label} className="flex items-center min-w-fit">
             {item.href ? (
               <>
