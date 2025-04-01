@@ -73,5 +73,5 @@ const AboutHero: React.FC = () => {
   )
 }
 
-export default AboutHero
+export default AboutHero;
 
