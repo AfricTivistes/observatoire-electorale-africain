@@ -10,7 +10,13 @@ interface ElectionEvent {
 }
 
 interface ElectionTimelineProps {
-  events: ElectionEvent[];
+  events: {
+    date: string;
+    type: string;
+    status: 'completed' | 'upcoming' | 'ongoing';
+    turnout?: number;
+    description: string;
+  }[];
   countryName: string;
 }
 
