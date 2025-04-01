@@ -251,6 +251,7 @@ const logoVariant = pageType === "about" ? "light" : "default";
     submenuToggles.forEach(toggle => {
       toggle.addEventListener('click', () => {
         const targetId = toggle.getAttribute('data-target');
+        if (!targetId) return;
         const submenu = document.getElementById(targetId);
         const arrow = toggle.querySelector('svg');
         
