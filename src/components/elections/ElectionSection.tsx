@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FaVoteYea, FaCalendarAlt } from 'react-icons/fa';
 
@@ -43,18 +42,18 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({ title, status, icon, 
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <img
-                    src={`/images/flags/${election.code_pays.toLowerCase()}.svg`}
-                    alt={`Drapeau ${election.nom_pays}`}
+                    src={`/images/flags/${election.data.code_pays.toLowerCase()}.svg`}
+                    alt={`Drapeau ${election.data.nomPays}`}
                     className="w-8 h-6"
                   />
                   <div>
-                    <h3 className="text-xl font-semibold text-farafina-dark">{election.nom_pays}</h3>
-                    <p className="text-farafina-secondary">{election.type_élection}</p>
+                    <h3 className="text-xl font-semibold text-farafina-dark">{election.data.nomPays}</h3>
+                    <p className="text-farafina-secondary">{election.data.typeElection}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className={`text-lg font-medium ${status === "À venir" ? "text-farafina-primary" : "text-farafina-secondary"}`}>
-                    {new Date(election.date_élection).toLocaleDateString('fr-FR', {
+                    {new Date(election.data.dateElection).toLocaleDateString('fr-FR', {
                       day: 'numeric',
                       month: 'long',
                       year: 'numeric'
