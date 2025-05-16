@@ -4,8 +4,18 @@ import Breadcrumbs from '../../components/Breadcrumbs.tsx';
 import PageHeader from '../../components/PageHeader.tsx';
 import { FaCalendarAlt, FaFilter, FaDownload, FaSync } from 'react-icons/fa';
 
-// Importer les données des élections
-import { upcomingElections, recentElections } from '../../data/elections.json';
+// Importer nocodb
+import { listTableRecords } from '../../lib/api/nocodb';
+
+// Récupérer les données des élections depuis nocodb
+const tableId = "mufcewiwnu6czob";
+const fields = ["Id", "date_élection", "type_élection", "nom_pays", "statut", "code_pays"];
+const params = {
+  where: "(statut,eq,À venir),or,(statut,eq,En préparation)",
+  sort: "date_élection",
+};
+
+const elections = await listTableRecords(tableId, fields, params);
 
 // Créer un calendrier pour les 24 prochains mois
 const currentDate = new Date();
@@ -167,6 +177,81 @@ const regions = [
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        <!-- Élections à venir -->
+        <div class="mb-12">
+          <h2 class="text-2xl font-bold text-farafina-dark mb-6 flex items-center">
+            <FaCalendarAlt class="text-farafina-primary mr-3" />
+            Élections à venir
+          </h2>
+          <div class="space-y-4">
+            {elections
+              .filter(election => election.statut === "À venir")
+              .map(election => (
+                <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-farafina-primary">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                      <img
+                        src={`/images/flags/${election.code_pays.toLowerCase()}.svg`}
+                        alt={`Drapeau ${election.nom_pays}`}
+                        class="w-8 h-6"
+                      />
+                      <div>
+                        <h3 class="text-xl font-semibold text-farafina-dark">{election.nom_pays}</h3>
+                        <p class="text-farafina-secondary">{election.type_élection}</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-lg font-medium text-farafina-primary">
+                        {new Date(election.date_élection).toLocaleDateString('fr-FR', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+
+        <!-- Élections en préparation -->
+        <div class="mb-12">
+          <h2 class="text-2xl font-bold text-farafina-dark mb-6 flex items-center">
+            <FaVoteYea class="text-farafina-secondary mr-3" />
+            Élections en préparation
+          </h2>
+          <div class="space-y-4">
+            {elections
+              .filter(election => election.statut === "En préparation")
+              .map(election => (
+                <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-farafina-secondary">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                      <img
+                        src={`/images/flags/${election.code_pays.toLowerCase()}.svg`}
+                        alt={`Drapeau ${election.nom_pays}`}
+                        class="w-8 h-6"
+                      />
+                      <div>
+                        <h3 class="text-xl font-semibold text-farafina-dark">{election.nom_pays}</h3>
+                        <p class="text-farafina-secondary">{election.type_élection}</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-lg font-medium text-farafina-secondary">
+                        {new Date(election.date_élection).toLocaleDateString('fr-FR', {
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
 
