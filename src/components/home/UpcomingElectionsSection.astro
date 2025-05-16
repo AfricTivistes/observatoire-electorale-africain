@@ -1,32 +1,18 @@
 ---
 import { FaCalendarAlt, FaArrowRight } from "react-icons/fa";
+import { getCollection } from "astro:content";
 
-const upcomingElections = [
-  {
-    id: "dz-2024",
-    country: "Algérie",
-    type: "Présidentielle",
-    date: "2024-04-15",
-    status: "À venir",
-    flagCode: "dz",
-  },
-  {
-    id: "ma-2024",
-    country: "Maroc",
-    type: "Législative",
-    date: "2024-09-20",
-    status: "En préparation",
-    flagCode: "ma",
-  },
-  {
-    id: "ke-2024",
-    country: "Kenya",
-    type: "Locales",
-    date: "2024-08-05",
-    status: "Planification",
-    flagCode: "ke",
-  },
-];
+// Récupérer les élections depuis la collection
+const elections = await getCollection('elections');
+
+// Filtrer et trier les élections à venir
+const upcomingElections = elections
+  .filter(election => 
+    election.data.statut === "En préparation" || 
+    election.data.statut === "À venir"
+  )
+  .sort((a, b) => new Date(a.data.dateElection).getTime() - new Date(b.data.dateElection).getTime())
+  .slice(0, 4);
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("fr-FR", {
@@ -56,7 +42,7 @@ const formatDate = (dateString: string) => {
       </a>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
       {upcomingElections.map(election => (
         <div
           class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-5px] overflow-hidden border border-gray-100"
@@ -64,32 +50,32 @@ const formatDate = (dateString: string) => {
           <div class="p-6">
             <div class="flex items-center mb-4">
               <img
-                src={`https://flagcdn.com/48x36/${election.flagCode}.png`}
-                alt={`Drapeau ${election.country}`}
+                src={`https://flagcdn.com/48x36/${election.data.code_pays.toLowerCase()}.png`}
+                alt={`Drapeau ${election.data.nomPays}`}
                 class="w-8 h-6 mr-3"
               />
-              <h3 class="text-xl font-semibold text-farafina-dark">{election.country}</h3>
+              <h3 class="text-xl font-semibold text-farafina-dark">{election.data.nomPays}</h3>
             </div>
 
             <div class="space-y-3 mb-6">
               <div class="flex justify-between">
                 <span class="text-gray-600">Type</span>
-                <span class="font-medium">{election.type}</span>
+                <span class="font-medium">{election.data.typeElection}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">Date</span>
-                <span class="font-medium">{formatDate(election.date)}</span>
+                <span class="font-medium">{formatDate(election.data.dateElection)}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">Statut</span>
                 <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-sm rounded-full">
-                  {election.status}
+                  {election.data.statut}
                 </span>
               </div>
             </div>
 
             <a
-              href={`/elections/${election.id}`}
+              href={`/countries/${election.data.code_pays.toLowerCase()}`}
               class="block w-full py-2 text-center border border-farafina-primary text-farafina-primary rounded-lg hover:bg-farafina-primary hover:text-white transition-colors"
             >
               Détails
@@ -100,4 +86,3 @@ const formatDate = (dateString: string) => {
     </div>
   </div>
 </section>
-

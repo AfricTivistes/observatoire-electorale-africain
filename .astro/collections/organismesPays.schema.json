@@ -1,0 +1,29 @@
+{
+  "$ref": "#/definitions/organismesPays",
+  "definitions": {
+    "organismesPays": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "oge": {
+          "type": "string"
+        },
+        "modele": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "oge",
+        "modele"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
