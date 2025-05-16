@@ -44,11 +44,13 @@ const pays = defineCollection({
       region: record["Zone geographique"] || "",
       vote: {
         presidentialVote: record["Présidentiel - Régime de vote"] || "",
+        presidentialscrutinMode: record["Présidentiel - Mode de scrutin"] || "",
         presidentialResults:
           record[
             "Organe de proclamation des resultats definitifs Présidentiel"
           ] || "",
         legislativeVote: record["Legislative - Régime de vote"] || "",
+        legislativeScrutinMode: record["Legislative - Mode de scrutin"] || "",
         legislativeResults:
           record["Organe proclamation resultats definitifs Législative"] || "",
         validationBody: record["Organe de validation des candidatures"] || "",
@@ -95,8 +97,10 @@ const pays = defineCollection({
     vote: z.object({
       presidentialVote: z.string(),
       presidentialResults: z.string(),
+      presidentialscrutinMode: z.string(),
       legislativeVote: z.string(),
       legislativeResults: z.string(),
+      legislativeScrutinMode: z.string(),
       validationBody: z.string(),
       legislativeValidationBody: z.string(),
       disputesManagementBody: z.string(),
