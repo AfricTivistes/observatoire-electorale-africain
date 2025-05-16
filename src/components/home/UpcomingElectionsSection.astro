@@ -12,7 +12,7 @@ const upcomingElections = elections
     election.data.statut === "À venir"
   )
   .sort((a, b) => new Date(a.data.dateElection).getTime() - new Date(b.data.dateElection).getTime())
-  .slice(0, 3);
+  .slice(0, 4);
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("fr-FR", {
@@ -42,7 +42,7 @@ const formatDate = (dateString: string) => {
       </a>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
       {upcomingElections.map(election => (
         <div
           class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-5px] overflow-hidden border border-gray-100"
