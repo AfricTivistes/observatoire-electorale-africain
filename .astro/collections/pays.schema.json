@@ -79,10 +79,16 @@
             "presidentialResults": {
               "type": "string"
             },
+            "presidentialscrutinMode": {
+              "type": "string"
+            },
             "legislativeVote": {
               "type": "string"
             },
             "legislativeResults": {
+              "type": "string"
+            },
+            "legislativeScrutinMode": {
               "type": "string"
             },
             "validationBody": {
@@ -101,8 +107,10 @@
           "required": [
             "presidentialVote",
             "presidentialResults",
+            "presidentialscrutinMode",
             "legislativeVote",
             "legislativeResults",
+            "legislativeScrutinMode",
             "validationBody",
             "legislativeValidationBody",
             "disputesManagementBody",
