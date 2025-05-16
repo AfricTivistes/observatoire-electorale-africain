@@ -154,7 +154,7 @@ const regions = [
           title="Élections à venir"
           status="À venir"
           icon="calendar"
-          elections={elections.filter(election => election.statut === "À venir")}
+          elections={elections.filter(election => election.data.statut === "À venir")}
           colorClass="border-farafina-primary"
         />
 
@@ -163,7 +163,7 @@ const regions = [
           title="Élections en préparation"
           status="En préparation"
           icon="vote"
-          elections={elections.filter(election => election.statut === "En préparation")}
+          elections={elections.filter(election => election.data.statut === "En préparation")}
           colorClass="border-farafina-secondary"
         />
 
