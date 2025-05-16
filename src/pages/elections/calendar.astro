@@ -4,22 +4,25 @@ import PageHeader from '../../components/PageHeader.tsx';
 import { FaCalendarAlt, FaFilter, FaDownload, FaSync } from 'react-icons/fa';
 import ElectionSection from '../../components/elections/ElectionSection';
 
-// Importer nocodb
-import { listTableRecords } from '../../lib/api/nocodb';
+// Importer la collection elections
+import { getCollection } from 'astro:content';
 
-// Récupérer les données des élections depuis nocodb
-const tableId = "mufcewiwnu6czob";
-const fields = ["Id", "date_élection", "type_élection", "nom_pays", "statut", "code_pays"];
-const params = {
-  where: "(statut,eq,À venir),or,(statut,eq,En préparation)",
-  sort: "date_élection",
-};
+// Récupérer les données des élections depuis la collection
+const elections = await getCollection('elections');
 
-const elections = await listTableRecords(tableId, fields, params);
+// Filtrer les élections à venir et en préparation
+const filteredElections = elections
+  .filter(election => 
+    election.data.statut === "À venir" || 
+    election.data.statut === "En préparation"
+  )
+  .sort((a, b) => 
+    new Date(a.data.dateElection).getTime() - new Date(b.data.dateElection).getTime()
+  );
 
 // Organiser les élections par statut
-const upcomingElections = elections.filter(e => e.statut === "À venir");
-const preparingElections = elections.filter(e => e.statut === "En préparation");
+const upcomingElections = filteredElections.filter(e => e.data.statut === "À venir");
+const preparingElections = filteredElections.filter(e => e.data.statut === "En préparation");
 
 // Créer un calendrier pour les 24 prochains mois
 const currentDate = new Date();
