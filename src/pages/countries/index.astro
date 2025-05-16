@@ -1,7 +1,6 @@
 ---
 import Layout from "../../layouts/MainLayout.astro";
-import CountryList from "../../components/CountryList";
-import CountrySidebar from "../../components/countries/CountrySidebar";
+import CountryFilterWrapper from "../../components/countries/CountryFilterWrapper";
 import AfricaMap from "../../components/countries/AfricaMap";
 import { FaGlobeAfrica, FaVoteYea, FaUsers, FaSearch } from "react-icons/fa";
 import CountriesHero from "@/components/countries/CountriesHero.astro";
@@ -68,25 +67,41 @@ const lastElections = elections
 const regions = [
   {
     name: "Afrique du Nord",
+    key: "Nord",
     count: pays.filter((country) => country.data.region === "Nord").length,
   },
   {
     name: "Afrique de l'Ouest",
+    key: "Ouest",
     count: pays.filter((country) => country.data.region === "Ouest").length,
   },
   {
     name: "Afrique Centrale",
+    key: "Centrale",
     count: pays.filter((country) => country.data.region === "Centrale").length,
   },
   {
     name: "Afrique de l'Est",
+    key: "Est",
     count: pays.filter((country) => country.data.region === "Est").length,
   },
   {
     name: "Afrique Australe",
+    key: "Australe",
     count: pays.filter((country) => country.data.region === "Australe").length,
   },
 ];
+
+const politicalSystemsMap = pays.reduce((acc, country) => {
+  const system = country.data.politicalSystem || 'Inconnu';
+  acc[system] = (acc[system] || 0) + 1;
+  return acc;
+}, {});
+
+const politicalSystems = Object.keys(politicalSystemsMap).map(system => ({
+  name: system,
+  count: politicalSystemsMap[system],
+}));
 
 const countriesWithLastElection = pays.map((country) => ({
   code: country.data.code,
@@ -110,6 +125,7 @@ const countriesWithLastElection = pays.map((country) => ({
       registered: country.data.demographics.voterRegistration.registered,
     },
   },
+  region: country.data.region
 }));
 ---
 
@@ -273,22 +289,12 @@ const countriesWithLastElection = pays.map((country) => ({
     <h2 class="text-2xl font-bold text-farafina-dark mb-6">
       Explorer tous les pays
     </h2>
-    <div class="flex flex-col lg:flex-row gap-8">
-      <div class="lg:w-1/4">
-        <CountrySidebar client:load />
-      </div>
-      <div class="lg:w-3/4">
-        <CountryList
-          countries={countriesWithLastElection.map((country) => ({
-            ...country,
-            lastElection: {
-              ...country.lastElection,
-              turnout: country.lastElection.turnout || 0,
-            },
-          }))}
-        />
-      </div>
-    </div>
+    <CountryFilterWrapper
+      countries={countriesWithLastElection}
+      regions={regions}
+      politicalSystems={politicalSystems}
+      client:load
+    />
   </div>
 
   <!-- Ressources et outils -->

@@ -1,62 +1,74 @@
 import React, { useState } from 'react';
 import { 
   FaFilter, 
-  FaGlobeAfrica, 
-  FaVoteYea, 
+  FaGlobeAfrica,
   FaBalanceScale 
 } from 'react-icons/fa';
 
-const filterSections = [
-  {
-    title: 'Régions',
-    icon: FaGlobeAfrica,
-    items: [
-      { label: 'Afrique du Nord', count: 5, key: 'north' },
-      { label: 'Afrique de l\'Ouest', count: 15, key: 'west' },
-      { label: 'Afrique Centrale', count: 8, key: 'central' },
-      { label: 'Afrique de l\'Est', count: 10, key: 'east' },
-      { label: 'Afrique Australe', count: 6, key: 'south' }
-    ]
-  },
-  {
-    title: 'Type d\'Élection',
-    icon: FaVoteYea,
-    items: [
-      { label: 'Présidentielle', count: 12, key: 'presidential' },
-      { label: 'Législative', count: 20, key: 'legislative' },
-      { label: 'Municipale', count: 8, key: 'municipal' },
-      { label: 'Référendum', count: 3, key: 'referendum' }
-    ]
-  },
-  {
-    title: 'Statut Électoral',
-    icon: FaBalanceScale,
-    items: [
-      { label: 'Élection Prochaine', count: 7, key: 'upcoming' },
-      { label: 'Élection Récente', count: 15, key: 'recent' },
-      { label: 'En Préparation', count: 5, key: 'preparation' }
-    ]
-  }
-];
-
-interface FilterState {
-  [key: string]: boolean;
+interface Region {
+  name: string;
+  count: number;
+  key: string;
 }
 
-const CountrySidebar: React.FC = () => {
-  const [activeFilters, setActiveFilters] = useState<FilterState>({});
+interface PoliticalSystem {
+  name: string;
+  count: number;
+}
+
+interface ActiveFilters {
+  regions: string[];
+  politicalSystems: string[];
+}
+
+interface CountrySidebarProps {
+  regions: Region[];
+  politicalSystems: PoliticalSystem[];
+  activeFilters: ActiveFilters;
+  onFilterChange: (filterType: 'regions' | 'politicalSystems', key: string, isChecked: boolean) => void;
+  onResetFilters: () => void;
+}
+
+const CountrySidebar: React.FC<CountrySidebarProps> = ({
+  regions,
+  politicalSystems,
+  activeFilters,
+  onFilterChange,
+  onResetFilters,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleFilter = (key: string) => {
-    setActiveFilters(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
+  const getActiveFiltersCount = () => {
+    return activeFilters.regions.length + activeFilters.politicalSystems.length;
   };
 
-  const getActiveFiltersCount = () => {
-    return Object.values(activeFilters).filter(Boolean).length;
+  const regionsFilterSection = {
+    title: 'Régions',
+    icon: FaGlobeAfrica,
+    type: 'regions' as 'regions' | 'politicalSystems',
+    items: regions.map(region => ({
+      label: region.name,
+      count: region.count,
+      key: region.key
+    }))
   };
+
+  const politicalSystemsFilterSection = {
+    title: 'Système Électoral',
+    icon: FaBalanceScale,
+    type: 'politicalSystems' as 'regions' | 'politicalSystems',
+    items: politicalSystems.map(system => ({
+      label: system.name,
+      count: system.count,
+      key: system.name
+    }))
+  };
+
+  // Combine dynamic sections
+  const filterSections = [
+    regionsFilterSection,
+    politicalSystemsFilterSection
+  ];
 
   return (
     <>
@@ -119,8 +131,8 @@ const CountrySidebar: React.FC = () => {
                             <input
                               type="checkbox"
                               className="form-checkbox"
-                              checked={!!activeFilters[item.key]}
-                              onChange={() => toggleFilter(item.key)}
+                              checked={activeFilters[section.type]?.includes(item.key) || false}
+                              onChange={(e) => onFilterChange(section.type, item.key, e.target.checked)}
                             />
                             <span className="ml-2 text-africa-dark">{item.label}</span>
                           </div>
@@ -135,7 +147,7 @@ const CountrySidebar: React.FC = () => {
               <div className="mt-8 pt-4 border-t border-africa-gray-200">
                 <button
                   className="w-full bg-africa-primary text-white py-2 rounded-lg hover:bg-africa-secondary transition-colors"
-                  onClick={() => setActiveFilters({})}
+                  onClick={onResetFilters}
                 >
                   Réinitialiser les Filtres
                 </button>

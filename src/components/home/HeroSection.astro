@@ -1,5 +1,8 @@
 ---
 import { FaArrowRight, FaChartBar, FaGlobeAfrica, FaUsers } from "react-icons/fa";
+import GlobeAlt from 'astro-heroicons/solid/GlobeAlt.astro';
+import CheckBadge from 'astro-heroicons/solid/CheckBadge.astro';
+import BuildingOffice2 from 'astro-heroicons/solid/BuildingOffice2.astro';
 ---
 
 <section class="relative pt-28 pb-20 overflow-hidden">
@@ -50,17 +53,20 @@ import { FaArrowRight, FaChartBar, FaGlobeAfrica, FaUsers } from "react-icons/fa
 
         <!-- Feature Icons -->
         <div class="grid grid-cols-3 gap-4 pt-6">
-          <div class="text-center">
-            <div class="text-3xl font-bold text-farafina-primary">54</div>
-            <div class="text-sm text-gray-600">Pays</div>
+          <div class="text-center flex flex-col items-center">
+            <GlobeAlt class="h-10 w-10 text-farafina-primary mb-2" />
+            <div class="text-3xl font-bold text-black-primary">54</div>
+            <div class="text-sm text-black-600">Pays avec des regimes politiques et mécanismes électoraux</div>
           </div>
-          <div class="text-center">
-            <div class="text-3xl font-bold text-farafina-primary">120+</div>
-            <div class="text-sm text-gray-600">Élections</div>
+          <div class="text-center flex flex-col items-center">
+            <CheckBadge class="h-10 w-10 text-farafina-primary mb-2" />
+            <div class="text-3xl font-bold text-black-primary">+6 000</div>
+            <div class="text-sm text-black-600">Données collectées, traitées et agrégées</div>
           </div>
-          <div class="text-center">
-            <div class="text-3xl font-bold text-farafina-primary">250+</div>
-            <div class="text-sm text-gray-600">Organisations</div>
+          <div class="text-center flex flex-col items-center">
+            <BuildingOffice2 class="h-10 w-10 text-farafina-primary mb-2" />
+            <div class="text-3xl font-bold text-black-primary">+250</div>
+            <div class="text-sm text-black-600">Organisations et institutions recensées</div>
           </div>
         </div>
       </div>

@@ -19,6 +19,7 @@
             "@types/react-dom": "^18.3.1",
             "@types/react-simple-maps": "^3.0.6",
             "astro": "^5.5.5",
+            "astro-heroicons": "^2.1.5-1",
             "astro-icon": "^1.1.2",
             "axios": "^1.8.4",
             "chart.js": "^4.4.6",
