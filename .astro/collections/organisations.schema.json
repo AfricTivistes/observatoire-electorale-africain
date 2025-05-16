@@ -1,0 +1,73 @@
+{
+  "$ref": "#/definitions/organisations",
+  "definitions": {
+    "organisations": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "statut": {
+          "type": "string"
+        },
+        "typeOrganisation": {
+          "type": "string"
+        },
+        "nombreDePaysCouverts": {
+          "type": "string"
+        },
+        "ville": {
+          "type": "string"
+        },
+        "anneeDeCreation": {
+          "type": "number"
+        },
+        "zonesCouverts": {
+          "type": "string"
+        },
+        "domainesExpertise": {
+          "type": "string"
+        },
+        "mobilisationsObservateurs": {
+          "type": "string"
+        },
+        "siteweb": {
+          "type": "string"
+        },
+        "telephone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "pays": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "nom",
+        "statut",
+        "typeOrganisation",
+        "nombreDePaysCouverts",
+        "ville",
+        "anneeDeCreation",
+        "zonesCouverts",
+        "domainesExpertise",
+        "mobilisationsObservateurs",
+        "siteweb",
+        "telephone",
+        "email",
+        "pays"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,214 @@
+{
+  "$ref": "#/definitions/pays",
+  "definitions": {
+    "pays": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "langue": {
+          "type": "string"
+        },
+        "population": {
+          "type": "number"
+        },
+        "ressources": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "collection": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "collection"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "slug": {
+                    "type": "string"
+                  },
+                  "collection": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "slug",
+                  "collection"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "politicalSystem": {
+          "type": "string"
+        },
+        "modele": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "vote": {
+          "type": "object",
+          "properties": {
+            "presidentialVote": {
+              "type": "string"
+            },
+            "presidentialResults": {
+              "type": "string"
+            },
+            "legislativeVote": {
+              "type": "string"
+            },
+            "legislativeResults": {
+              "type": "string"
+            },
+            "validationBody": {
+              "type": "string"
+            },
+            "legislativeValidationBody": {
+              "type": "string"
+            },
+            "disputesManagementBody": {
+              "type": "string"
+            },
+            "provisionalResultsBody": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "presidentialVote",
+            "presidentialResults",
+            "legislativeVote",
+            "legislativeResults",
+            "validationBody",
+            "legislativeValidationBody",
+            "disputesManagementBody",
+            "provisionalResultsBody"
+          ],
+          "additionalProperties": false
+        },
+        "lastElection": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "year": {
+              "type": "number"
+            },
+            "turnout": {
+              "type": "number"
+            },
+            "nextElectionYear": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "type",
+            "year",
+            "turnout",
+            "nextElectionYear"
+          ],
+          "additionalProperties": false
+        },
+        "demographics": {
+          "type": "object",
+          "properties": {
+            "gender": {
+              "type": "object",
+              "properties": {
+                "male": {
+                  "type": "number"
+                },
+                "female": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "male",
+                "female"
+              ],
+              "additionalProperties": false
+            },
+            "genderRatio": {
+              "type": "object",
+              "properties": {
+                "male": {
+                  "type": "number"
+                },
+                "female": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "male",
+                "female"
+              ],
+              "additionalProperties": false
+            },
+            "voterRegistration": {
+              "type": "object",
+              "properties": {
+                "registered": {
+                  "type": "number"
+                },
+                "population": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "registered",
+                "population"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "gender",
+            "genderRatio",
+            "voterRegistration"
+          ],
+          "additionalProperties": false
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "code",
+        "name",
+        "langue",
+        "population",
+        "vote",
+        "lastElection",
+        "demographics"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

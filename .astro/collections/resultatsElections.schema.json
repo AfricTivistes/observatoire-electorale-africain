@@ -1,0 +1,45 @@
+{
+  "$ref": "#/definitions/resultatsElections",
+  "definitions": {
+    "resultatsElections": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "resultats": {
+          "type": "string"
+        },
+        "participation": {
+          "type": "number"
+        },
+        "nomPays": {
+          "type": "string"
+        },
+        "electeur": {
+          "type": "number"
+        },
+        "source_résultats": {
+          "type": "string"
+        },
+        "Elections_id": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "resultats",
+        "participation",
+        "nomPays",
+        "electeur",
+        "source_résultats",
+        "Elections_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

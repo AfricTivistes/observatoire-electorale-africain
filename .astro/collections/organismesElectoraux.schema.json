@@ -1,0 +1,49 @@
+{
+  "$ref": "#/definitions/organismesElectoraux",
+  "definitions": {
+    "organismesElectoraux": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "ville": {
+          "type": "string"
+        },
+        "anneeDeCreation": {
+          "type": "number"
+        },
+        "siteweb": {
+          "type": "string"
+        },
+        "telephone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "Pays_id": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "nom",
+        "ville",
+        "anneeDeCreation",
+        "siteweb",
+        "telephone",
+        "email",
+        "Pays_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

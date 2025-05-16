@@ -1,0 +1,45 @@
+{
+  "$ref": "#/definitions/defisElections",
+  "definitions": {
+    "defisElections": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "libelleDefis": {
+          "type": "string"
+        },
+        "typeDefi": {
+          "type": "string"
+        },
+        "nomPays": {
+          "type": "string"
+        },
+        "sourceDefi": {
+          "type": "string"
+        },
+        "ResultatsElections": {
+          "type": "string"
+        },
+        "resultats": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "libelleDefis",
+        "typeDefi",
+        "nomPays",
+        "sourceDefi",
+        "ResultatsElections",
+        "resultats"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

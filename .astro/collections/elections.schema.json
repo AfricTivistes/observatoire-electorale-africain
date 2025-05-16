@@ -1,0 +1,91 @@
+{
+  "$ref": "#/definitions/elections",
+  "definitions": {
+    "elections": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "dateElection": {
+          "type": "string"
+        },
+        "statut": {
+          "type": "string"
+        },
+        "typeElection": {
+          "type": "string"
+        },
+        "nomPays": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "code_pays": {
+          "type": "string"
+        },
+        "Pays_id": {
+          "type": "string"
+        },
+        "resultats": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "collection": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "collection"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "slug": {
+                    "type": "string"
+                  },
+                  "collection": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "slug",
+                  "collection"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "dateElection",
+        "statut",
+        "typeElection",
+        "nomPays",
+        "region",
+        "code_pays",
+        "Pays_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

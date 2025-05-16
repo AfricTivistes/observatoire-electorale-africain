@@ -8,7 +8,6 @@ interface AfricaMapProps {
 }
 
 const AfricaMap: React.FC<AfricaMapProps> = ({ selectedCountry }) => {
-
   return (
     <div className="relative w-full h-[400px] bg-gray-50 rounded-lg overflow-hidden">
       <ComposableMap
@@ -22,7 +21,7 @@ const AfricaMap: React.FC<AfricaMapProps> = ({ selectedCountry }) => {
           {({ geographies }) =>
             geographies.map((geo) => {
               const isSenegal = geo.properties.code === selectedCountry;
-              
+
               return (
                 <Geography
                   key={geo.rsmKey}

@@ -1,0 +1,45 @@
+{
+  "$ref": "#/definitions/ressources",
+  "definitions": {
+    "ressources": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "year": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "Pays_id": {
+          "type": "string"
+        },
+        "fichier": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "type",
+        "year",
+        "description",
+        "Pays_id",
+        "fichier"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

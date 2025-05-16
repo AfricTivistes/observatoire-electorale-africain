@@ -13,15 +13,19 @@ const elections = await getCollection("elections");
 const resultatsElections = await getCollection("resultatsElections");
 
 // Statistiques globales
-const totalPopulation = pays.reduce(
-  (sum, country) => sum + country.data.population,
+
+const totalRegistered = resultatsElections.reduce(
+  (sum, resultat) => sum + (resultat.data?.electeur || 0),
   0,
 );
+
+const totalPopulation = pays.reduce((sum, country) => sum + country.data.population, 0,);
+
 const totalVotes = resultatsElections.reduce(
   (sum, resultat) => sum + (resultat.data?.participation || 0),
   0,
 );
-const avgTurnout = (totalVotes / totalPopulation) * 100;
+const avgTurnout = (totalVotes / totalRegistered) * 100;
 
 const upcomingElections = elections
   .filter(

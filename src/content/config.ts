@@ -1,19 +1,25 @@
 import { defineCollection, z, reference } from "astro:content";
-import { listTableRecords } from '../lib/api/nocodb';
-import { paysData, electionsData, resultatsElectionsData, defisData, organismesElectorauxData, organisationsData } from "./fields";
-
+import { listTableRecords } from "../lib/api/nocodb";
+import {
+  paysData,
+  electionsData,
+  resultatsElectionsData,
+  defisData,
+  organismesElectorauxData,
+  organisationsData,
+} from "./fields";
 
 // Fonction utilitaire pour générer un slug à partir d’une chaîne
 function generateSlug(text: string): string {
   return text
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 // Type slug avec Zod
-const slugSchema = z.string().regex(/^[a-z0-9-]+$/, 'Slug invalide');
+const slugSchema = z.string().regex(/^[a-z0-9-]+$/, "Slug invalide");
 
 // Collection 'pays'
 const pays = defineCollection({
@@ -38,13 +44,20 @@ const pays = defineCollection({
       region: record["Zone geographique"] || "",
       vote: {
         presidentialVote: record["Présidentiel - Régime de vote"] || "",
-        presidentialResults : record["Organe de proclamation des resultats definitifs Présidentiel"] || "",
+        presidentialResults:
+          record[
+            "Organe de proclamation des resultats definitifs Présidentiel"
+          ] || "",
         legislativeVote: record["Legislative - Régime de vote"] || "",
-        legislativeResults: record["Organe proclamation resultats definitifs Législative"] || "",
+        legislativeResults:
+          record["Organe proclamation resultats definitifs Législative"] || "",
         validationBody: record["Organe de validation des candidatures"] || "",
-        legislativeValidationBody: record["Organe validation candidatures législatives"] || "",
-        disputesManagementBody: record["Organe de gestion des contentieux électoraux"] || "",
-        provisionalResultsBody: record["Organe de proclamation des résultats provisoires"] || "",
+        legislativeValidationBody:
+          record["Organe validation candidatures législatives"] || "",
+        disputesManagementBody:
+          record["Organe de gestion des contentieux électoraux"] || "",
+        provisionalResultsBody:
+          record["Organe de proclamation des résultats provisoires"] || "",
       },
       lastElection: {
         type: Math.random() < 0.5 ? "Présidentielle" : "Législative",
@@ -57,8 +70,8 @@ const pays = defineCollection({
           male: parseFloat(record["hommes"]) || 0,
           female: parseFloat(record["femmes"]) || 0,
         },
-        genderRatio: { 
-          male: parseFloat(record["électeurs_hommes"])  || 0,
+        genderRatio: {
+          male: parseFloat(record["électeurs_hommes"]) || 0,
           female: parseFloat(record["électeurs_femmes"]) || 0,
         },
         voterRegistration: {
@@ -159,6 +172,7 @@ const elections = defineCollection({
       statut: record["statut"] || "",
       dateElection: record["date_élection"] || "",
       typeElection: record["type_élection"] || "",
+      region: record["zone"] || "",
       nomPays: record["nom_pays"] || "",
       code_pays: record["code_pays"] || "",
       Pays_id: record["Pays_id"] ? record["Pays_id"].toString() : "",
@@ -171,6 +185,7 @@ const elections = defineCollection({
     statut: z.string(),
     typeElection: z.string(),
     nomPays: z.string(),
+    region: z.string(),
     code_pays: z.string(),
     Pays_id: z.string(),
     resultats: z.array(reference("Résultats Élections")).optional(),
@@ -190,15 +205,21 @@ const resultatsElections = defineCollection({
     return records.map((record) => ({
       id: record["Id"].toString(),
       resultats: record["résultats"] || "",
+      nomPays: record["nom_pays"] || "",
       participation: parseInt(record["participation"]) || 0,
+      electeur: parseInt(record["nombre_électeurs"]) || 0,
       source_résultats: record["source_résultats"] || "",
-      Elections_id: record["Elections_id"] ? record["Elections_id"].toString() : "",
+      Elections_id: record["Elections_id"]
+        ? record["Elections_id"].toString()
+        : "",
     }));
   },
   schema: z.object({
     id: z.string(),
     resultats: z.string(),
     participation: z.number(),
+    nomPays: z.string(),
+    electeur: z.number(),
     source_résultats: z.string(),
     Elections_id: z.string(),
   }),
@@ -217,15 +238,19 @@ const defisElections = defineCollection({
       id: record["Id"].toString(),
       libelleDefis: record["libellé defis"] || "",
       typeDefi: record["type_défi"] || "",
+      nomPays: record["nom_pays"] || "",
       sourceDefi: record["source_defi"] || "",
       ResultatsElections: record["Résultats elections"] || "",
-      resultats: record["Résultats Élections_id"] ? record["Résultats Élections_id"].toString() : "",
+      resultats: record["Résultats Élections_id"]
+        ? record["Résultats Élections_id"].toString()
+        : "",
     }));
   },
   schema: z.object({
     id: z.string(),
     libelleDefis: z.string(),
     typeDefi: z.string(),
+    nomPays: z.string(),
     sourceDefi: z.string(),
     ResultatsElections: z.string(),
     resultats: z.string(),
@@ -272,7 +297,7 @@ const organisations = defineCollection({
       where: "(Statut,eq,Vérifié)",
       limit: "1000",
     };
-    const records = await listTableRecords(tableId,fields, params);
+    const records = await listTableRecords(tableId, fields, params);
     return records.map((record) => ({
       id: record["Id"].toString(),
       nom: record["nom"] || "",
@@ -287,7 +312,9 @@ const organisations = defineCollection({
       siteweb: record["siteweb"] || "",
       telephone: record["telephone"] || "",
       email: record["email"] || "",
-      pays: record["nom_pays (from Pays)"] ? record["nom_pays (from Pays)"].toString() : "",
+      pays: record["nom_pays (from Pays)"]
+        ? record["nom_pays (from Pays)"].toString()
+        : "",
     }));
   },
   schema: z.object({
@@ -308,5 +335,12 @@ const organisations = defineCollection({
   }),
 });
 
-
-export const collections = { pays, ressources, organisations, organismesElectoraux, defisElections, resultatsElections, elections };
+export const collections = {
+  pays,
+  ressources,
+  organisations,
+  organismesElectoraux,
+  defisElections,
+  resultatsElections,
+  elections,
+};
