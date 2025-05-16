@@ -132,7 +132,7 @@ interface LegalFrameworkProps {
 
       {activeTab === 'organisations' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 p-4">
-          {organisations.slice(0, 7).map((org, index) => (
+          {organisations.slice(0, 8).map((org, index) => (
             <div
               key={org.id || index}
               className="relative rounded-xl border border-gray-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg cursor-pointer"

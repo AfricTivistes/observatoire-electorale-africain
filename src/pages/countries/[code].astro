@@ -81,9 +81,11 @@ const electoralOrganism = {
   electoralModel: country.modele,
   vote: {
     presidentialVote: country.vote.presidentialVote,
+    presidentialscrutinMode: country.vote.presidentialscrutinMode,
     presidentialResults: country.vote.presidentialResults,
     legislativeVote: country.vote.legislativeVote,
     legislativeResults: country.vote.legislativeResults,
+    legislativeScrutinMode: country.vote.legislativeScrutinMode,
     validationBody: country.vote.validationBody,
     legislativeValidationBody: country.vote.legislativeValidationBody,
     disputesManagementBody: country.vote.disputesManagementBody,
@@ -104,7 +106,7 @@ const legalFramework = {
   documents: legalFramework3
     //.filter((r) => r.data.type === "Constitution" || r.data.type === "Loi Électorale")
     .sort((a, b) => b.data.year - a.data.year)
-    .slice(0, 5) // Limiter à 4 éléments
+    .slice(0, 6) // Limiter à 4 éléments
     .map((r) => ({
       title: r.data.title,
       type: r.data.type,
@@ -543,23 +545,41 @@ const recentArticles = [
               </ul>
             </div>
           </div>
-
-          <div class="bg-farafina-primary/5 rounded-lg p-4">
-            <h3 class="font-semibold text-farafina-primary mb-2">
-              Régimes de vote
-            </h3>
-            <ul class="list-disc pl-4">
-              <li>
-                <span class="font-bold text-gray-700">Présidentiel</span>: {
-                  electoralOrganism.vote.presidentialVote
-                }
-              </li>
-              <li>
-                <span class="font-bold text-gray-700">Législatif</span>: {
-                  electoralOrganism.vote.legislativeVote
-                }
-              </li>
-            </ul>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-farafina-primary/5 rounded-lg p-4">
+              <h3 class="font-semibold text-farafina-primary mb-2">
+                Régime de vote
+              </h3>
+              <ul class="list-disc pl-4">
+                <li>
+                  <span class="font-bold text-gray-700">Présidentiel</span>: {
+                    electoralOrganism.vote.presidentialVote
+                  }
+                </li>
+                <li>
+                  <span class="font-bold text-gray-700">Législatif</span>: {
+                    electoralOrganism.vote.legislativeVote
+                  }
+                </li>
+              </ul>
+            </div>
+            <div class="bg-farafina-primary/5 rounded-lg p-4">
+              <h3 class="font-semibold text-farafina-primary mb-2">
+                Mode de scrutin
+              </h3>
+              <ul class="list-disc pl-4">
+                <li>
+                  <span class="font-bold text-gray-700">Présidentiel</span>: {
+                    electoralOrganism.vote.presidentialscrutinMode
+                  }
+                </li>
+                <li>
+                  <span class="font-bold text-gray-700">Législatif</span>: {
+                    electoralOrganism.vote.legislativeScrutinMode
+                  }
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div class="bg-farafina-primary/5 rounded-lg p-4">
