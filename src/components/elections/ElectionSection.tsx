@@ -35,7 +35,7 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
   };
 
   return (
-    <div className="mb-12">
+    <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
       <h2 className="text-2xl font-bold text-farafina-blue mb-6 flex items-center">
         {getIcon()}
         {title}
