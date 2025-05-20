@@ -75,7 +75,7 @@ function formatNumber(num: number) {
 
             <div class="p-6">
               <!-- Informations générales -->
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 <div class="bg-gray-50 rounded-lg p-4">
                   <span class="block text-sm text-gray-500">Date</span>
                   <span class="font-medium">
@@ -86,13 +86,11 @@ function formatNumber(num: number) {
                     })}
                   </span>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-4">
+                <div class="bg-gray-50 rounded-lg p-3">
                   <span class="block text-sm text-gray-500">Participation</span>
-                  <span class="font-medium">{resultat?.data.participation || 'N/A'}%</span>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <span class="block text-sm text-gray-500">Votes exprimés</span>
-                  <span class="font-medium">{formatNumber(resultat?.data.votesExprimes || 0)}</span>
+                  <span class="font-medium">
+                    {resultat ? (resultat.data.participation / resultat.data.electeur * 100).toFixed(2) + '%' : 'N/A'}
+                  </span>
                 </div>
                 <div class="bg-gray-50 rounded-lg p-4">
                   <span class="block text-sm text-gray-500">Statut</span>
@@ -110,7 +108,7 @@ function formatNumber(num: number) {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <span class="text-sm text-gray-500">Participation</span>
-                        <div class="font-medium text-xl">{resultat.data.participation}%</div>
+                        <div class="font-medium text-xl">{formatNumber(resultat.data.participation)}</div>
                       </div>
                       <div>
                         <span class="text-sm text-gray-500">Nombre d'électeurs</span>
@@ -118,15 +116,19 @@ function formatNumber(num: number) {
                       </div>
                     </div>
                     <div class="mt-4">
-                      <span class="text-sm text-gray-500">Source des résultats</span>
-                      <div class="font-medium">{resultat.data.source_résultats}</div>
+                      {resultat.data.resultats && (
+                        <div class="mt-4">
+                          <span class="text-sm text-gray-500">Résultats détaillés</span>
+                          <div class="font-medium whitespace-pre-wrap">{resultat.data.resultats}</div>
+                        </div>
+                      )}
                     </div>
-                    {resultat.data.resultats && (
-                      <div class="mt-4">
-                        <span class="text-sm text-gray-500">Résultats détaillés</span>
-                        <div class="font-medium whitespace-pre-wrap">{resultat.data.resultats}</div>
-                      </div>
-                    )}
+                    <span class="text-sm text-gray-500">Source des résultats</span>
+                    <div class="font-medium">
+                      <a href={resultat.data.source_url} target="_blank" rel="noopener noreferrer">
+                        {resultat.data.source_résultats}
+                      </a>
+                    </div>
                   </div>
 
                   {resultat.data.defis && (

@@ -44,7 +44,7 @@ const pays = defineCollection({
       region: record["Zone geographique"] || "",
       vote: {
         presidentialVote: record["Présidentiel - Régime de vote"] || "",
-        presidentialscrutinMode: record["Présidentiel - Mode de scrutin"] || "",
+        presidentialscrutinMode: record["Presidentiel - Mode de scrutin"] || "",
         presidentialResults:
           record[
             "Organe de proclamation des resultats definitifs Présidentiel"

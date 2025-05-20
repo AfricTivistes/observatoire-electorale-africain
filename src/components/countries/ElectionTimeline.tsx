@@ -1,11 +1,16 @@
-import React from 'react';
-import { FaVoteYea, FaCalendarAlt, FaCheckCircle, FaClock } from 'react-icons/fa';
+import React from "react";
+import {
+  FaVoteYea,
+  FaCalendarAlt,
+  FaCheckCircle,
+  FaClock,
+} from "react-icons/fa";
 
 interface ElectionTimelineProps {
   events: {
     date: string;
     type: string;
-    status: 'Précédente' | 'À venir' | 'En préparation';
+    status: "Précédente" | "À venir" | "En préparation";
     turnout?: number;
     description: string;
     vainqueur?: string;
@@ -13,16 +18,21 @@ interface ElectionTimelineProps {
   countryName: string;
 }
 
-const ElectionTimeline: React.FC<ElectionTimelineProps> = ({ events, countryName }) => {
-  const sortedEvents = [...events].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+const ElectionTimeline: React.FC<ElectionTimelineProps> = ({
+  events,
+  countryName,
+}) => {
+  const sortedEvents = [...events].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'Précédente':
+      case "Précédente":
         return <FaCheckCircle className="text-green-500" />;
-      case 'À venir':
+      case "À venir":
         return <FaClock className="text-blue-500" />;
-      case 'En préparation':
+      case "En préparation":
         return <FaVoteYea className="text-yellow-500" />;
       default:
         return null;
@@ -31,14 +41,14 @@ const ElectionTimeline: React.FC<ElectionTimelineProps> = ({ events, countryName
 
   const getStatusClass = (status: string) => {
     switch (status) {
-      case 'Précédente':
-        return 'bg-green-50 border-green-200';
-      case 'À venir':
-        return 'bg-blue-50 border-blue-200';
-      case 'En préparation':
-        return 'bg-yellow-50 border-yellow-200';
+      case "Précédente":
+        return "bg-green-50 border-green-200";
+      case "À venir":
+        return "bg-blue-50 border-blue-200";
+      case "En préparation":
+        return "bg-yellow-50 border-yellow-200";
       default:
-        return 'bg-gray-50 border-gray-200';
+        return "bg-gray-50 border-gray-200";
     }
   };
 
@@ -51,12 +61,11 @@ const ElectionTimeline: React.FC<ElectionTimelineProps> = ({ events, countryName
 
       <div className="space-y-6">
         {sortedEvents.map((event, index) => (
-          <div 
+          <div
             key={index}
             className={`relative border-l-4 pl-6 pb-6 ${getStatusClass(event.status)}`}
           >
             <div className="absolute -left-3 top-0 w-8 h-8  bg-white rounded-full border-2 border-africa-primary flex items-center justify-center">
-
               {getStatusIcon(event.status)}
             </div>
 
@@ -64,13 +73,17 @@ const ElectionTimeline: React.FC<ElectionTimelineProps> = ({ events, countryName
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-africa-primary">
-                    {event.status === 'Précédente' ? `${event.type} - ${event.vainqueur || 'Inconnu'}` : event.type}
+                    {event.status === "Précédente"
+                      ? `${event.type} - ${event.vainqueur || "Inconnu"}`
+                      : event.type}
                   </h3>
                   <p className="text-gray-600">
-                    {event.status === 'À venir' ? new Date(event.date).getFullYear().toString() : event.date}
+                    {event.status === "À venir"
+                      ? new Date(event.date).getFullYear().toString()
+                      : event.date}
                   </p>
                 </div>
-                {event.status === 'Précédente' && event.turnout && (
+                {event.status === "Précédente" && event.turnout && (
                   <div className="text-right">
                     <span className="text-sm text-gray-600">Participation</span>
                     <p className="font-semibold text-africa-secondary">
