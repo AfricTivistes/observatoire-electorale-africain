@@ -219,7 +219,7 @@ function formatNumber(num: number) {
       <div class="flex justify-center items-center mt-8 space-x-2">
         {currentPage > 1 && (
           <a
-            href={`?page=${currentPage - 1}`}
+            href={`/elections/results?page=${currentPage - 1}`}
             class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
           >
             Précédent
@@ -228,7 +228,7 @@ function formatNumber(num: number) {
         
         {Array.from({ length: totalPages }, (_, i) => (
           <a
-            href={`?page=${i + 1}`}
+            href={`/elections/results?page=${i + 1}`}
             class={`px-4 py-2 rounded-lg ${
               currentPage === i + 1
                 ? 'bg-farafina-primary text-white'
@@ -241,7 +241,7 @@ function formatNumber(num: number) {
 
         {currentPage < totalPages && (
           <a
-            href={`?page=${currentPage + 1}`}
+            href={`/elections/results?page=${currentPage + 1}`}
             class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
           >
             Suivant
