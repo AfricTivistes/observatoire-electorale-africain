@@ -24,21 +24,21 @@ const completedElections = elections
 const totalPages = Math.ceil(completedElections.length / itemsPerPage);
 
 // Récupérer d'abord tous les résultats qui correspondent aux élections terminées
-const completedResults = resultatsElections.filter(resultat => 
-  completedElections.some(election => election.data.id === resultat.data.Elections_id)
-);
+// Récupérer tous les résultats pour les élections complétées
+const electionsWithResults = completedElections.map(election => {
+  const resultat = resultatsElections.find(r => r.data.Elections_id === election.data.id);
+  return {
+    election,
+    resultat
+  };
+}).filter(({ resultat }) => resultat !== undefined);
 
-// Associer les résultats aux élections
-const electionsWithResults = completedElections.map(election => ({
-  election,
-  resultat: completedResults.find(r => r.data.Elections_id === election.data.id)
-}));
+// Paginer après avoir filtré les résultats valides
+const paginatedElectionsWithResults = electionsWithResults
+  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-// Paginer les élections avec leurs résultats
-const paginatedElectionsWithResults = electionsWithResults.slice(
-  (currentPage - 1) * itemsPerPage,
-  currentPage * itemsPerPage
-);
+// Mettre à jour le nombre total de pages en fonction des résultats valides
+const totalPages = Math.ceil(electionsWithResults.length / itemsPerPage);
 
 // Formater les nombres
 function formatNumber(num: number) {
