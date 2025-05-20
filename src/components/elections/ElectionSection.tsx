@@ -41,8 +41,9 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
         {title}
       </h2>
       <div className="space-y-4">
-        {elections.map((election) => (
+        {elections.map((election, index) => (
           <div
+            key={`${election.data.code_pays}-${election.data.dateElection}-${index}`}
             className={`bg-white rounded-lg shadow-sm p-6 border-l-4 ${colorClass}`}
           >
             <div className="flex items-center justify-between">

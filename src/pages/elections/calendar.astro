@@ -43,7 +43,7 @@ for (let i = 0; i < 24; i++) {
 const allElections = [...upcomingElections, ...preparingElections];
 const electionsByMonth = months.map(month => {
   const monthElections = allElections.filter(election => {
-    const electionDate = new Date(election.date_élection);
+    const electionDate = new Date(election.data.dateElection);
     return electionDate.getMonth() === month.date.getMonth() && 
            electionDate.getFullYear() === month.date.getFullYear();
   });
@@ -87,7 +87,7 @@ const regions = [
   </PageHeader>
 
   <div class="container mx-auto px-4 py-8">
-   
+
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="lg:w-1/4">
         <FilterSidebar
@@ -134,9 +134,8 @@ const regions = [
       </div>
 
       <div class="lg:w-3/4">
+        <YearTimeline client:load elections={filteredElections} />
 
-         <YearTimeline client:load elections={filteredElections} />
-      
         <ElectionSection 
           client:load
           title="Élections à venir"
@@ -144,6 +143,15 @@ const regions = [
           icon="calendar"
           elections={upcomingElections}
           colorClass="border-farafina-blue"
+          onFilterChange={(filters) => {
+            const filtered = elections.filter(election => {
+              if (filters.year && new Date(election.data.dateElection).getFullYear().toString() !== filters.year) return false;
+              if (filters.type && election.data.typeElection !== filters.type) return false;
+              if (filters.region && election.data.region !== filters.region) return false;
+              return true;
+            });
+            return filtered;
+          }}
         />
 
                 <!-- Calendrier des élections amélioré -->
