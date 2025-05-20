@@ -16,6 +16,11 @@ interface ElectionSectionProps {
   icon: "calendar" | "vote";
   elections: Election[];
   colorClass: string;
+  filters?: {
+    year?: string;
+    type?: string;
+    region?: string;
+  };
 }
 
 const ElectionSection: React.FC<ElectionSectionProps> = ({

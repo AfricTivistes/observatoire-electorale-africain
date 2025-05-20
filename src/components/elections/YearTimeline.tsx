@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 
 interface Election {
@@ -7,37 +8,57 @@ interface Election {
     dateElection: string;
     typeElection: string;
     code_pays: string;
+    region: string;
   };
 }
 
 interface YearTimelineProps {
   elections: Election[];
+  filters?: {
+    year?: string;
+    type?: string;
+    region?: string;
+  };
 }
 
-const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
+const YearTimeline: React.FC<YearTimelineProps> = ({ elections, filters }) => {
+  const [filteredElections, setFilteredElections] = useState(elections);
   const currentYear = new Date().getFullYear();
+  
   const months = [
-    "Janvier",
-    "Février",
-    "Mars",
-    "Avril",
-    "Mai",
-    "Juin",
-    "Juillet",
-    "Août",
-    "Septembre",
-    "Octobre",
-    "Novembre",
-    "Décembre",
+    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
   ];
 
-  const electionsByMonth = months.map((month) => {
-    const monthElections = elections.filter((election) => {
+  useEffect(() => {
+    let filtered = [...elections];
+    
+    if (filters) {
+      if (filters.year) {
+        filtered = filtered.filter(election => 
+          new Date(election.data.dateElection).getFullYear().toString() === filters.year
+        );
+      }
+      if (filters.type) {
+        filtered = filtered.filter(election => 
+          election.data.typeElection === filters.type
+        );
+      }
+      if (filters.region) {
+        filtered = filtered.filter(election => 
+          election.data.region === filters.region
+        );
+      }
+    }
+    
+    setFilteredElections(filtered);
+  }, [elections, filters]);
+
+  const electionsByMonth = months.map(month => {
+    const monthElections = filteredElections.filter(election => {
       const electionDate = new Date(election.data.dateElection);
-      return (
-        electionDate.getMonth() === months.indexOf(month) &&
-        electionDate.getFullYear() === currentYear
-      );
+      return electionDate.getMonth() === months.indexOf(month) &&
+             electionDate.getFullYear() === currentYear;
     });
     return { month, elections: monthElections };
   });
@@ -51,7 +72,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
 
       <div className="space-y-4">
         {electionsByMonth
-          .filter((monthData) => monthData.elections.length > 0)
+          .filter(monthData => monthData.elections.length > 0)
           .map((monthData, index) => (
             <div key={index} className="relative">
               <div className="flex items-start">
@@ -63,7 +84,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
                   <div className="space-y-3">
                     {monthData.elections.map((election, idx) => (
                       <div
-                        key={idx}
+                        key={`${election.data.code_pays}-${idx}`}
                         className="bg-farafina-primary/5 rounded-lg p-4 border-l-4 border-farafina-primary"
                       >
                         <div className="flex items-center justify-between">
@@ -83,9 +104,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
                             </div>
                           </div>
                           <div className="text-sm text-gray-600">
-                            {new Date(
-                              election.data.dateElection,
-                            ).toLocaleDateString("fr-FR")}
+                            {new Date(election.data.dateElection).toLocaleDateString("fr-FR")}
                           </div>
                         </div>
                       </div>

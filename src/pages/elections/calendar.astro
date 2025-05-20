@@ -41,6 +41,13 @@ for (let i = 0; i < 24; i++) {
 
 // Organiser les élections par mois
 const allElections = [...upcomingElections, ...preparingElections];
+// État des filtres actifs
+const activeFilters = {
+  year: undefined,
+  type: undefined,
+  region: undefined
+};
+
 const electionsByMonth = months.map(month => {
   const monthElections = allElections.filter(election => {
     const electionDate = new Date(election.data.dateElection);
@@ -134,7 +141,7 @@ const regions = [
       </div>
 
       <div class="lg:w-3/4">
-        <YearTimeline client:load elections={filteredElections} />
+        <YearTimeline client:load elections={filteredElections} filters={activeFilters} />
 
         <ElectionSection 
           client:load
@@ -142,6 +149,7 @@ const regions = [
           status="À venir"
           icon="calendar"
           elections={upcomingElections}
+          filters={activeFilters}
           colorClass="border-farafina-blue"
           onFilterChange={(filters) => {
             const filtered = elections.filter(election => {
