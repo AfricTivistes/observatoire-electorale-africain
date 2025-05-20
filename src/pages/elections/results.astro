@@ -11,9 +11,9 @@ import { getCollection } from 'astro:content';
 const elections = await getCollection('elections');
 const resultatsElections = await getCollection('resultatsElections');
 
-// Filtrer les élections terminées et les trier par date
+// Filtrer les élections Précédentes et les trier par date
 const completedElections = elections
-  .filter(election => election.data.statut === "Terminée")
+  .filter(election => election.data.statut === "Précédente")
   .sort((a, b) => new Date(b.data.dateElection).getTime() - new Date(a.data.dateElection).getTime());
 
 // Formater les nombres
