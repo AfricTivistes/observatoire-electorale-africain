@@ -24,6 +24,7 @@ const filteredElections = elections
 // Organiser les élections par statut
 const upcomingElections = filteredElections.filter(e => e.data.statut === "À venir");
 const preparingElections = filteredElections.filter(e => e.data.statut === "En préparation");
+console.log(upcomingElections);
 
 // Créer un calendrier pour les 24 prochains mois
 const currentDate = new Date();
@@ -74,7 +75,7 @@ const regions = [
 <Layout title="Calendrier Électoral | Observatoire des Élections en Afrique">
   <PageHeader
     title="Calendrier Électoral" 
-    subtitle="Consultez les dates des élections à venir et en préparation"
+    subtitle="Consultez les dates des élections et en préparation et à venir"
     breadcrumbs={[
       { label: 'Accueil', href: '/' },
       { label: 'Élections', href: '/elections' },
@@ -150,14 +151,6 @@ const regions = [
       </div>
 
       <div class="lg:w-3/4">
-        <ElectionSection 
-          client:load
-          title="Élections à venir"
-          status="À venir"
-          icon="calendar"
-          elections={elections.filter(election => election.data.statut === "À venir")}
-          colorClass="border-farafina-primary"
-        />
 
         <ElectionSection 
           client:load
@@ -165,7 +158,16 @@ const regions = [
           status="En préparation"
           icon="vote"
           elections={elections.filter(election => election.data.statut === "En préparation")}
-          colorClass="border-farafina-secondary"
+          colorClass="border-farafina-blue"
+        />
+      
+        <ElectionSection 
+          client:load
+          title="Élections à venir"
+          status="À venir"
+          icon="calendar"
+          elections={upcomingElections}
+          colorClass="border-farafina-primary"
         />
 
                 <!-- Calendrier des élections -->
@@ -205,7 +207,7 @@ const regions = [
           ))}
         </div>
 
-        <!-- Mois sans élections -->
+        <!-- Mois sans élections >
         <div class="mt-8 bg-gray-50 rounded-lg p-6 border border-gray-200">
           <h3 class="text-lg font-semibold text-farafina-dark mb-4">Mois sans élections programmées</h3>
           <div class="flex flex-wrap gap-2">
@@ -215,7 +217,7 @@ const regions = [
               </span>
             ))}
           </div>
-        </div>
+        </div-->
       </div>
     </div>
   </div>
