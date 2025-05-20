@@ -21,20 +21,24 @@ const completedElections = elections
   .filter(election => election.data.statut === "Précédente")
   .sort((a, b) => new Date(b.data.dateElection).getTime() - new Date(a.data.dateElection).getTime());
 
-// Filter elections with results first
+// Filter elections with results and ensure all data is present
 const electionsWithResults = completedElections
-  .map(election => ({
-    election,
-    resultat: resultatsElections.find(r => r.data.Elections_id === election.data.id)
-  }))
-  .filter(({ resultat }) => resultat !== undefined);
+  .map(election => {
+    const resultat = resultatsElections.find(r => r.data.Elections_id === election.data.id);
+    return {
+      election,
+      resultat: resultat || undefined
+    };
+  })
+  .filter(({ resultat }) => resultat !== undefined)
+  .sort((a, b) => new Date(b.election.data.dateElection).getTime() - new Date(a.election.data.dateElection).getTime());
 
-// Calculate total pages based on elections with results
+// Calculate total pages based on available results
 const totalPages = Math.ceil(electionsWithResults.length / itemsPerPage);
 
-// Get paginated data
-const paginatedElectionsWithResults = electionsWithResults
-  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+// Get paginated data with proper offset
+const startIndex = (currentPage - 1) * itemsPerPage;
+const paginatedElectionsWithResults = electionsWithResults.slice(startIndex, startIndex + itemsPerPage);
 
 // Formater les nombres
 function formatNumber(num: number) {
