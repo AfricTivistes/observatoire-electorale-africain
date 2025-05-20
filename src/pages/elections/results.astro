@@ -80,7 +80,12 @@ function formatNumber(num: number) {
     <!-- Résultats des élections -->
     <div class="space-y-8">
       {paginatedElectionsWithResults.map(({ election, resultat }) => (
-        <ResultData election={election} resultat={resultat} formatNumber={formatNumber} />
+        <ResultData 
+          election={election} 
+          resultat={resultat} 
+          formatNumber={formatNumber}
+          client:load
+        />
       ))}
     </div>
 
@@ -95,7 +100,7 @@ function formatNumber(num: number) {
             Précédent
           </a>
         )}
-        
+
         {Array.from({ length: totalPages }, (_, i) => (
           <a
             href={`/elections/results?page=${i + 1}`}
