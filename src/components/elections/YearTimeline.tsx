@@ -39,7 +39,9 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
       </h2>
       
       <div className="space-y-4">
-        {electionsByMonth.map((monthData, index) => (
+        {electionsByMonth
+          .filter(monthData => monthData.elections.length > 0)
+          .map((monthData, index) => (
           <div key={index} className="relative">
             <div className="flex items-start">
               <div className="min-w-[120px] font-medium text-gray-600">
@@ -47,8 +49,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
               </div>
               
               <div className="flex-grow">
-                {monthData.elections.length > 0 ? (
-                  <div className="space-y-3">
+                <div className="space-y-3">
                     {monthData.elections.map((election, idx) => (
                       <div key={idx} className="bg-farafina-primary/5 rounded-lg p-4 border-l-4 border-farafina-primary">
                         <div className="flex items-center justify-between">
@@ -73,10 +74,6 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
                         </div>
                       </div>
                     ))}
-                  </div>
-                ) : (
-                  <div className="h-12 flex items-center">
-                    <span className="text-gray-400 text-sm">Aucune élection prévue</span>
                   </div>
                 )}
               </div>
