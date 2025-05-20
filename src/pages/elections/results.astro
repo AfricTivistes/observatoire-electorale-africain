@@ -12,9 +12,19 @@ const elections = await getCollection('elections');
 const resultatsElections = await getCollection('resultatsElections');
 
 // Filtrer les élections Précédentes et les trier par date
+// Pagination
+const itemsPerPage = 10;
+const currentPage = 1;
+
 const completedElections = elections
   .filter(election => election.data.statut === "Précédente")
   .sort((a, b) => new Date(b.data.dateElection).getTime() - new Date(a.data.dateElection).getTime());
+
+const totalPages = Math.ceil(completedElections.length / itemsPerPage);
+const paginatedElections = completedElections.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
 
 // Formater les nombres
 function formatNumber(num: number) {
@@ -55,7 +65,7 @@ function formatNumber(num: number) {
 
     <!-- Résultats des élections -->
     <div class="space-y-8">
-      {completedElections.map(election => {
+      {paginatedElections.map(election => {
         const resultat = resultatsElections.find(r => r.data.Elections_id === election.data.id);
         return (
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -203,5 +213,22 @@ function formatNumber(num: number) {
         );
       })}
     </div>
+
+    <!-- Pagination -->
+    {totalPages > 1 && (
+      <div class="flex justify-center items-center mt-8 space-x-2">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            class={`px-4 py-2 rounded-lg ${
+              currentPage === i + 1
+                ? 'bg-farafina-primary text-white'
+                : 'bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+    )}
   </div>
 </Layout>
