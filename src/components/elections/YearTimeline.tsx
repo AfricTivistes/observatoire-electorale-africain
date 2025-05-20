@@ -35,7 +35,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
     <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
       <h2 className="text-2xl font-bold mb-6 flex items-center text-farafina-primary">
         <FaCalendarAlt className="mr-3" />
-        Timeline Électorale {currentYear}
+        Calendrier Électorale {currentYear}
       </h2>
       
       <div className="space-y-4">

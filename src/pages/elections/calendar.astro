@@ -87,7 +87,7 @@ const regions = [
   </PageHeader>
 
   <div class="container mx-auto px-4 py-8">
-    <YearTimeline client:load elections={filteredElections} />
+   
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="lg:w-1/4">
         <FilterSidebar
@@ -135,14 +135,7 @@ const regions = [
 
       <div class="lg:w-3/4">
 
-        <ElectionSection 
-          client:load
-          title="Élections en préparation"
-          status="En préparation"
-          icon="vote"
-          elections={preparingElections}
-          colorClass="border-farafina-blue"
-        />
+         <YearTimeline client:load elections={filteredElections} />
       
         <ElectionSection 
           client:load
@@ -150,7 +143,7 @@ const regions = [
           status="À venir"
           icon="calendar"
           elections={upcomingElections}
-          colorClass="border-farafina-primary"
+          colorClass="border-farafina-blue"
         />
 
                 <!-- Calendrier des élections amélioré -->

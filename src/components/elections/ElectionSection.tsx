@@ -28,15 +28,15 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
   const getIcon = () => {
     switch (icon) {
       case "calendar":
-        return <FaCalendarAlt className="text-farafina-primary mr-3" />;
+        return <FaCalendarAlt className="text-farafina-blue mr-3" />;
       case "vote":
-        return <FaVoteYea className="text-farafina-blue mr-3" />;
+        return <FaVoteYea className="text-farafina-primary mr-3" />;
     }
   };
 
   return (
     <div className="mb-12">
-      <h2 className="text-2xl font-bold text-farafina-dark mb-6 flex items-center">
+      <h2 className="text-2xl font-bold text-farafina-blue mb-6 flex items-center">
         {getIcon()}
         {title}
       </h2>
@@ -61,7 +61,7 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
                     </a>
                   </h3>
                   <p
-                    className={`text-lg font-medium ${status === "À venir" ? "text-farafina-primary" : "text-farafina-blue"}`}
+                    className={`text-lg font-medium ${status === "À venir" ? "text-farafina-blue" : "text-farafina-primary"}`}
                   >
                     {election.data.typeElection}
                   </p>
@@ -69,7 +69,7 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
               </div>
               <div className="text-right">
                 <p
-                  className={`text-lg font-medium ${status === "À venir" ? "text-farafina-primary" : "text-farafina-blue"}`}
+                  className={`text-lg font-medium ${status === "À venir" ? "text-farafina-blue" : "text-farafina-primary"}`}
                 >
                   {status === "À venir"
                     ? new Date(election.data.dateElection).getFullYear()
