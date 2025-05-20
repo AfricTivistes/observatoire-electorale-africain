@@ -75,7 +75,6 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
                       </div>
                     ))}
                   </div>
-                )}
               </div>
             </div>
           </div>
