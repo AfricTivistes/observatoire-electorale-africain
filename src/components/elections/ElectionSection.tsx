@@ -35,15 +35,15 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
   };
 
   return (
-    <div className="mb-12">
+    <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
       <h2 className="text-2xl font-bold text-farafina-dark mb-6 flex items-center">
         {getIcon()}
         {title}
       </h2>
-      <div className="space-y-4">
+      <div className="space-y-4 grid grid-cols-2 gap-4">
         {elections.map((election) => (
           <div
-            className={`bg-white rounded-lg shadow-sm p-6 border-l-4 ${colorClass}`}
+            className={`bg-white rounded-lg shadow-sm p-6 border-l-4 ${colorClass} hover:bg-gray-100 transition duration-300`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
