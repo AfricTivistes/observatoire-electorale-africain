@@ -1,8 +1,8 @@
 ---
 import Layout from '../../layouts/MainLayout.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.tsx';
 import PageHeader from '../../components/PageHeader.tsx';
-import { FaChartBar, FaSearch, FaDownload, FaExternalLinkAlt } from 'react-icons/fa';
+import ResultData from '../../components/elections/ResultData.tsx';
+import { FaChartBar, FaSearch } from 'react-icons/fa';
 
 // Importer les collections
 import { getCollection } from 'astro:content';
@@ -79,152 +79,9 @@ function formatNumber(num: number) {
 
     <!-- Résultats des élections -->
     <div class="space-y-8">
-      {paginatedElectionsWithResults.map(({ election, resultat }) => {
-        return (
-          <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="bg-farafina-secondary text-white px-6 py-3 flex justify-between items-center">
-              <h3 class="text-xl font-semibold">
-                {election.data.nomPays} - {election.data.typeElection} ({new Date(election.data.dateElection).getFullYear()})
-              </h3>
-              <div class="flex space-x-2">
-                <button class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Télécharger les résultats">
-                  <FaDownload className="text-white" />
-                </button>
-                <a href={resultat.data.source_url} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Voir les détails">
-                  <FaExternalLinkAlt className="text-white" />
-                </a>
-              </div>
-            </div>
-
-            <div class="p-6">
-              <!-- Informations générales -->
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <span class="block text-sm text-gray-500">Date</span>
-                  <span class="font-medium">
-                    {new Date(election.data.dateElection).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </span>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3">
-                  <span class="block text-sm text-gray-500">Participation</span>
-                  <span class="font-medium">
-                    {resultat ? (resultat.data.participation / resultat.data.electeur * 100).toFixed(2) + '%' : 'N/A'}
-                  </span>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <span class="block text-sm text-gray-500">Statut</span>
-                  <span class={`font-medium ${resultat?.data.conteste ? 'text-farafina-accent' : 'text-green-600'}`}>
-                    {resultat?.data.conteste ? 'Résultats contestés' : 'Résultats validés'}
-                  </span>
-                </div>
-              </div>
-
-              <!-- Résultats -->
-              {resultat && (
-                <div class="space-y-4">
-                  <h4 class="font-semibold text-farafina-dark mb-4">Résultats de l'élection</h4>
-                  <div class="bg-gray-50 p-4 rounded-lg">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <span class="text-sm text-gray-500">Participation</span>
-                        <div class="font-medium text-xl">{formatNumber(resultat.data.participation)}</div>
-                      </div>
-                      <div>
-                        <span class="text-sm text-gray-500">Nombre d'électeurs</span>
-                        <div class="font-medium text-xl">{formatNumber(resultat.data.electeur)}</div>
-                      </div>
-                    </div>
-                    <div class="mt-4">
-                      {resultat.data.resultats && (
-                        <div class="mt-4">
-                          <span class="text-sm text-gray-500">Résultats détaillés</span>
-                          <div class="font-medium whitespace-pre-wrap">{resultat.data.resultats}</div>
-                        </div>
-                      )}
-                    </div>
-                    <span class="text-sm text-gray-500">Source des résultats</span>
-                    <div class="font-medium">
-                      <a href={resultat.data.source_url} target="_blank" rel="noopener noreferrer">
-                        {resultat.data.source_résultats}
-                      </a>
-                    </div>
-                  </div>
-
-                  {resultat.data.defis && (
-                    <div class="mt-4">
-                      <span class="text-sm text-gray-500">Défis Électoraux</span>
-                      <div class="font-medium">{resultat.data.defis}</div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <!-- Résultats des candidats -->
-              {resultat?.data.candidats && (
-                <div class="mt-6 space-y-4">
-                  <h4 class="font-semibold text-farafina-dark mb-4">Résultats par candidat</h4>
-                  {resultat.data.candidats.map((candidat) => (
-                    <div class="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow">
-                      <div class="flex flex-col md:flex-row md:items-center">
-                        <div class="md:w-1/4">
-                          <span class="font-semibold text-farafina-dark">
-                            {candidat.nom}
-                            {candidat.elu && (
-                              <span class="ml-2 inline-block px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
-                                Élu
-                              </span>
-                            )}
-                          </span>
-                          <div class="text-sm text-gray-500">{candidat.parti}</div>
-                        </div>
-                        <div class="md:w-1/2">
-                          <div class="relative pt-1">
-                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
-                              <div 
-                                style={`width: ${candidat.score}%`}
-                                class={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${candidat.elu ? 'bg-farafina-primary' : 'bg-farafina-secondary/70'}`}>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="md:w-1/4 text-right">
-                          <span class={`text-lg font-bold ${candidat.elu ? 'text-farafina-primary' : 'text-gray-700'}`}>
-                            {candidat.score}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <!-- Rapports d'observation -->
-              {resultat?.data.rapports && (
-                <div class="mt-6 pt-6 border-t border-gray-100">
-                  <h4 class="font-semibold text-farafina-dark mb-4">Rapports d'observation</h4>
-                  <div class="flex flex-wrap gap-3">
-                    {resultat.data.rapports.map((rapport, index) => (
-                      <a 
-                        href={rapport.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                      >
-                        <span class="mr-2">{rapport.titre}</span>
-                        <FaDownload className="text-gray-600" />
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      })}
+      {paginatedElectionsWithResults.map(({ election, resultat }) => (
+        <ResultData election={election} resultat={resultat} formatNumber={formatNumber} />
+      ))}
     </div>
 
     <!-- Pagination -->
