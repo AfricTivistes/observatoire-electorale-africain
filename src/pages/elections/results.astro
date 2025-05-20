@@ -16,14 +16,22 @@ const resultatsElections = await getCollection('resultatsElections');
 const itemsPerPage = 2;
 const currentPage = Astro.url.searchParams.get('page') ? parseInt(Astro.url.searchParams.get('page')) : 1;
 
+// Trier d'abord toutes les élections terminées
 const completedElections = elections
   .filter(election => election.data.statut === "Précédente")
   .sort((a, b) => new Date(b.data.dateElection).getTime() - new Date(a.data.dateElection).getTime());
 
 const totalPages = Math.ceil(completedElections.length / itemsPerPage);
+
+// Paginer les élections
 const paginatedElections = completedElections.slice(
   (currentPage - 1) * itemsPerPage,
   currentPage * itemsPerPage
+);
+
+// Récupérer uniquement les résultats pour les élections paginées
+const paginatedResults = resultatsElections.filter(resultat => 
+  paginatedElections.some(election => election.data.id === resultat.data.Elections_id)
 );
 
 // Formater les nombres
@@ -66,7 +74,7 @@ function formatNumber(num: number) {
     <!-- Résultats des élections -->
     <div class="space-y-8">
       {paginatedElections.map(election => {
-        const resultat = resultatsElections.find(r => r.data.Elections_id === election.data.id);
+        const resultat = paginatedResults.find(r => r.data.Elections_id === election.data.id);
         return (
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="bg-farafina-secondary text-white px-6 py-3 flex justify-between items-center">
