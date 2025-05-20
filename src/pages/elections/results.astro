@@ -102,11 +102,32 @@ function formatNumber(num: number) {
                 </div>
               </div>
 
-              <!-- Résultats des candidats -->
-              {resultat?.data.candidats && (
+              <!-- Résultats -->
+              {resultat && (
                 <div class="space-y-4">
-                  <h4 class="font-semibold text-farafina-dark mb-4">Résultats par candidat</h4>
-                  {resultat.data.candidats.map((candidat) => (
+                  <h4 class="font-semibold text-farafina-dark mb-4">Résultats de l'élection</h4>
+                  <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span class="text-sm text-gray-500">Participation</span>
+                        <div class="font-medium text-xl">{resultat.data.participation}%</div>
+                      </div>
+                      <div>
+                        <span class="text-sm text-gray-500">Nombre d'électeurs</span>
+                        <div class="font-medium text-xl">{formatNumber(resultat.data.electeur)}</div>
+                      </div>
+                    </div>
+                    <div class="mt-4">
+                      <span class="text-sm text-gray-500">Source des résultats</span>
+                      <div class="font-medium">{resultat.data.source_résultats}</div>
+                    </div>
+                    {resultat.data.resultats && (
+                      <div class="mt-4">
+                        <span class="text-sm text-gray-500">Résultats détaillés</span>
+                        <div class="font-medium whitespace-pre-wrap">{resultat.data.resultats}</div>
+                      </div>
+                    )}
+                  </div>
                     <div class="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow">
                       <div class="flex flex-col md:flex-row md:items-center">
                         <div class="md:w-1/4">
