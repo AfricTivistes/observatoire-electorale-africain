@@ -13,7 +13,7 @@ const resultatsElections = await getCollection('resultatsElections');
 
 // Filtrer les élections Précédentes et les trier par date
 // Pagination
-const itemsPerPage = 10;
+const itemsPerPage = 2;
 const currentPage = Astro.url.searchParams.get('page') ? parseInt(Astro.url.searchParams.get('page')) : 1;
 
 const completedElections = elections
@@ -77,7 +77,7 @@ function formatNumber(num: number) {
                 <button class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Télécharger les résultats">
                   <FaDownload className="text-white" />
                 </button>
-                <a href={`/elections/${election.data.id}`} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Voir les détails">
+                <a href={resultat.data.source_url} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Voir les détails">
                   <FaExternalLinkAlt className="text-white" />
                 </a>
               </div>
