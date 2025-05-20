@@ -21,19 +21,18 @@ const completedElections = elections
   .filter(election => election.data.statut === "Précédente")
   .sort((a, b) => new Date(b.data.dateElection).getTime() - new Date(a.data.dateElection).getTime());
 
-const totalPages = Math.ceil(completedElections.length / itemsPerPage);
-
-// Récupérer d'abord tous les résultats qui correspondent aux élections terminées
-// Récupérer tous les résultats pour les élections complétées
-const electionsWithResults = completedElections.map(election => {
-  const resultat = resultatsElections.find(r => r.data.Elections_id === election.data.id);
-  return {
+// Filter elections with results first
+const electionsWithResults = completedElections
+  .map(election => ({
     election,
-    resultat
-  };
-}).filter(({ resultat }) => resultat !== undefined);
+    resultat: resultatsElections.find(r => r.data.Elections_id === election.data.id)
+  }))
+  .filter(({ resultat }) => resultat !== undefined);
 
-// Paginer après avoir filtré les résultats valides
+// Calculate total pages based on elections with results
+const totalPages = Math.ceil(electionsWithResults.length / itemsPerPage);
+
+// Get paginated data
 const paginatedElectionsWithResults = electionsWithResults
   .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
