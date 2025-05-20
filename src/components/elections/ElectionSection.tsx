@@ -16,11 +16,6 @@ interface ElectionSectionProps {
   icon: "calendar" | "vote";
   elections: Election[];
   colorClass: string;
-  filters?: {
-    year?: string;
-    type?: string;
-    region?: string;
-  };
 }
 
 const ElectionSection: React.FC<ElectionSectionProps> = ({
@@ -33,22 +28,21 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
   const getIcon = () => {
     switch (icon) {
       case "calendar":
-        return <FaCalendarAlt className="text-farafina-blue mr-3" />;
+        return <FaCalendarAlt className="text-farafina-primary mr-3" />;
       case "vote":
-        return <FaVoteYea className="text-farafina-primary mr-3" />;
+        return <FaVoteYea className="text-farafina-blue mr-3" />;
     }
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-      <h2 className="text-2xl font-bold text-farafina-blue mb-6 flex items-center">
+    <div className="mb-12">
+      <h2 className="text-2xl font-bold text-farafina-dark mb-6 flex items-center">
         {getIcon()}
         {title}
       </h2>
       <div className="space-y-4">
-        {elections.map((election, index) => (
+        {elections.map((election) => (
           <div
-            key={`${election.data.code_pays}-${election.data.dateElection}-${index}`}
             className={`bg-white rounded-lg shadow-sm p-6 border-l-4 ${colorClass}`}
           >
             <div className="flex items-center justify-between">
@@ -67,7 +61,7 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
                     </a>
                   </h3>
                   <p
-                    className={`text-lg font-medium ${status === "À venir" ? "text-farafina-blue" : "text-farafina-primary"}`}
+                    className={`text-lg font-medium ${status === "À venir" ? "text-farafina-primary" : "text-farafina-blue"}`}
                   >
                     {election.data.typeElection}
                   </p>
@@ -75,7 +69,7 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
               </div>
               <div className="text-right">
                 <p
-                  className={`text-lg font-medium ${status === "À venir" ? "text-farafina-blue" : "text-farafina-primary"}`}
+                  className={`text-lg font-medium ${status === "À venir" ? "text-farafina-primary" : "text-farafina-blue"}`}
                 >
                   {status === "À venir"
                     ? new Date(election.data.dateElection).getFullYear()

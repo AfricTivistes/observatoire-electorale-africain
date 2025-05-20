@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from "react";
-import { FaCalendarAlt } from "react-icons/fa";
+import React from 'react';
+import { FaCalendarAlt } from 'react-icons/fa';
 
 interface Election {
   data: {
@@ -8,54 +8,22 @@ interface Election {
     dateElection: string;
     typeElection: string;
     code_pays: string;
-    region: string;
   };
 }
 
 interface YearTimelineProps {
   elections: Election[];
-  filters?: {
-    year?: string;
-    type?: string;
-    region?: string;
-  };
 }
 
-const YearTimeline: React.FC<YearTimelineProps> = ({ elections, filters }) => {
-  const [filteredElections, setFilteredElections] = useState(elections);
+const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
   const currentYear = new Date().getFullYear();
-  
   const months = [
-    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
   ];
 
-  useEffect(() => {
-    let filtered = [...elections];
-    
-    if (filters) {
-      if (filters.year) {
-        filtered = filtered.filter(election => 
-          new Date(election.data.dateElection).getFullYear().toString() === filters.year
-        );
-      }
-      if (filters.type) {
-        filtered = filtered.filter(election => 
-          election.data.typeElection === filters.type
-        );
-      }
-      if (filters.region) {
-        filtered = filtered.filter(election => 
-          election.data.region === filters.region
-        );
-      }
-    }
-    
-    setFilteredElections(filtered);
-  }, [elections, filters]);
-
   const electionsByMonth = months.map(month => {
-    const monthElections = filteredElections.filter(election => {
+    const monthElections = elections.filter(election => {
       const electionDate = new Date(election.data.dateElection);
       return electionDate.getMonth() === months.indexOf(month) &&
              electionDate.getFullYear() === currentYear;
@@ -67,26 +35,23 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections, filters }) => {
     <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
       <h2 className="text-2xl font-bold mb-6 flex items-center text-farafina-primary">
         <FaCalendarAlt className="mr-3" />
-        Calendrier Électorale {currentYear}
+        Timeline Électorale {currentYear}
       </h2>
-
+      
       <div className="space-y-4">
         {electionsByMonth
           .filter(monthData => monthData.elections.length > 0)
           .map((monthData, index) => (
-            <div key={index} className="relative">
-              <div className="flex items-start">
-                <div className="min-w-[120px] font-medium text-gray-600">
-                  {monthData.month}
-                </div>
-
-                <div className="flex-grow">
-                  <div className="space-y-3">
+          <div key={index} className="relative">
+            <div className="flex items-start">
+              <div className="min-w-[120px] font-medium text-gray-600">
+                {monthData.month}
+              </div>
+              
+              <div className="flex-grow">
+                <div className="space-y-3">
                     {monthData.elections.map((election, idx) => (
-                      <div
-                        key={`${election.data.code_pays}-${idx}`}
-                        className="bg-farafina-primary/5 rounded-lg p-4 border-l-4 border-farafina-primary"
-                      >
+                      <div key={idx} className="bg-farafina-primary/5 rounded-lg p-4 border-l-4 border-farafina-primary">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
                             <img
@@ -104,16 +69,16 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections, filters }) => {
                             </div>
                           </div>
                           <div className="text-sm text-gray-600">
-                            {new Date(election.data.dateElection).toLocaleDateString("fr-FR")}
+                            {new Date(election.data.dateElection).toLocaleDateString('fr-FR')}
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
               </div>
             </div>
-          ))}
+          </div>
+        ))}
       </div>
     </div>
   );
