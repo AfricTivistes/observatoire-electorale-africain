@@ -37,9 +37,6 @@ const electionsWithResults = completedElections.map(election => {
 const paginatedElectionsWithResults = electionsWithResults
   .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-// Mettre à jour le nombre total de pages en fonction des résultats valides
-const totalPages = Math.ceil(electionsWithResults.length / itemsPerPage);
-
 // Formater les nombres
 function formatNumber(num: number) {
   return new Intl.NumberFormat('fr-FR').format(num);
