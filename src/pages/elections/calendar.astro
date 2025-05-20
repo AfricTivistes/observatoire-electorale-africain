@@ -1,7 +1,8 @@
 ---
 import Layout from '../../layouts/MainLayout.astro';
 import PageHeader from '../../components/PageHeader.tsx';
-import { FaCalendarAlt, FaFilter, FaDownload, FaSync } from 'react-icons/fa';
+import { FaCalendarAlt } from 'react-icons/fa';
+import FilterSidebar from '../../components/common/FilterSidebar';
 import ElectionSection from '../../components/elections/ElectionSection';
 
 // Importer la collection elections
@@ -87,67 +88,48 @@ const regions = [
 
   <div class="container mx-auto px-4 py-8">
     <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Sidebar avec filtres -->
       <div class="lg:w-1/4">
-        <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-          <div class="flex items-center mb-6">
-            <FaFilter class="text-farafina-primary mr-2" />
-            <h2 class="text-xl font-bold text-farafina-dark">Filtres</h2>
-          </div>
-
-          <div class="space-y-6">
-            <!-- Filtre par année -->
-            <div>
-              <h3 class="font-semibold mb-3 text-farafina-secondary">Année</h3>
-              <div class="flex space-x-2">
-                <select class="form-select w-full rounded-md border-gray-300 focus:border-farafina-primary focus:ring focus:ring-farafina-primary/20">
-                  <option value="">Toutes les années</option>
-                  <option value="2024">2024</option>
-                  <option value="2025">2025</option>
-                  <option value="2026">2026</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Filtre par type d'élection -->
-            <div>
-              <h3 class="font-semibold mb-3 text-farafina-secondary">Type d'Élection</h3>
-              <div class="space-y-2">
-                {electionTypes.map(type => (
-                  <label class="flex items-center">
-                    <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
-                    <span class="ml-2 text-gray-700">{type}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <!-- Filtre par région -->
-            <div>
-              <h3 class="font-semibold mb-3 text-farafina-secondary">Région</h3>
-              <div class="space-y-2">
-                {regions.map(region => (
-                  <label class="flex items-center">
-                    <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
-                    <span class="ml-2 text-gray-700">{region}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <!-- Boutons d'action -->
-            <div class="pt-4 border-t border-gray-200 flex flex-col space-y-3">
-              <button class="btn-primary flex items-center justify-center">
-                <FaSync class="mr-2" />
-                Appliquer les filtres
-              </button>
-              <button class="btn bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center justify-center">
-                <FaDownload class="mr-2" />
-                Exporter le calendrier
-              </button>
-            </div>
-          </div>
-        </div>
+        <FilterSidebar
+          client:load
+          sections={[
+            {
+              title: "Année",
+              name: "year",
+              options: Array.from(new Set(elections.map(e => new Date(e.data.dateElection).getFullYear())))
+                .sort()
+                .map(year => ({
+                  label: year.toString(),
+                  value: year.toString(),
+                  count: elections.filter(e => new Date(e.data.dateElection).getFullYear() === year).length
+                }))
+            },
+            {
+              title: "Type d'Élection",
+              name: "type",
+              options: Array.from(new Set(elections.map(e => e.data.typeElection)))
+                .sort()
+                .map(type => ({
+                  label: type,
+                  value: type,
+                  count: elections.filter(e => e.data.typeElection === type).length
+                }))
+            },
+            {
+              title: "Région",
+              name: "region",
+              options: Array.from(new Set(elections.map(e => e.data.region)))
+                .sort()
+                .map(region => ({
+                  label: region,
+                  value: region,
+                  count: elections.filter(e => e.data.region === region).length
+                }))
+            }
+          ]}
+          onFilterChange={(filters) => {
+            console.log('Filtres appliqués:', filters);
+          }}
+        />
       </div>
 
       <div class="lg:w-3/4">
