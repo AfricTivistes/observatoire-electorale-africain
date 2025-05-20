@@ -14,7 +14,7 @@ const resultatsElections = await getCollection('resultatsElections');
 // Filtrer les élections Précédentes et les trier par date
 // Pagination
 const itemsPerPage = 10;
-const currentPage = 1;
+const currentPage = Astro.url.searchParams.get('page') ? parseInt(Astro.url.searchParams.get('page')) : 1;
 
 const completedElections = elections
   .filter(election => election.data.statut === "Précédente")
@@ -217,8 +217,18 @@ function formatNumber(num: number) {
     <!-- Pagination -->
     {totalPages > 1 && (
       <div class="flex justify-center items-center mt-8 space-x-2">
+        {currentPage > 1 && (
+          <a
+            href={`?page=${currentPage - 1}`}
+            class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
+          >
+            Précédent
+          </a>
+        )}
+        
         {Array.from({ length: totalPages }, (_, i) => (
-          <button
+          <a
+            href={`?page=${i + 1}`}
             class={`px-4 py-2 rounded-lg ${
               currentPage === i + 1
                 ? 'bg-farafina-primary text-white'
@@ -226,8 +236,17 @@ function formatNumber(num: number) {
             }`}
           >
             {i + 1}
-          </button>
+          </a>
         ))}
+
+        {currentPage < totalPages && (
+          <a
+            href={`?page=${currentPage + 1}`}
+            class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
+          >
+            Suivant
+          </a>
+        )}
       </div>
     )}
   </div>
