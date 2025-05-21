@@ -40,19 +40,51 @@ function formatNumber(num: number) {
     <!-- Barre de recherche -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
       <div class="max-w-3xl mx-auto">
-        <div class="relative">
+        <form id="searchForm" class="relative">
           <input
             type="text"
+            id="searchInput"
             placeholder="Rechercher par pays, type d'élection ou année..."
             class="w-full py-3 pl-12 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
           />
           <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <button class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-farafina-primary text-white px-4 py-1 rounded-md hover:bg-farafina-primary/90 transition-colors">
+          <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-farafina-primary text-white px-4 py-1 rounded-md hover:bg-farafina-primary/90 transition-colors">
             Rechercher
           </button>
-        </div>
+        </form>
       </div>
     </div>
+
+    <script>
+      const searchForm = document.getElementById('searchForm');
+      const searchInput = document.getElementById('searchInput');
+      const resultCards = document.querySelectorAll('.bg-white.rounded-lg.shadow-md.overflow-hidden');
+
+      function filterResults(query) {
+        const searchTerm = query.toLowerCase();
+        
+        resultCards.forEach(card => {
+          const country = card.querySelector('h3').textContent.toLowerCase();
+          const date = card.querySelector('.font-medium').textContent.toLowerCase();
+          const electionType = card.querySelector('h3').textContent.toLowerCase();
+          
+          const matches = country.includes(searchTerm) || 
+                         date.includes(searchTerm) || 
+                         electionType.includes(searchTerm);
+          
+          card.style.display = matches ? 'block' : 'none';
+        });
+      }
+
+      searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        filterResults(searchInput.value);
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        filterResults(e.target.value);
+      });
+    </script>
 
     <!-- Résultats des élections -->
     <div class="space-y-8">
