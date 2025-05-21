@@ -7,6 +7,7 @@ interface Election {
     dateElection: string;
     typeElection: string;
     code_pays: string;
+    id?: string; // Optional id to use as key, if available
   };
 }
 
@@ -63,7 +64,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
                   <div className="space-y-3">
                     {monthData.elections.map((election, idx) => (
                       <div
-                        key={idx}
+                        key={election.data.id || idx}
                         className="bg-farafina-primary/5 rounded-lg p-4 border-l-4 border-farafina-primary"
                       >
                         <div className="flex items-center justify-between">
