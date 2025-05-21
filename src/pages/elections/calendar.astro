@@ -47,6 +47,55 @@ const regions = [
   </PageHeader>
 
   <div class="container mx-auto px-4 py-8">
+    <!-- Barre de recherche -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div class="max-w-3xl mx-auto">
+        <form id="searchForm" class="relative">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Rechercher par pays, type d'élection ou année..."
+            class="w-full py-3 pl-12 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
+          />
+          <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-farafina-primary text-white px-4 py-1 rounded-md hover:bg-farafina-primary/90 transition-colors">
+            Rechercher
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function normalizeString(str) {
+        return str
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+      }
+
+      const searchForm = document.getElementById('searchForm');
+      const searchInput = document.getElementById('searchInput');
+      const electionCards = document.querySelectorAll('.border-l-4');
+
+      function filterResults(query) {
+        const searchTerm = normalizeString(query);
+        
+        electionCards.forEach(card => {
+          const text = normalizeString(card.textContent || '');
+          card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+        });
+      }
+
+      searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        filterResults(searchInput.value);
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        filterResults(e.target.value);
+      });
+    </script>
+
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="lg:w-1/4">
         <FilterSidebar
