@@ -79,7 +79,7 @@ const regions = [
 
       function filterResults(query) {
         const searchTerm = normalizeString(query);
-        
+
         electionCards.forEach(card => {
           const text = normalizeString(card.textContent || '');
           card.style.display = text.includes(searchTerm) ? 'block' : 'none';
