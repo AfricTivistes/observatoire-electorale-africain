@@ -2,7 +2,7 @@
 import Layout from '../../layouts/MainLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.tsx';
 import PageHeader from '../../components/PageHeader.tsx';
-import { FaChartBar, FaSearch, FaDownload, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaChartBar, FaSearch, FaDownload, FaExternalLinkAlt, FaCheckCircle, FaCalendarAlt } from 'react-icons/fa';
 
 // Importer les collections
 import { getCollection } from 'astro:content';
@@ -142,8 +142,32 @@ function formatNumber(num: number) {
                 </div>
               </div>
 
-              <!-- Résultats -->
+              <!-- Statut et Date -->
               {resultat && (
+                <div class="flex gap-4 mb-4">
+                  {resultat.data.typeStatut && resultat.data.typeStatut.length > 0 && (
+                    <div class="flex items-center gap-2">
+                      <span class="flex items-center gap-1">
+                        <FaCheckCircle className="text-green-500" />
+                        <span class="text-sm text-gray-600">Statut:</span>
+                      </span>
+                      <span class="font-medium">{resultat.data.typeStatut.join(', ')}</span>
+                    </div>
+                  )}
+                  {resultat.data.dateStatut && resultat.data.dateStatut.length > 0 && (
+                    <div class="flex items-center gap-2">
+                      <span class="flex items-center gap-1">
+                        <FaCalendarAlt className="text-farafina-primary" />
+                        <span class="text-sm text-gray-600">Date:</span>
+                      </span>
+                      <span class="font-medium">
+                        {resultat.data.dateStatut.map(date => new Date(date).toLocaleDateString('fr-FR')).join(', ')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <!-- Résultats -->
                 <div class="space-y-4">
                   <h4 class="font-semibold text-farafina-dark mb-4">Résultats de l'élection</h4>
                   <div class="bg-gray-50 p-4 rounded-lg">
