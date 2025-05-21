@@ -10,7 +10,7 @@ import { getCollection } from 'astro:content';
 // Récupérer les données des élections et résultats
 const elections = await getCollection('elections');
 const resultatsElections = await getCollection('resultatsElections');
-console.log(elections);
+console.log(JSON.stringify(resultatsElections, null, 2));
 
 // Filtrer les élections Précédentes et les trier par date
 const completedElections = elections
@@ -27,11 +27,6 @@ function formatNumber(num: number) {
   <PageHeader
     title="Résultats des Élections"
     subtitle="Consultez les résultats des élections récentes à travers le continent africain"
-    breadcrumbs={[
-      { label: 'Accueil', href: '/' },
-      { label: 'Élections', href: '/elections' },
-      { label: 'Résultats' }
-    ]}
   >
     <FaChartBar className="text-farafina-primary text-3xl" slot="icon" />
   </PageHeader>
@@ -101,7 +96,7 @@ function formatNumber(num: number) {
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="bg-farafina-secondary text-white px-6 py-3 flex justify-between items-center">
               <h3 class="text-xl font-semibold">
-                {election.data.nomPays} - {election.data.typeElection} ({new Date(election.data.dateElection).getFullYear()})
+                <a href={`/countries/${election.data.code_pays.toLowerCase()}`}>{election.data.nomPays} - {election.data.typeElection} ({new Date(election.data.dateElection).getFullYear()})</a>
               </h3>
               
               <div class="flex space-x-2">
@@ -114,8 +109,8 @@ function formatNumber(num: number) {
                   >
                   <FaDownload className="text-white" />
                 </button>
-                <a href={`/countries/${election.data.code_pays.toLowerCase()}`} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Voir les détails">
-                  <FaExternalLinkAlt className="text-white" />
+                <a href={`/countries/${election.data.code_pays.toLowerCase()}`} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Drapeau du pays">
+                  <img src={`https://flagcdn.com/w160/${election.data.code_pays.toLowerCase()}.webp`} alt="Drapeau de ${election.data.nomPays}" class="w-6 h-6 inline" />
                 </a>
               </div>
             </div>

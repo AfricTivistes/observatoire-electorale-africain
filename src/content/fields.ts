@@ -48,6 +48,8 @@ export const resultatsElectionsData = [
   "source_résultats",
   "Défis Electorals",
   "nom_pays",
+  "type_statut",
+  "date_statut",
   "nombre_électeurs",
   "Elections_id",
 ];
