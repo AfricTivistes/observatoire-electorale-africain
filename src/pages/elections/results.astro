@@ -60,13 +60,20 @@ function formatNumber(num: number) {
       const searchInput = document.getElementById('searchInput');
       const resultCards = document.querySelectorAll('.bg-white.rounded-lg.shadow-md.overflow-hidden');
 
+      function normalizeString(str) {
+        return str
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+      }
+
       function filterResults(query) {
-        const searchTerm = query.toLowerCase();
+        const searchTerm = normalizeString(query);
         
         resultCards.forEach(card => {
-          const country = card.querySelector('h3').textContent.toLowerCase();
-          const date = card.querySelector('.font-medium').textContent.toLowerCase();
-          const electionType = card.querySelector('h3').textContent.toLowerCase();
+          const country = normalizeString(card.querySelector('h3').textContent);
+          const date = normalizeString(card.querySelector('.font-medium').textContent);
+          const electionType = normalizeString(card.querySelector('h3').textContent);
           
           const matches = country.includes(searchTerm) || 
                          date.includes(searchTerm) || 
