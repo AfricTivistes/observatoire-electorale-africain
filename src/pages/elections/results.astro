@@ -2,53 +2,22 @@
 import Layout from '../../layouts/MainLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.tsx';
 import PageHeader from '../../components/PageHeader.tsx';
-import { FaChartBar, FaSearch, FaDownload, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaChartBar, FaSearch, FaDownload, FaExternalLinkAlt, FaCheckCircle, FaCalendarAlt } from 'react-icons/fa';
 
-// Importer les données des élections
-import { recentElections } from '../../data/elections.json';
+// Importer les collections
+import { getCollection } from 'astro:content';
 
-// Créer des données étendues pour les résultats des élections
-const electionResults = recentElections.map(election => {
-  // Générer des données fictives pour les résultats
-  const candidates = [];
-  const totalVotes = Math.floor(Math.random() * 10000000) + 5000000;
-  
-  // Nombre de candidats (entre 2 et 5)
-  const numCandidates = election.candidates || Math.floor(Math.random() * 4) + 2;
-  
-  // Générer des résultats pour chaque candidat
-  let remainingPercentage = 100;
-  for (let i = 0; i < numCandidates; i++) {
-    const isWinner = i === 0;
-    const percentage = isWinner 
-      ? Math.floor(Math.random() * 30) + 40 // Le gagnant obtient entre 40% et 70%
-      : (i === numCandidates - 1) 
-        ? remainingPercentage // Le dernier candidat prend le reste
-        : Math.floor(Math.random() * remainingPercentage / 2);
-    
-    remainingPercentage -= percentage;
-    
-    candidates.push({
-      name: isWinner ? election.winner || `Candidat ${i+1}` : `Candidat ${i+1}`,
-      party: `Parti ${String.fromCharCode(65 + i)}`,
-      votes: Math.floor(totalVotes * percentage / 100),
-      percentage,
-      isWinner
-    });
-  }
-  
-  return {
-    ...election,
-    totalVotes,
-    candidates,
-    turnout: election.turnout || Math.floor(Math.random() * 30) + 40, // Entre 40% et 70%
-    contested: election.challenges || Math.random() > 0.7, // 30% de chance d'être contesté
-    observerReports: Math.floor(Math.random() * 5) + 1 // Entre 1 et 5 rapports
-  };
-});
+// Récupérer les données des élections et résultats
+const elections = await getCollection('elections');
+const resultatsElections = await getCollection('resultatsElections');
 
-// Fonction pour formater les nombres
-function formatNumber(num) {
+// Filtrer les élections Précédentes et les trier par date
+const completedElections = elections
+  .filter(election => election.data.statut === "Précédente")
+  .sort((a, b) => new Date(b.data.dateElection).getTime() - new Date(a.data.dateElection).getTime());
+
+// Formater les nombres
+function formatNumber(num: number) {
   return new Intl.NumberFormat('fr-FR').format(num);
 }
 ---
@@ -57,163 +26,263 @@ function formatNumber(num) {
   <PageHeader
     title="Résultats des Élections"
     subtitle="Consultez les résultats des élections récentes à travers le continent africain"
-    breadcrumbs={[
-      { label: 'Accueil', href: '/' },
-      { label: 'Élections', href: '/elections' },
-      { label: 'Résultats' }
-    ]}
   >
-    <FaChartBar class="text-farafina-primary text-3xl" slot="icon" />
+    <FaChartBar className="text-farafina-primary text-3xl" slot="icon" />
   </PageHeader>
 
   <div class="container mx-auto px-4 py-8">
     <!-- Barre de recherche -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
       <div class="max-w-3xl mx-auto">
-        <div class="relative">
+        <form id="searchForm" class="relative">
           <input
             type="text"
+            id="searchInput"
             placeholder="Rechercher par pays, type d'élection ou année..."
             class="w-full py-3 pl-12 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
           />
-          <FaSearch class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <button class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-farafina-primary text-white px-4 py-1 rounded-md hover:bg-farafina-primary/90 transition-colors">
+          <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-farafina-primary text-white px-4 py-1 rounded-md hover:bg-farafina-primary/90 transition-colors">
             Rechercher
           </button>
-        </div>
-        <div class="flex flex-wrap gap-2 mt-4">
-          <span class="text-sm text-gray-500">Filtres rapides:</span>
-          <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
-            Présidentielles
-          </button>
-          <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
-            Législatives
-          </button>
-          <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
-            2023
-          </button>
-          <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors">
-            Résultats contestés
-          </button>
-        </div>
+        </form>
       </div>
     </div>
 
+    <script>
+      const searchForm = document.getElementById('searchForm');
+      const searchInput = document.getElementById('searchInput');
+      const resultCards = document.querySelectorAll('.bg-white.rounded-lg.shadow-md.overflow-hidden');
+
+      function normalizeString(str) {
+        return str
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+      }
+
+      function filterResults(query) {
+        const searchTerm = normalizeString(query);
+        
+        resultCards.forEach(card => {
+          const country = normalizeString(card.querySelector('h3').textContent);
+          const date = normalizeString(card.querySelector('.font-medium').textContent);
+          const electionType = normalizeString(card.querySelector('h3').textContent);
+          
+          const matches = country.includes(searchTerm) || 
+                         date.includes(searchTerm) || 
+                         electionType.includes(searchTerm);
+          
+          card.style.display = matches ? 'block' : 'none';
+        });
+      }
+
+      searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        filterResults(searchInput.value);
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        filterResults(e.target.value);
+      });
+    </script>
+
     <!-- Résultats des élections -->
     <div class="space-y-8">
-      {electionResults.map(election => (
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-          <div class="bg-farafina-secondary text-white px-6 py-3 flex justify-between items-center">
-            <h3 class="text-xl font-semibold">{election.country} - {election.type} ({new Date(election.date).getFullYear()})</h3>
-            <div class="flex space-x-2">
-              <button class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Télécharger les résultats">
-                <FaDownload class="text-white" />
-              </button>
-              <a href={`/elections/${election.id}`} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Voir les détails">
-                <FaExternalLinkAlt class="text-white" />
-              </a>
-            </div>
-          </div>
-          
-          <div class="p-6">
-            <!-- Informations générales -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div class="bg-gray-50 rounded-lg p-4">
-                <span class="block text-sm text-gray-500">Date</span>
-                <span class="font-medium">{new Date(election.date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'long', year: 'numeric'})}</span>
-              </div>
-              <div class="bg-gray-50 rounded-lg p-4">
-                <span class="block text-sm text-gray-500">Participation</span>
-                <span class="font-medium">{election.turnout}%</span>
-              </div>
-              <div class="bg-gray-50 rounded-lg p-4">
-                <span class="block text-sm text-gray-500">Votes exprimés</span>
-                <span class="font-medium">{formatNumber(election.totalVotes)}</span>
-              </div>
-              <div class="bg-gray-50 rounded-lg p-4">
-                <span class="block text-sm text-gray-500">Statut</span>
-                <span class={`font-medium ${election.contested ? 'text-farafina-accent' : 'text-green-600'}`}>
-                  {election.contested ? 'Résultats contestés' : 'Résultats validés'}
-                </span>
+      {completedElections.map(election => {
+        const resultat = resultatsElections.find(r => r.data.Elections_id === election.data.id);
+        return (
+          <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="bg-farafina-secondary text-white px-6 py-3 flex justify-between items-center">
+              <h3 class="text-xl font-semibold">
+                <a href={`/countries/${election.data.code_pays.toLowerCase()}`}>{election.data.nomPays} - {election.data.typeElection} ({new Date(election.data.dateElection).getFullYear()})</a>
+              </h3>
+              
+              <div class="flex space-x-2">
+                <button class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Télécharger les résultats">
+                  <a 
+                    href={resultat?.data.source_résultats || '#'} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Télécharger les résultats"
+                  >
+                  <FaDownload className="text-white" />
+                </button>
+                <a href={`/countries/${election.data.code_pays.toLowerCase()}`} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Drapeau du pays">
+                  <img src={`https://flagcdn.com/w160/${election.data.code_pays.toLowerCase()}.webp`} alt="Drapeau de ${election.data.nomPays}" class="w-6 h-6 inline" />
+                </a>
               </div>
             </div>
-            
-            <!-- Résultats des candidats -->
-            <h4 class="font-semibold text-farafina-dark mb-4">Résultats par candidat</h4>
-            <div class="space-y-4">
-              {election.candidates.map((candidate, index) => (
-                <div class="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow">
-                  <div class="flex flex-col md:flex-row md:items-center">
-                    <div class="md:w-1/4 mb-2 md:mb-0">
-                      <span class="font-semibold text-farafina-dark">
-                        {candidate.name}
-                        {candidate.isWinner && (
-                          <span class="ml-2 inline-block px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
-                            Élu
-                          </span>
-                        )}
-                      </span>
-                      <div class="text-sm text-gray-500">{candidate.party}</div>
+
+            <div class="p-6">
+              <!-- Informations générales -->
+              <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-50 rounded-lg p-4">
+                  <span class="block text-sm text-gray-500">Date</span>
+                  <span class="font-medium">
+                    {new Date(election.data.dateElection).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                  <span class="block text-sm text-gray-500">Participation</span>
+                  <span class="font-medium">
+                    {resultat ? (resultat.data.participation / resultat.data.electeur * 100).toFixed(2) + '%' : 'N/A'}
+                  </span>
+                </div>
+              </div>
+              {/* Timeline horizontal */}
+              <div className="mt-6">
+                <div class="bg-gray-50 rounded-lg p-6">
+                  <span class="block text-sm text-gray-500 mb-4">Chronologie des Statuts</span>
+                  {resultat?.data.typeStatut && (
+                    <div class="relative">
+                      <div class="absolute h-0.5 bg-gray-200 left-0 right-0 top-4"></div>
+                      <div class="relative flex justify-between items-start">
+                        {resultat.data.typeStatut
+                          .map((type, index) => ({
+                            type,
+                            date: resultat.data.dateStatut?.[index] || 'Non spécifié',
+                            originalDate: resultat.data.dateStatut?.[index] ? new Date(resultat.data.dateStatut[index]) : new Date(0),
+                            displayDate: resultat.data.dateStatut?.[index] ? new Date(resultat.data.dateStatut[index]).toLocaleDateString('fr-FR') : 'Non spécifié'
+                          }))
+                          .sort((a, b) => a.originalDate.getTime() - b.originalDate.getTime())
+                          .map((item, index, array) => (
+                            <div class="relative flex flex-col items-center flex-1" key={index}>
+                              <div class={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 ${
+                                item.type === 'contesté' ? 'bg-yellow-100 border-yellow-500' :
+                                item.type === 'validé' ? 'bg-green-100 border-green-500' :
+                                item.type === 'annulé' ? 'bg-red-100 border-red-500' :
+                                item.type === 'provisoire' ? 'bg-blue-100 border-blue-500' :
+                                'bg-gray-100 border-gray-500'
+                              }`}>
+                                <FaCheckCircle className={`text-sm ${
+                                  item.type === 'contesté' ? 'text-yellow-500' :
+                                  item.type === 'validé' ? 'text-green-500' :
+                                  item.type === 'annulé' ? 'text-red-500' :
+                                  item.type === 'provisoire' ? 'text-blue-500' :
+                                  'text-gray-500'
+                                }`} />
+                              </div>
+                              <div class="mt-2 text-center">
+                                <span class={`font-medium block ${
+                                  item.type === 'contesté' ? 'text-yellow-700' :
+                                  item.type === 'validé' ? 'text-green-700' :
+                                  item.type === 'annulé' ? 'text-red-700' :
+                                  item.type === 'provisoire' ? 'text-blue-700' :
+                                  'text-gray-700'
+                                }`}>
+                                  {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                                </span>
+                                <span class="text-sm text-gray-500 block mt-1">{item.displayDate}</span>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
                     </div>
-                    <div class="md:w-1/2">
-                      <div class="relative pt-1">
-                        <div class="flex mb-2 items-center justify-between">
-                          <div>
-                            <span class="text-xs font-semibold inline-block text-farafina-primary">
-                              {candidate.percentage}%
-                            </span>
-                          </div>
-                          <div class="text-right">
-                            <span class="text-xs font-semibold inline-block text-gray-600">
-                              {formatNumber(candidate.votes)} votes
-                            </span>
+                  )}
+                </div>
+              </div>
+
+
+                <!-- Résultats -->
+                <div class="space-y-4">
+                  <h4 class="font-semibold text-farafina-dark mb-4">Résultats de l'élection</h4>
+                  <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span class="text-sm text-gray-500">Participation</span>
+                        <div class="font-medium text-xl">{formatNumber(resultat.data.participation)}</div>
+                      </div>
+                      <div>
+                        <span class="text-sm text-gray-500">Nombre d'électeurs</span>
+                        <div class="font-medium text-xl">{formatNumber(resultat.data.electeur)}</div>
+                      </div>
+                    </div>
+                    <div class="mt-4">
+                      {resultat.data.resultats && (
+                        <div class="mt-4">
+                          <span class="text-sm text-gray-500">Résultats détaillés</span>
+                          <div class="font-medium whitespace-pre-wrap">{resultat.data.resultats}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {resultat.data.defis && (
+                    <div class="mt-4">
+                      <span class="text-sm text-gray-500">Défis Électoraux</span>
+                      <div class="font-medium">{resultat.data.defis}</div>
+                    </div>
+                  )}
+                </div>
+   
+
+              <!-- Résultats des candidats -->
+              {resultat?.data.candidats && (
+                <div class="mt-6 space-y-4">
+                  <h4 class="font-semibold text-farafina-dark mb-4">Résultats par candidat</h4>
+                  {resultat.data.candidats.map((candidat) => (
+                    <div class="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow">
+                      <div class="flex flex-col md:flex-row md:items-center">
+                        <div class="md:w-1/4">
+                          <span class="font-semibold text-farafina-dark">
+                            {candidat.nom}
+                            {candidat.elu && (
+                              <span class="ml-2 inline-block px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
+                                Élu
+                              </span>
+                            )}
+                          </span>
+                          <div class="text-sm text-gray-500">{candidat.parti}</div>
+                        </div>
+                        <div class="md:w-1/2">
+                          <div class="relative pt-1">
+                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                              <div 
+                                style={`width: ${candidat.score}%`}
+                                class={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${candidat.elu ? 'bg-farafina-primary' : 'bg-farafina-secondary/70'}`}>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
-                          <div 
-                            style={`width: ${candidate.percentage}%`} 
-                            class={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${candidate.isWinner ? 'bg-farafina-primary' : 'bg-farafina-secondary/70'}`}>
-                          </div>
+                        <div class="md:w-1/4 text-right">
+                          <span class={`text-lg font-bold ${candidat.elu ? 'text-farafina-primary' : 'text-gray-700'}`}>
+                            {candidat.score}%
+                          </span>
                         </div>
                       </div>
                     </div>
-                    <div class="md:w-1/4 text-right">
-                      <span class={`text-lg font-bold ${candidate.isWinner ? 'text-farafina-primary' : 'text-gray-700'}`}>
-                        {candidate.percentage}%
-                      </span>
-                    </div>
+                  ))}
+                </div>
+              )}
+
+              <!-- Rapports d'observation -->
+              {resultat?.data.rapports && (
+                <div class="mt-6 pt-6 border-t border-gray-100">
+                  <h4 class="font-semibold text-farafina-dark mb-4">Rapports d'observation</h4>
+                  <div class="flex flex-wrap gap-3">
+                    {resultat.data.rapports.map((rapport, index) => (
+                      <a 
+                        href={rapport.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                      >
+                        <span class="mr-2">{rapport.titre}</span>
+                        <FaDownload className="text-gray-600" />
+                      </a>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-            
-            <!-- Rapports d'observation -->
-            <div class="mt-6 pt-6 border-t border-gray-100">
-              <h4 class="font-semibold text-farafina-dark mb-4">Rapports d'observation</h4>
-              <div class="flex flex-wrap gap-3">
-                {Array.from({ length: election.observerReports }).map((_, i) => (
-                  <a href="#" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    <span class="mr-2">Rapport {i+1}</span>
-                    <FaDownload class="text-gray-600" />
-                  </a>
-                ))}
-              </div>
+              )}
             </div>
           </div>
-        </div>
-      ))}
-    </div>
-    
-    <!-- Pagination -->
-    <div class="mt-8 flex justify-center">
-      <nav class="inline-flex rounded-md shadow">
-        <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</a>
-        <a href="#" class="py-2 px-4 bg-farafina-primary text-white border border-farafina-primary">1</a>
-        <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">2</a>
-        <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">3</a>
-        <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">Suivant</a>
-      </nav>
+        );
+      })}
     </div>
   </div>
 </Layout>
-

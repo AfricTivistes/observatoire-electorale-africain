@@ -16,6 +16,18 @@
         "nomPays": {
           "type": "string"
         },
+        "typeStatut": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dateStatut": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "electeur": {
           "type": "number"
         },
@@ -34,6 +46,8 @@
         "resultats",
         "participation",
         "nomPays",
+        "typeStatut",
+        "dateStatut",
         "electeur",
         "source_résultats",
         "Elections_id"
