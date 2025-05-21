@@ -133,8 +133,56 @@ function formatNumber(num: number) {
                     {resultat ? (resultat.data.participation / resultat.data.electeur * 100).toFixed(2) + '%' : 'N/A'}
                   </span>
                 </div>
+              </div>
+              {/* Timeline horizontal */}
+              <div className="mt-6">
                 <div class="bg-gray-50 rounded-lg p-6">
-                  <span class="block text-sm text-gray-500 mb-4">Statut</span>
+                  <span class="block text-sm text-gray-500 mb-4">Chronologie des Statuts</span>
+                  {resultat?.data.typeStatut && (
+                    <div class="relative">
+                      <div class="absolute h-0.5 bg-gray-200 left-0 right-0 top-4"></div>
+                      <div class="relative flex justify-between items-start">
+                        {resultat.data.typeStatut
+                          .map((type, index) => ({
+                            type,
+                            date: resultat.data.dateStatut ? resultat.data.dateStatut[index] ? new Date(resultat.data.dateStatut[index]).toLocaleDateString('fr-FR') : 'Non spécifié' : 'Non spécifié'
+                          }))
+                          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                          .map((item, index, array) => (
+                            <div class="relative flex flex-col items-center flex-1" key={index}>
+                              <div class={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 ${
+                                item.type === 'contesté' ? 'bg-yellow-100 border-yellow-500' :
+                                item.type === 'validé' ? 'bg-green-100 border-green-500' :
+                                item.type === 'annulé' ? 'bg-red-100 border-red-500' :
+                                item.type === 'provisoire' ? 'bg-blue-100 border-blue-500' :
+                                'bg-gray-100 border-gray-500'
+                              }`}>
+                                <FaCheckCircle className={`text-sm ${
+                                  item.type === 'contesté' ? 'text-yellow-500' :
+                                  item.type === 'validé' ? 'text-green-500' :
+                                  item.type === 'annulé' ? 'text-red-500' :
+                                  item.type === 'provisoire' ? 'text-blue-500' :
+                                  'text-gray-500'
+                                }`} />
+                              </div>
+                              <div class="mt-2 text-center">
+                                <span class={`font-medium block ${
+                                  item.type === 'contesté' ? 'text-yellow-700' :
+                                  item.type === 'validé' ? 'text-green-700' :
+                                  item.type === 'annulé' ? 'text-red-700' :
+                                  item.type === 'provisoire' ? 'text-blue-700' :
+                                  'text-gray-700'
+                                }`}>
+                                  {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                                </span>
+                                <span class="text-sm text-gray-500 block mt-1">{item.date}</span>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
                   {resultat?.data.typeStatut && (
                     <div class="relative">
                       <div class="absolute h-full w-0.5 bg-gray-200 left-2 top-0"></div>
