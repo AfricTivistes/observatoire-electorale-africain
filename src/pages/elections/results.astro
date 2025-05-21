@@ -10,7 +10,6 @@ import { getCollection } from 'astro:content';
 // Récupérer les données des élections et résultats
 const elections = await getCollection('elections');
 const resultatsElections = await getCollection('resultatsElections');
-console.log(JSON.stringify(resultatsElections, null, 2));
 
 // Filtrer les élections Précédentes et les trier par date
 const completedElections = elections
@@ -136,36 +135,28 @@ function formatNumber(num: number) {
                 </div>
                 <div class="bg-gray-50 rounded-lg p-4">
                   <span class="block text-sm text-gray-500">Statut</span>
-                  <span class={`font-medium ${resultat?.data.conteste ? 'text-farafina-accent' : 'text-green-600'}`}>
-                    {resultat?.data.conteste ? 'Résultats contestés' : 'Résultats validés'}
-                  </span>
+                  {resultat?.data.typeStatut && resultat.data.typeStatut
+                    .map((type, index) => ({
+                      type,
+                      date: resultat.data.dateStatut ? resultat.data.dateStatut[index] ? new Date(resultat.data.dateStatut[index]).toLocaleDateString('fr-FR') : 'Non spécifié' : 'Non spécifié'
+                    }))
+                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                    .map((item, index) => (
+                      <div class="flex items-center gap-1 mt-1" key={index}>
+                        <span class={`font-medium ${item.type === 'contesté' ? 'text-farafina-accent' : (item.type === 'validé' ? 'text-green-600' : 'text-gray-600')}`}>                        {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                        </span>
+                        {item.type === 'constesté' && <FaCheckCircle className="text-yellow-500 ml-1" />}
+                        {item.type === 'validé' && <FaCheckCircle className="text-green-500 ml-1" />}
+                        {item.type === 'annulé' && <FaCheckCircle className="text-red-500 ml-1" />}
+                        {item.type === 'provisoire' && <FaCheckCircle className="text-blue-500 ml-1" />}
+                        <span class="flex items-center text-sm text-gray-500 ml-2">
+                          <FaCalendarAlt className="text-farafina-primary mr-1" />
+                          {item.date}
+                        </span>
+                      </div>
+                    ))}
                 </div>
               </div>
-
-              <!-- Statut et Date -->
-              {resultat && (
-                <div class="flex gap-4 mb-4">
-                  {resultat.data.typeStatut && resultat.data.typeStatut.length > 0 && (
-                    <div class="flex items-center gap-2">
-                      <span class="flex items-center gap-1">
-                        <FaCheckCircle className="text-green-500" />
-                        <span class="text-sm text-gray-600">Statut:</span>
-                      </span>
-                      <span class="font-medium">{resultat.data.typeStatut.join(', ')}</span>
-                    </div>
-                  )}
-                  {resultat.data.dateStatut && resultat.data.dateStatut.length > 0 && (
-                    <div class="flex items-center gap-2">
-                      <span class="flex items-center gap-1">
-                        <FaCalendarAlt className="text-farafina-primary" />
-                        <span class="text-sm text-gray-600">Date:</span>
-                      </span>
-                      <span class="font-medium">
-                        {resultat.data.dateStatut.map(date => new Date(date).toLocaleDateString('fr-FR')).join(', ')}
-                      </span>
-                    </div>
-                  )}
-                </div>
 
                 <!-- Résultats -->
                 <div class="space-y-4">
