@@ -519,7 +519,6 @@ const recentArticles = [
                     <a href="${item.link}" target="_blank">${item.title}</a>
                   </h3>
                   <p class="text-sm text-gray-500 mb-2">🗓️ ${this.formatDate(item.pubDate)}</p>
-                  <!--p class="text-sm text-gray-600">${cleanDescription.slice(0, CONFIG.descriptionLength)}...</p-->
                 `;
 
                 return div;
@@ -529,40 +528,6 @@ const recentArticles = [
                 newsList.innerHTML = `<p class="text-sm text-gray-500">${message}</p>`;
               }
             };
-
-            // Main news fetching function
-            async function getNews() {
-              const country = document.getElementById("country").value;
-              const newsList = document.getElementById("newsList");
-
-              if (!country) {
-                helpers.showError(newsList, "");
-                return;
-              }
-
-              try {
-                const query = encodeURIComponent(`élections présidentielles OR législatives ${country}`);
-                const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=fr&gl=FR&ceid=FR:fr`;
-                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
-                if (!data.items?.length) {
-                  helpers.showError(newsList, `Aucune actualité trouvée pour "${country}".`);
-                  return;
-                }
-
-                newsList.innerHTML = "";
-                data.items
-                  .slice(0, CONFIG.maxArticles)
-                  .forEach(item => newsList.appendChild(helpers.createNewsElement(item)));
-
-              } catch (error) {
-                console.error(error);
-                helpers.showError(newsList, "Erreur lors du chargement des actualités.");
-              }
-            }
 
             let allNewsItems = [];
             let currentDisplayCount = CONFIG.maxArticles;
@@ -581,7 +546,7 @@ const recentArticles = [
               }
             }
 
-            // Modified getNews function
+            // Main news fetching function
             async function getNews() {
               const country = document.getElementById("country").value;
               const newsList = document.getElementById("newsList");
@@ -901,208 +866,7 @@ const recentArticles = [
       </div>
     </div>
 
-    <script>
-      // Configuration
-      const CONFIG2 = {
-        maxArticles: 2,
-        descriptionLength: 150,
-        dateOptions: {
-          weekday: "short",
-          year: "numeric",
-          month: "long",
-        }
-      };
-
-      // Helper functions
-      const helpers2 = {
-        formatDate(pubDate) {
-          return new Date(pubDate).toLocaleDateString("fr-FR", CONFIG2.dateOptions);
-        },
-
-        cleanHtml(text) {
-          return text.replace(/<[^>]*>?/gm, "");
-        },
-
-        createNewsElement(item) {
-          const div = document.createElement("div");
-          div.className = "border-b border-gray-100 pb-4 last:border-0 last:pb-0";
-
-          const cleanDescription = this.cleanHtml(item.description);
-
-          div.innerHTML = `
-            <h3 class="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
-              <a href="${item.link}" target="_blank">${item.title}</a>
-            </h3>
-            <p class="text-sm text-gray-500 mb-2">🗓️ ${this.formatDate(item.pubDate)}</p>
-          `;
-
-          return div;
-        },
-
-        showError(newsList, message) {
-          newsList.innerHTML = `<p class="text-sm text-gray-500">${message}</p>`;
-        }
-      };
-
-      // Main news fetching function
-      async function getNews2() {
-        const country = document.getElementById("country2").value;
-        const newsList = document.getElementById("newsList2");
-
-        if (!country) {
-          helpers2.showError(newsList, "");
-          return;
-        }
-
-        try {
-          const query = encodeURIComponent(`élections présidentielles OR législatives ${country}`);
-          const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=fr&gl=FR&ceid=FR:fr`;
-          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-          const response = await fetch(apiUrl);
-          const data = await response.json();
-
-          if (!data.items?.length) {
-            helpers2.showError(newsList, `Aucune actualité trouvée pour "${country}".`);
-            return;
-          }
-
-          const initialNews = data.items.slice(0, CONFIG2.maxArticles);
-          const remainingNews = data.items.slice(CONFIG2.maxArticles);
-
-          newsList.innerHTML = "";
-          initialNews.forEach(item => newsList.appendChild(helpers2.createNewsElement(item)));
-
-          if (remainingNews.length > 0) {
-            const moreContainer = document.createElement("div");
-            moreContainer.id = "news-more2";
-            moreContainer.className = "hidden";
-            remainingNews.forEach(item => moreContainer.appendChild(helpers2.createNewsElement(item)));
-            newsList.appendChild(moreContainer);
-
-            const button = document.createElement("button");
-            button.className = "mt-4 px-4 py-2 bg-farafina-accent text-white rounded-lg hover:bg-transparent hover:border hover:border-farafina-accent hover:text-farafina-accent transition-colors w-full";
-            button.textContent = "Voir plus";
-            button.onclick = () => {
-              const moreContent = document.getElementById("news-more2");
-              const isHidden = moreContent.classList.contains("hidden");
-              moreContent.classList.toggle("hidden");
-              button.textContent = isHidden ? "Voir moins" : "Voir plus";
-            };
-            newsList.appendChild(button);
-          }
-
-        } catch (error) {
-          console.error(error);
-          helpers2.showError(newsList, "Erreur lors du chargement des actualités.");
-        }
-      }
-
-      // Initialize news loading
-      getNews2();
-    </script>
-
-    <script>
-      // Configuration
-      const CONFIG = {
-        maxArticles: 2,
-        descriptionLength: 150,
-        dateOptions: {
-          weekday: "short",
-          year: "numeric",
-          month: "long",
-        }
-      };
-
-      // Helper functions
-      const helpers = {
-        formatDate(pubDate) {
-          return new Date(pubDate).toLocaleDateString("fr-FR", CONFIG.dateOptions);
-        },
-
-        cleanHtml(text) {
-          return text.replace(/<[^>]*>?/gm, "");
-        },
-
-        createNewsElement(item) {
-          const div = document.createElement("div");
-          div.className = "border-b border-gray-100 pb-4 last:border-0 last:pb-0";
-
-          const cleanDescription = this.cleanHtml(item.description);
-
-          div.innerHTML = `
-            <h3 class="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
-              <a href="${item.link}" target="_blank">${item.title}</a>
-            </h3>
-            <p class="text-sm text-gray-500 mb-2">🗓️ ${this.formatDate(item.pubDate)}</p>
-            <!--p class="text-sm text-gray-600">${cleanDescription.slice(0, CONFIG.descriptionLength)}...</p-->
-          `;
-
-          return div;
-        },
-
-        showError(newsList, message) {
-          newsList.innerHTML = `<p class="text-sm text-gray-500">${message}</p>`;
-        }
-      };
-
-      // Main news fetching function
-      async function getNews() {
-        const country = document.getElementById("country").value;
-        const newsList = document.getElementById("newsList");
-
-        if (!country) {
-          helpers.showError(newsList, "");
-          return;
-        }
-
-        try {
-          const query = encodeURIComponent(`élections présidentielles OR législatives ${country}`);
-          const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=fr&gl=FR&ceid=FR:fr`;
-          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-          const response = await fetch(apiUrl);
-          const data = await response.json();
-
-          if (!data.items?.length) {
-            helpers.showError(newsList, `Aucune actualité trouvée pour "${country}".`);
-            return;
-          }
-
-          const initialNews = data.items.slice(0, CONFIG.maxArticles);
-          const remainingNews = data.items.slice(CONFIG.maxArticles);
-
-          newsList.innerHTML = "";
-          initialNews.forEach(item => newsList.appendChild(helpers.createNewsElement(item)));
-
-          if (remainingNews.length > 0) {
-            const moreContainer = document.createElement("div");
-            moreContainer.id = "news-more";
-            moreContainer.className = "hidden";
-            remainingNews.forEach(item => moreContainer.appendChild(helpers.createNewsElement(item)));
-            newsList.appendChild(moreContainer);
-
-            const button = document.createElement("button");
-            button.className = "mt-4 px-4 py-2 bg-farafina-accent text-white rounded-lg hover:bg-transparent hover:border hover:border-farafina-accent hover:text-farafina-accent transition-colors w-full";
-            button.textContent = "Voir plus";
-            button.onclick = () => {
-              const moreContent = document.getElementById("news-more");
-              const isHidden = moreContent.classList.contains("hidden");
-              moreContent.classList.toggle("hidden");
-              button.textContent = isHidden ? "Voir moins" : "Voir plus";
-            };
-            newsList.appendChild(button);
-          }
-
-        } catch (error) {
-          console.error(error);
-          helpers.showError(newsList, "Erreur lors du chargement des actualités.");
-        }
-      }
-
-      // Initialize news loading
-      getNews();
-    </script>
+    
   </div>
 
   <!-- Ressources et liens utiles -->
