@@ -1,0 +1,43 @@
+
+---
+import { Image } from 'astro:assets';
+
+const dataPartners = [
+  {
+    nom: "Stears",
+    href: "https://www.stears.co/open-data/elections/upcoming-african-elections/",
+    image: "/images/stears.png"
+  },
+  {
+    nom: "Africa Elects",
+    href: "https://africaelects.com/",
+    image: "/images/africaelects.png"
+  }
+];
+---
+
+<section class="bg-white py-8">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold text-farafina-dark">Nos Partenaires de Données</h2>
+      <p class="text-gray-600 mt-2">Ces partenaires ont contribué à l'agrégation des données électorales</p>
+    </div>
+    <div class="flex justify-center items-center gap-8 flex-wrap">
+      {dataPartners.map(partner => (
+        <a 
+          href={partner.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-transform hover:scale-105"
+        >
+          <img
+            src={partner.image}
+            alt={`Logo de ${partner.nom}`}
+            class="h-12 w-auto object-contain"
+            loading="lazy"
+          />
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
