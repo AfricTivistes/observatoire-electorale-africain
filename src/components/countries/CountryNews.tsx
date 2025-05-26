@@ -56,11 +56,12 @@ const CountryNews: React.FC<CountryNewsProps> = ({
     fetchNews();
   }, [countryName]);
 
+
   const formatDate = (pubDate: string) => {
     return new Date(pubDate).toLocaleDateString("fr-FR", {
-      weekday: "short",
-      year: "numeric",
+      day: "numeric",
       month: "long",
+      year: "numeric",
     });
   };
 
