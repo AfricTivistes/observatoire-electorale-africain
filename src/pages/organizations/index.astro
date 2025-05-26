@@ -121,14 +121,68 @@ organisations.forEach(org => {
     <!-- Types de partenariats -->
     <PartnershipTypes />
 
-    <!-- Réseaux d'observateurs -->
+    <!-- Initiatives et Programmes -->
     <div class="my-12">
-      <ObserverNetworks />
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-2xl font-bold text-farafina-dark mb-6">Initiatives et Programmes Phares</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-gradient-to-br from-farafina-primary/10 to-farafina-primary/5 rounded-lg p-6">
+            <div class="w-12 h-12 bg-farafina-primary/20 rounded-lg flex items-center justify-center mb-4">
+              <FaChartBar className="text-farafina-primary text-xl" />
+            </div>
+            <h3 class="font-semibold text-farafina-dark mb-3">Observatoire Electoral</h3>
+            <p class="text-gray-600 text-sm mb-4">Surveillance et analyse en temps réel des processus électoraux africains</p>
+            <div class="text-2xl font-bold text-farafina-primary">{elections.length}</div>
+            <div class="text-xs text-gray-600">Élections suivies</div>
+          </div>
+          
+          <div class="bg-gradient-to-br from-farafina-secondary/10 to-farafina-secondary/5 rounded-lg p-6">
+            <div class="w-12 h-12 bg-farafina-secondary/20 rounded-lg flex items-center justify-center mb-4">
+              <FaUsers className="text-farafina-secondary text-xl" />
+            </div>
+            <h3 class="font-semibold text-farafina-dark mb-3">Réseau de Formation</h3>
+            <p class="text-gray-600 text-sm mb-4">Renforcement des capacités des acteurs de la société civile</p>
+            <div class="text-2xl font-bold text-farafina-secondary">15+</div>
+            <div class="text-xs text-gray-600">Programmes actifs</div>
+          </div>
+          
+          <div class="bg-gradient-to-br from-farafina-accent/10 to-farafina-accent/5 rounded-lg p-6">
+            <div class="w-12 h-12 bg-farafina-accent/20 rounded-lg flex items-center justify-center mb-4">
+              <FaGlobeAfrica className="text-farafina-accent text-xl" />
+            </div>
+            <h3 class="font-semibold text-farafina-dark mb-3">Plaidoyer Régional</h3>
+            <p class="text-gray-600 text-sm mb-4">Promotion de la démocratie et de la transparence électorale</p>
+            <div class="text-2xl font-bold text-farafina-accent">{Array.from(zonesCouvertes).length}</div>
+            <div class="text-xs text-gray-600">Zones d'intervention</div>
+          </div>
+        </div>
+        
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="border border-gray-200 rounded-lg p-5">
+            <h4 class="font-semibold text-farafina-dark mb-3">Programme de Mentorat</h4>
+            <p class="text-gray-600 text-sm mb-4">Accompagnement des jeunes organisations dans le développement de leurs capacités d'observation électorale.</p>
+            <div class="flex items-center text-sm text-farafina-primary">
+              <FaHandshake className="mr-2" />
+              <span>25 organisations mentorées en 2024</span>
+            </div>
+          </div>
+          
+          <div class="border border-gray-200 rounded-lg p-5">
+            <h4 class="font-semibold text-farafina-dark mb-3">Base de Données Partagée</h4>
+            <p class="text-gray-600 text-sm mb-4">Plateforme collaborative pour le partage d'informations et de bonnes pratiques entre organisations.</p>
+            <div class="flex items-center text-sm text-farafina-secondary">
+              <FaChartBar className="mr-2" />
+              <span>Plus de 500 ressources disponibles</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Organisations en vedette et filtres -->
+    <!-- Acteurs clés et filtres -->
     <div class="mb-12">
-      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Organisations Partenaires</h2>
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Acteurs clés</h2>
       
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Filtres -->
@@ -140,7 +194,7 @@ organisations.forEach(org => {
         <div class="lg:col-span-3">
           <div class="bg-white rounded-xl shadow-md p-6 mb-6">
             <div class="flex justify-between items-center mb-6">
-              <h3 class="text-xl font-semibold text-farafina-dark">Organisations en vedette</h3>
+              <h3 class="text-xl font-semibold text-farafina-dark">Acteurs clés en vedette</h3>
               <div class="text-sm text-gray-600">
                 Affichage de {featuredOrganizations.length} sur {organizationsData.length} organisations
               </div>
@@ -156,48 +210,12 @@ organisations.forEach(org => {
               <a 
                 href="/organizations/partners" 
                 class="inline-block px-6 py-3 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors">
-                Voir toutes les organisations
+                Voir tous les acteurs clés
               </a>
             </div>
           </div>
           
-          <!-- Zones géographiques couvertes -->
-          <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-            <h3 class="text-xl font-semibold text-farafina-dark mb-6">Zones Géographiques Couvertes</h3>
-            <div class="flex flex-wrap gap-2">
-              {Array.from(zonesCouvertes).map(zone => (
-                <span class="px-3 py-1 bg-farafina-secondary/10 text-farafina-secondary text-sm rounded-full">
-                  {zone}
-                </span>
-              ))}
-            </div>
-          </div>
           
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <h3 class="text-xl font-semibold text-farafina-dark mb-6">Catégories d'organisations</h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <a href="/organizations/observers" class="bg-farafina-primary/5 rounded-lg p-5 hover:shadow-md transition-shadow flex items-center">
-                <div class="w-12 h-12 rounded-full bg-farafina-primary/10 flex items-center justify-center mr-4">
-                  <FaUsers className="text-farafina-primary text-xl" />
-                </div>
-                <div>
-                  <h4 class="font-semibold text-farafina-dark">Observateurs Électoraux</h4>
-                  <p class="text-sm text-gray-600">Organisations spécialisées dans l'observation des élections</p>
-                </div>
-              </a>
-              
-              <a href="/organizations/partners" class="bg-farafina-secondary/5 rounded-lg p-5 hover:shadow-md transition-shadow flex items-center">
-                <div class="w-12 h-12 rounded-full bg-farafina-secondary/10 flex items-center justify-center mr-4">
-                  <FaHandshake className="text-farafina-secondary text-xl" />
-                </div>
-                <div>
-                  <h4 class="font-semibold text-farafina-dark">Partenaires Techniques</h4>
-                  <p class="text-sm text-gray-600">Organisations fournissant un soutien technique et méthodologique</p>
-                </div>
-              </a>
-            </div>
-          </div>
         </div>
       </div>
     </div>
