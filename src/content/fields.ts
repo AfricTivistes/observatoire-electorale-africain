@@ -60,8 +60,6 @@ export const defisData = [
   "type_défi",
   "source_defi",
   "nom_pays",
-  "code_pays",
-  "zone",
   "Résultats Élections_id",
 ];
 

@@ -1,6 +1,5 @@
 ---
 import Layout from '../../layouts/MainLayout.astro';
-import DataPartners from '../../components/elections/DataPartners.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.tsx';
 import PageHeader from '../../components/PageHeader.tsx';
 import { FaChartBar, FaSearch, FaDownload, FaExternalLinkAlt, FaCheckCircle, FaCalendarAlt } from 'react-icons/fa';
@@ -146,13 +145,11 @@ function formatNumber(num: number) {
                         {resultat.data.typeStatut
                           .map((type, index) => ({
                             type,
-                            date: resultat.data.dateStatut?.[index],
-                            formattedDate: resultat.data.dateStatut?.[index] ? 
-                              new Date(resultat.data.dateStatut[index]).toLocaleDateString('fr-FR') : 
-                              'Non spécifié'
+                            date: resultat.data.dateStatut?.[index] || 'Non spécifié',
+                            originalDate: resultat.data.dateStatut?.[index] ? new Date(resultat.data.dateStatut[index]) : new Date(0),
+                            displayDate: resultat.data.dateStatut?.[index] ? new Date(resultat.data.dateStatut[index]).toLocaleDateString('fr-FR') : 'Non spécifié'
                           }))
-                          .filter(item => item.type && item.date)
-                          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                          .sort((a, b) => a.originalDate.getTime() - b.originalDate.getTime())
                           .map((item, index, array) => (
                             <div class="relative flex flex-col items-center flex-1" key={index}>
                               <div class={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 ${
@@ -180,7 +177,7 @@ function formatNumber(num: number) {
                                 }`}>
                                   {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                                 </span>
-                                <span class="text-sm text-gray-500 block mt-1">{item.formattedDate}</span>
+                                <span class="text-sm text-gray-500 block mt-1">{item.displayDate}</span>
                               </div>
                             </div>
                           ))}
@@ -288,5 +285,4 @@ function formatNumber(num: number) {
       })}
     </div>
   </div>
-  <DataPartners />
 </Layout>

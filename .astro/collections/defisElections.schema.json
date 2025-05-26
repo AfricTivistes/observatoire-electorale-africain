@@ -13,12 +13,6 @@
         "typeDefi": {
           "type": "string"
         },
-        "zone": {
-          "type": "string"
-        },
-        "code_pays": {
-          "type": "string"
-        },
         "nomPays": {
           "type": "string"
         },
@@ -39,8 +33,6 @@
         "id",
         "libelleDefis",
         "typeDefi",
-        "zone",
-        "code_pays",
         "nomPays",
         "sourceDefi",
         "ResultatsElections",
