@@ -1,3 +1,4 @@
+
 ---
 import Layout from '../../layouts/MainLayout.astro';
 import OrganizationsHero from '../../components/organizations/OrganizationsHero.astro';
@@ -6,83 +7,42 @@ import OrganizationFilter from '../../components/organizations/OrganizationFilte
 import PartnershipTypes from '../../components/organizations/PartnershipTypes.astro';
 import ObserverNetworks from '../../components/organizations/ObserverNetworks.astro';
 import { FaUsers, FaHandshake, FaGlobeAfrica, FaChartBar } from 'react-icons/fa';
+import { getCollection } from 'astro:content';
 
-// Données des organisations (simulées)
-const organizations = [
-  {
-    id: "obs-dz-001",
-    name: "Observatoire National des Élections (ONEC)",
-    country: "Algérie",
-    type: "Organisation Locale",
-    expertise: ["Observation Électorale", "Transparence", "Formation Civique"],
-    logo: "/images/organizations/onec-logo.svg",
-    website: "https://www.onec.dz",
-    description: "L'ONEC est une organisation indépendante dédiée à l'observation des processus électoraux en Algérie et à la promotion de la transparence démocratique.",
-    contacts: {
-      email: "contact@onec.dz",
-      phone: "+213 21 XX XX XX",
-      address: "Alger, Algérie"
-    }
-  },
-  {
-    id: "obs-ma-001",
-    name: "Centre Marocain pour l'Observation Électorale",
-    country: "Maroc",
-    type: "Organisation Locale",
-    expertise: ["Monitoring Électoral", "Analyse Politique", "Éducation Civique"],
-    logo: "/images/organizations/cmoe-logo.svg",
-    website: "https://www.cmoe.ma",
-    description: "Le CMOE travaille à renforcer la participation citoyenne et la transparence des élections au Maroc à travers l'observation et l'éducation civique.",
-    contacts: {
-      email: "contact@cmoe.ma",
-      phone: "+212 53 XX XX XX",
-      address: "Rabat, Maroc"
-    }
-  },
-  {
-    id: "obs-ke-001",
-    name: "Kenya Election Watch",
-    country: "Kenya",
-    type: "Organisation Locale",
-    expertise: ["Observation Électorale", "Droits Civiques", "Médias"],
-    logo: "/images/organizations/kew-logo.svg",
-    website: "https://www.kenyaelectionwatch.org",
-    description: "Kenya Election Watch surveille les processus électoraux au Kenya pour garantir des élections libres, équitables et transparentes.",
-    contacts: {
-      email: "info@kenyaelectionwatch.org",
-      phone: "+254 20 XXX XXXX",
-      address: "Nairobi, Kenya"
-    }
-  },
-  {
-    id: "obs-int-001",
-    name: "International Election Observation Institute",
-    country: "International",
-    type: "ONG Internationale",
-    expertise: ["Observation Électorale", "Formation", "Technologie Électorale"],
-    logo: "/images/organizations/ieoi-logo.svg",
-    website: "https://www.ieoi.org",
-    description: "L'IEOI est une organisation internationale qui fournit une expertise technique et un soutien pour l'observation électorale dans le monde entier.",
-    contacts: {
-      email: "contact@ieoi.org",
-      phone: "+1 202 XXX XXXX",
-      address: "Washington DC, États-Unis"
-    }
+// Récupération des données depuis NocoDB
+const organisations = await getCollection('organisations');
+const pays = await getCollection('pays');
+const elections = await getCollection('elections');
+
+// Transformation des données d'organisations pour le format attendu
+const organizationsData = organisations.map(org => ({
+  id: org.id,
+  name: org.data.nom,
+  country: org.data.pays || 'Non spécifié',
+  type: org.data.typeOrganisation || 'Organisation',
+  expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(d => d.trim()) : [],
+  logo: null, // Pas de logo dans les données NocoDB
+  website: org.data.siteweb || '',
+  description: `Organisation ${org.data.typeOrganisation} basée à ${org.data.ville || 'localisation non spécifiée'}, couvrant ${org.data.nombreDePaysCouverts || '1'} pays dans les zones: ${org.data.zonesCouverts || 'Non spécifié'}.`,
+  contacts: {
+    email: org.data.email || '',
+    phone: org.data.telephone || '',
+    address: `${org.data.ville || ''}, ${org.data.pays || ''}`
   }
-];
+}));
 
-// Statistiques
+// Calcul des statistiques basées sur les données réelles
 const stats = [
   { 
     icon: FaUsers, 
-    value: "250+", 
+    value: organisations.length.toString(), 
     label: "Organisations Partenaires",
     color: "bg-farafina-primary/10",
     textColor: "text-farafina-primary"
   },
   { 
     icon: FaHandshake, 
-    value: "45", 
+    value: pays.length.toString(), 
     label: "Pays Représentés",
     color: "bg-farafina-secondary/10",
     textColor: "text-farafina-secondary"
@@ -96,15 +56,32 @@ const stats = [
   },
   { 
     icon: FaChartBar, 
-    value: "120+", 
+    value: elections.length.toString(), 
     label: "Élections Observées",
     color: "bg-farafina-blue/10",
     textColor: "text-farafina-blue"
   }
 ];
 
-// Organisations en vedette
-const featuredOrganizations = organizations.slice(0, 2);
+// Organisations en vedette (les 2 premières)
+const featuredOrganizations = organizationsData.slice(0, 2);
+
+// Calcul des types d'organisations pour les statistiques
+const organisationTypes = organisations.reduce((acc, org) => {
+  const type = org.data.typeOrganisation || 'Autre';
+  acc[type] = (acc[type] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+// Calcul des zones géographiques couvertes
+const zonesCouvertes = new Set();
+organisations.forEach(org => {
+  if (org.data.zonesCouverts) {
+    org.data.zonesCouverts.split(',').forEach(zone => {
+      zonesCouvertes.add(zone.trim());
+    });
+  }
+});
 ---
 
 <Layout title="Organisations | Observatoire des Élections en Afrique">
@@ -122,6 +99,20 @@ const featuredOrganizations = organizations.slice(0, 2);
             </div>
             <span class={`block text-3xl font-bold ${stat.textColor}`}>{stat.value}</span>
             <span class="text-gray-600">{stat.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Aperçu des types d'organisations -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Types d'Organisations</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Object.entries(organisationTypes).map(([type, count]) => (
+          <div class="bg-farafina-primary/5 rounded-lg p-4">
+            <h3 class="font-semibold text-farafina-dark">{type}</h3>
+            <p class="text-2xl font-bold text-farafina-primary">{count}</p>
+            <p class="text-sm text-gray-600">organisations</p>
           </div>
         ))}
       </div>
@@ -151,7 +142,7 @@ const featuredOrganizations = organizations.slice(0, 2);
             <div class="flex justify-between items-center mb-6">
               <h3 class="text-xl font-semibold text-farafina-dark">Organisations en vedette</h3>
               <div class="text-sm text-gray-600">
-                Affichage de {featuredOrganizations.length} sur {organizations.length} organisations
+                Affichage de {featuredOrganizations.length} sur {organizationsData.length} organisations
               </div>
             </div>
             
@@ -167,6 +158,18 @@ const featuredOrganizations = organizations.slice(0, 2);
                 class="inline-block px-6 py-3 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors">
                 Voir toutes les organisations
               </a>
+            </div>
+          </div>
+          
+          <!-- Zones géographiques couvertes -->
+          <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <h3 class="text-xl font-semibold text-farafina-dark mb-6">Zones Géographiques Couvertes</h3>
+            <div class="flex flex-wrap gap-2">
+              {Array.from(zonesCouvertes).map(zone => (
+                <span class="px-3 py-1 bg-farafina-secondary/10 text-farafina-secondary text-sm rounded-full">
+                  {zone}
+                </span>
+              ))}
             </div>
           </div>
           
@@ -226,4 +229,3 @@ const featuredOrganizations = organizations.slice(0, 2);
     </div>
   </div>
 </Layout>
-
