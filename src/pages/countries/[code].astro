@@ -11,7 +11,6 @@ import ToCountryLink from "@/components/common/ToCountryLink.astro";
 import {
   FaGlobeAfrica,
   FaVoteYea,
-  FaNewspaper,
   FaBalanceScale,
   FaUsers,
   FaChartBar,
@@ -107,6 +106,7 @@ const legalFramework = {
   documents: legalFramework3
     //.filter((r) => r.data.type === "Constitution" || r.data.type === "Loi Électorale")
     .sort((a, b) => b.data.year - a.data.year)
+    .slice(0, 6) // Limiter à 4 éléments
     .map((r) => ({
       title: r.data.title,
       type: r.data.type,
@@ -137,7 +137,10 @@ const electionEvents = electionEvents3.map((e) => {
     (resultat) => resultat.data.Elections_id === e.data.id,
   );
   const defisElection = defis?.filter(
-    (defi) => resultatsElections3[0]?.data.id === defi.data.resultats
+    (defi) =>
+      defi.data.resultats === resultatsElections3[0]?.data.id &&
+      e.data.statut === "Précédente" &&
+      e.data.id === country.id,
   );
   return {
     results:
@@ -157,16 +160,16 @@ const electionEvents = electionEvents3.map((e) => {
         ? `Élection ${e.data.typeElection.toLowerCase()} ${country.name}`
         : `Prochaine élection ${e.data.typeElection.toLowerCase()} prévue`,
     defis: defisElection.length
-      ? defisElection.map((defi) => ({
+      ? defisElection.slice(0, 3).map((defi) => ({
           libelle: defi.data.libelleDefis,
           type: defi.data.typeDefi,
           url: defi.data.sourceDefi,
-          dateElection: e.data.dateElection,
         }))
       : [],
   };
 });
 
+// Simuler des élections à venir
 const upcomingElections = [
   {
     type: electionEvents.find(
@@ -463,170 +466,36 @@ const recentArticles = [
         </div>
 
         <!-- Articles récents -->
-        <div class="bg-white rounded-xl shadow-md p-6">
+        <!--div class="bg-white rounded-xl shadow-md p-6">
           <h2
             class="text-xl font-bold text-farafina-accent mb-6 flex items-center"
           >
-            <FaNewspaper className="mr-2" />  Articles récents
+            <FaNewspaper class="mr-2" /> Articles récents
           </h2>
 
-           <input type="hidden" id="country" value={country.name} />
-      <div id="newsList" class="space-y-4">
-        <div class="flex items-center justify-center py-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-farafina-accent"></div>
-          <p class="ml-3 text-farafina-accent">Chargement des actualités...</p>
-        </div>
-      </div>
-      <button
-        id="loadMoreNews"
-        class="mt-4 px-4 py-2 bg-farafina-accent text-white rounded-lg hover:bg-transparent hover:border hover:border-farafina-accent hover:text-farafina-accent transition-colors w-full hidden"
-        onclick="loadMoreNews()"
-      >
-        Voir plus
-      </button>
-
-          <script>
-            // Configuration
-            const CONFIG = {
-              maxArticles: 2,
-              loadMoreIncrement: 2,
-              descriptionLength: 150,
-              dateOptions: {
-                weekday: "short",
-                year: "numeric",
-                month: "long",
-              }
-            };
-
-            // Helper functions
-            const helpers = {
-              formatDate(pubDate) {
-                return new Date(pubDate).toLocaleDateString("fr-FR", CONFIG.dateOptions);
-              },
-
-              cleanHtml(text) {
-                return text.replace(/<[^>]*>?/gm, "");
-              },
-
-              createNewsElement(item) {
-                const div = document.createElement("div");
-                div.className = "border-b border-gray-100 pb-4 last:border-0 last:pb-0";
-
-                const cleanDescription = this.cleanHtml(item.description);
-
-                div.innerHTML = `
+          <div class="space-y-4">
+            {
+              recentArticles.map((article) => (
+                <div class="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
                   <h3 class="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
-                    <a href="${item.link}" target="_blank">${item.title}</a>
+                    <a href="#">{article.title}</a>
                   </h3>
-                  <p class="text-sm text-gray-500 mb-2">🗓️ ${this.formatDate(item.pubDate)}</p>
-                  <!--p class="text-sm text-gray-600">${cleanDescription.slice(0, CONFIG.descriptionLength)}...</p-->
-                `;
-
-                return div;
-              },
-
-              showError(newsList, message) {
-                newsList.innerHTML = `<p class="text-sm text-gray-500">${message}</p>`;
-              }
-            };
-
-            // Main news fetching function
-            async function getNews() {
-              const country = document.getElementById("country").value;
-              const newsList = document.getElementById("newsList");
-
-              if (!country) {
-                helpers.showError(newsList, "");
-                return;
-              }
-
-              try {
-                const query = encodeURIComponent(`élections présidentielles OR législatives ${country}`);
-                const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=fr&gl=FR&ceid=FR:fr`;
-                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
-                if (!data.items?.length) {
-                  helpers.showError(newsList, `Aucune actualité trouvée pour "${country}".`);
-                  return;
-                }
-
-                newsList.innerHTML = "";
-                data.items
-                  .slice(0, CONFIG.maxArticles)
-                  .forEach(item => newsList.appendChild(helpers.createNewsElement(item)));
-
-              } catch (error) {
-                console.error(error);
-                helpers.showError(newsList, "Erreur lors du chargement des actualités.");
-              }
+                  <p class="text-sm text-gray-500 mb-2">{article.date}</p>
+                  <p class="text-sm text-gray-600">{article.excerpt}</p>
+                </div>
+              ))
             }
+          </div>
 
-            let allNewsItems = [];
-            let currentDisplayCount = CONFIG.maxArticles;
-
-            // Load more news function
-            function loadMoreNews() {
-              const nextItems = allNewsItems.slice(currentDisplayCount, currentDisplayCount + CONFIG.loadMoreIncrement);
-              const newsList = document.getElementById("newsList");
-              
-              nextItems.forEach(item => newsList.appendChild(helpers.createNewsElement(item)));
-              currentDisplayCount += CONFIG.loadMoreIncrement;
-
-              // Hide button if no more items
-              if (currentDisplayCount >= allNewsItems.length) {
-                document.getElementById("loadMoreNews").classList.add("hidden");
-              }
-            }
-
-            // Modified getNews function
-            async function getNews() {
-              const country = document.getElementById("country").value;
-              const newsList = document.getElementById("newsList");
-              const loadMoreButton = document.getElementById("loadMoreNews");
-
-              if (!country) {
-                helpers.showError(newsList, "");
-                return;
-              }
-
-              try {
-                const query = encodeURIComponent(`élections présidentielles OR législatives ${country}`);
-                const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=fr&gl=FR&ceid=FR:fr`;
-                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
-                if (!data.items?.length) {
-                  helpers.showError(newsList, `Aucune actualité trouvée pour "${country}".`);
-                  return;
-                }
-
-                allNewsItems = data.items;
-                newsList.innerHTML = "";
-                
-                allNewsItems
-                  .slice(0, CONFIG.maxArticles)
-                  .forEach(item => newsList.appendChild(helpers.createNewsElement(item)));
-
-                // Show load more button if there are more items
-                if (allNewsItems.length > CONFIG.maxArticles) {
-                  loadMoreButton.classList.remove("hidden");
-                }
-
-              } catch (error) {
-                console.error(error);
-                helpers.showError(newsList, "Erreur lors du chargement des actualités.");
-              }
-            }
-
-            // Initialize news loading
-            getNews();
-          </script>
-        </div>
+          <div class="mt-4">
+            <a
+              href="/resources"
+              class="text-farafina-accent hover:text-farafina-accent/80 transition-colors text-sm"
+            >
+              Voir toutes les actualités →
+            </a>
+          </div>
+        </div-->
       </div>
     </div>
 
@@ -781,6 +650,14 @@ const recentArticles = [
           organisations={organisation}
           electoralOrganism={electoralOrganism?.vote || electoralOrganism.vote}
         />
+        <div class="mt-4">
+          <a
+            href="/resources"
+            class="text-farafina-blue hover:text-farafina-secondary/80 transition-colors text-sm"
+          >
+            Voir toutes les ressources →
+          </a>
+        </div>
       </div>
     </div>
 
@@ -800,7 +677,7 @@ const recentArticles = [
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-farafina-accent flex items-center">
-          <FaExclamationTriangle className="mr-2" /> Les défis électoraux
+          <FaExclamationTriangle className="mr-2" /> Défis de la dernière élection
         </h2>
         <a
           href="/elections/challenges"
@@ -820,329 +697,73 @@ const recentArticles = [
           </div>
           <div class="text-sm text-gray-500"></div>
         </div>
-        {(() => {
-          // Récupérer tous les défis et les trier par date
-          const allDefis = electionEvents
-            .flatMap(event => event.defis.map(defi => ({...defi, dateElection: event.date})))
-            .sort((a, b) => new Date(b.dateElection).getTime() - new Date(a.dateElection).getTime());
-
-          const initialCount = 2;
-          const visibleDefis = allDefis.slice(0, initialCount);
-          const remainingDefis = allDefis.slice(initialCount);
-
-          return (
-            <>
-              {visibleDefis.map((challenge) => (
-                <div
-                  key={challenge.libelle}
-                  class="border border-red-100 rounded-lg p-5 hover:shadow-md transition-shadow"
-                >
-                  <div class="grid grid-cols-3 gap-6">
-                    <p class="font-medium text-farafina-accent">
-                      {challenge.type} - {new Date(challenge.dateElection).toLocaleDateString('fr-FR')}
-                    </p>
-                    <p class="text-gray-700">{challenge.libelle}</p>
-                    <div class="flex justify-end">
-                      <a
-                        href={challenge.url}
-                        target="_blank"
-                        class="text-farafina-accent hover:text-farafina-accent/80 transition-colors"
-                      >
-                        Voir l'analyse complète →
-                      </a>
-                    </div>
+        {
+          electionEvents.map((event) =>
+            event.defis.map((challenge) => (
+              <div
+                key={challenge.libelle}
+                class="border border-red-100 rounded-lg p-5 hover:shadow-md transition-shadow"
+              >
+                <div class="grid grid-cols-3 gap-6">
+                  <p class="font-medium text-farafina-accent">
+                    {challenge.type}
+                  </p>
+                  <p class="text-gray-700">{challenge.libelle}</p>
+                  <div class="flex justify-end">
+                    <a
+                      href={challenge.url}
+                      target="_blank"
+                      class="text-farafina-accent hover:text-farafina-accent/80 transition-colors"
+                    >
+                      Voir l'analyse complète →
+                    </a>
                   </div>
                 </div>
-              ))}
-
-              {remainingDefis.length > 0 && (
-                <div class="hidden" id="defis-more">
-                  {remainingDefis.map((challenge) => (
-                    <div
-                      key={challenge.libelle}
-                      class="border border-red-100 rounded-lg p-5 hover:shadow-md transition-shadow"
-                    >
-                      <div class="grid grid-cols-3 gap-6">
-                        <p class="font-medium text-farafina-accent">
-                          {challenge.type} - {new Date(challenge.dateElection).toLocaleDateString('fr-FR')}
-                        </p>
-                        <p class="text-gray-700">{challenge.libelle}</p>
-                        <div class="flex justify-end">
-                          <a
-                            href={challenge.url}
-                            target="_blank"
-                            class="text-farafina-accent hover:text-farafina-accent/80 transition-colors"
-                          >
-                            Voir l'analyse complète →
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {remainingDefis.length > 0 && (
-                <button
-                  class="mt-4 px-4 py-2 bg-farafina-accent text-white rounded-lg hover:bg-transparent hover:border hover:border-farafina-accent hover:text-farafina-accent transition-colors w-full"
-                  onclick={`
-                    const moreContent = document.getElementById('defis-more');
-                    const isHidden = moreContent.classList.contains('hidden');
-                    moreContent.classList.toggle('hidden');
-                    this.textContent = isHidden ? 'Voir moins' : 'Voir plus';
-                  `}
-                >
-                  Voir plus
-                </button>
-              )}
-            </>
-          );
-        })()}
+              </div>
+            )),
+          )
+        }
       </div>
     </div>
 
-    <script>
-      // Configuration
-      const CONFIG2 = {
-        maxArticles: 2,
-        descriptionLength: 150,
-        dateOptions: {
-          weekday: "short",
-          year: "numeric",
-          month: "long",
-        }
-      };
-
-      // Helper functions
-      const helpers2 = {
-        formatDate(pubDate) {
-          return new Date(pubDate).toLocaleDateString("fr-FR", CONFIG2.dateOptions);
-        },
-
-        cleanHtml(text) {
-          return text.replace(/<[^>]*>?/gm, "");
-        },
-
-        createNewsElement(item) {
-          const div = document.createElement("div");
-          div.className = "border-b border-gray-100 pb-4 last:border-0 last:pb-0";
-
-          const cleanDescription = this.cleanHtml(item.description);
-
-          div.innerHTML = `
-            <h3 class="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
-              <a href="${item.link}" target="_blank">${item.title}</a>
-            </h3>
-            <p class="text-sm text-gray-500 mb-2">🗓️ ${this.formatDate(item.pubDate)}</p>
-          `;
-
-          return div;
-        },
-
-        showError(newsList, message) {
-          newsList.innerHTML = `<p class="text-sm text-gray-500">${message}</p>`;
-        }
-      };
-
-      // Main news fetching function
-      async function getNews2() {
-        const country = document.getElementById("country2").value;
-        const newsList = document.getElementById("newsList2");
-
-        if (!country) {
-          helpers2.showError(newsList, "");
-          return;
-        }
-
-        try {
-          const query = encodeURIComponent(`élections présidentielles OR législatives ${country}`);
-          const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=fr&gl=FR&ceid=FR:fr`;
-          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-          const response = await fetch(apiUrl);
-          const data = await response.json();
-
-          if (!data.items?.length) {
-            helpers2.showError(newsList, `Aucune actualité trouvée pour "${country}".`);
-            return;
-          }
-
-          const initialNews = data.items.slice(0, CONFIG2.maxArticles);
-          const remainingNews = data.items.slice(CONFIG2.maxArticles);
-
-          newsList.innerHTML = "";
-          initialNews.forEach(item => newsList.appendChild(helpers2.createNewsElement(item)));
-
-          if (remainingNews.length > 0) {
-            const moreContainer = document.createElement("div");
-            moreContainer.id = "news-more2";
-            moreContainer.className = "hidden";
-            remainingNews.forEach(item => moreContainer.appendChild(helpers2.createNewsElement(item)));
-            newsList.appendChild(moreContainer);
-
-            const button = document.createElement("button");
-            button.className = "mt-4 px-4 py-2 bg-farafina-accent text-white rounded-lg hover:bg-transparent hover:border hover:border-farafina-accent hover:text-farafina-accent transition-colors w-full";
-            button.textContent = "Voir plus";
-            button.onclick = () => {
-              const moreContent = document.getElementById("news-more2");
-              const isHidden = moreContent.classList.contains("hidden");
-              moreContent.classList.toggle("hidden");
-              button.textContent = isHidden ? "Voir moins" : "Voir plus";
-            };
-            newsList.appendChild(button);
-          }
-
-        } catch (error) {
-          console.error(error);
-          helpers2.showError(newsList, "Erreur lors du chargement des actualités.");
-        }
-      }
-
-      // Initialize news loading
-      getNews2();
-    </script>
-
-    <script>
-      // Configuration
-      const CONFIG = {
-        maxArticles: 2,
-        descriptionLength: 150,
-        dateOptions: {
-          weekday: "short",
-          year: "numeric",
-          month: "long",
-        }
-      };
-
-      // Helper functions
-      const helpers = {
-        formatDate(pubDate) {
-          return new Date(pubDate).toLocaleDateString("fr-FR", CONFIG.dateOptions);
-        },
-
-        cleanHtml(text) {
-          return text.replace(/<[^>]*>?/gm, "");
-        },
-
-        createNewsElement(item) {
-          const div = document.createElement("div");
-          div.className = "border-b border-gray-100 pb-4 last:border-0 last:pb-0";
-
-          const cleanDescription = this.cleanHtml(item.description);
-
-          div.innerHTML = `
-            <h3 class="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
-              <a href="${item.link}" target="_blank">${item.title}</a>
-            </h3>
-            <p class="text-sm text-gray-500 mb-2">🗓️ ${this.formatDate(item.pubDate)}</p>
-            <!--p class="text-sm text-gray-600">${cleanDescription.slice(0, CONFIG.descriptionLength)}...</p-->
-          `;
-
-          return div;
-        },
-
-        showError(newsList, message) {
-          newsList.innerHTML = `<p class="text-sm text-gray-500">${message}</p>`;
-        }
-      };
-
-      // Main news fetching function
-      async function getNews() {
-        const country = document.getElementById("country").value;
-        const newsList = document.getElementById("newsList");
-
-        if (!country) {
-          helpers.showError(newsList, "");
-          return;
-        }
-
-        try {
-          const query = encodeURIComponent(`élections présidentielles OR législatives ${country}`);
-          const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=fr&gl=FR&ceid=FR:fr`;
-          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-          const response = await fetch(apiUrl);
-          const data = await response.json();
-
-          if (!data.items?.length) {
-            helpers.showError(newsList, `Aucune actualité trouvée pour "${country}".`);
-            return;
-          }
-
-          const initialNews = data.items.slice(0, CONFIG.maxArticles);
-          const remainingNews = data.items.slice(CONFIG.maxArticles);
-
-          newsList.innerHTML = "";
-          initialNews.forEach(item => newsList.appendChild(helpers.createNewsElement(item)));
-
-          if (remainingNews.length > 0) {
-            const moreContainer = document.createElement("div");
-            moreContainer.id = "news-more";
-            moreContainer.className = "hidden";
-            remainingNews.forEach(item => moreContainer.appendChild(helpers.createNewsElement(item)));
-            newsList.appendChild(moreContainer);
-
-            const button = document.createElement("button");
-            button.className = "mt-4 px-4 py-2 bg-farafina-accent text-white rounded-lg hover:bg-transparent hover:border hover:border-farafina-accent hover:text-farafina-accent transition-colors w-full";
-            button.textContent = "Voir plus";
-            button.onclick = () => {
-              const moreContent = document.getElementById("news-more");
-              const isHidden = moreContent.classList.contains("hidden");
-              moreContent.classList.toggle("hidden");
-              button.textContent = isHidden ? "Voir moins" : "Voir plus";
-            };
-            newsList.appendChild(button);
-          }
-
-        } catch (error) {
-          console.error(error);
-          helpers.showError(newsList, "Erreur lors du chargement des actualités.");
-        }
-      }
-
-      // Initialize news loading
-      getNews();
-    </script>
-  </div>
-
-  <!-- Ressources et liens utiles -->
-  <div
-    class="bg-gradient-to-r from-farafina-primary to-farafina-secondary rounded-xl shadow-md overflow-hidden"
-  >
-    <div class="grid grid-cols-1 md:grid-cols-2">
-      <div class="p-8 text-white">
-        <h2 class="text-2xl font-bold mb-4">Ressources supplémentaires</h2>
-        <p class="mb-6 text-white/90">
-          Accédez à notre base de données complète sur les élections, les
-          résultats et les analyses concernant {country.name}.
-        </p>
-        <div class="space-y-3">
-          <a
-            href={`/elections?country=${country.code.toLowerCase()}`}
-            class="block px-6 py-3 bg-white text-farafina-primary font-medium rounded-lg hover:bg-white/90 transition-colors"
-          >
-            Voir les élections de {country.name}
-          </a>
-          <a
-            href="/resources"
-            class="block px-6 py-3 bg-white/20 text-white font-medium rounded-lg hover:bg-white/30 transition-colors"
-          >
-            Consulter les rapports d'analyse
-          </a>
+    <!-- Ressources et liens utiles -->
+    <div
+      class="bg-gradient-to-r from-farafina-primary to-farafina-secondary rounded-xl shadow-md overflow-hidden"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="p-8 text-white">
+          <h2 class="text-2xl font-bold mb-4">Ressources supplémentaires</h2>
+          <p class="mb-6 text-white/90">
+            Accédez à notre base de données complète sur les élections, les
+            résultats et les analyses concernant {country.name}.
+          </p>
+          <div class="space-y-3">
+            <a
+              href={`/elections?country=${country.code.toLowerCase()}`}
+              class="block px-6 py-3 bg-white text-farafina-primary font-medium rounded-lg hover:bg-white/90 transition-colors"
+            >
+              Voir les élections de {country.name}
+            </a>
+            <a
+              href="/resources"
+              class="block px-6 py-3 bg-white/20 text-white font-medium rounded-lg hover:bg-white/30 transition-colors"
+            >
+              Consulter les rapports d'analyse
+            </a>
+          </div>
+        </div>
+        <div class="hidden md:block relative">
+          <Image
+            src="/images/mapping.webp"
+            alt={`Ressources sur ${country.name}`}
+            class="w-full h-full object-cover"
+            width={400}
+            height={300}
+            inferSize
+          />
+          <div class="absolute inset-0 bg-black/20"></div>
         </div>
       </div>
-      <div class="hidden md:block relative">
-        <Image
-          src="/images/mapping.webp"
-          alt={`Ressources sur ${country.name}`}
-          class="w-full h-full object-cover"
-          width={400}
-          height={300}
-          inferSize
-        />
-        <div class="absolute inset-0 bg-black/20"></div>
-      </div>
     </div>
   </div>
-</div>
 </Layout>
