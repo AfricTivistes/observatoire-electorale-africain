@@ -7,6 +7,7 @@ import DemographicChart from "../../components/countries/DemographicChart.tsx";
 import LegalFramework from "../../components/countries/LegalFramework.tsx";
 import ElectionTimeline from "../../components/countries/ElectionTimeline.tsx";
 import AfricaMap from "../../components/countries/AfricaMap.tsx";
+import CountryNews from "../../components/countries/CountryNews.tsx";
 import ToCountryLink from "@/components/common/ToCountryLink.astro";
 import {
   FaGlobeAfrica,
@@ -469,128 +470,7 @@ const recentArticles = [
           >
             <FaNewspaper className="mr-2" />  Articles récents
           </h2>
-
-           <input type="hidden" id="country" value={country.name} />
-      <div id="newsList" class="space-y-4">
-        <div class="flex items-center justify-center py-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-farafina-accent"></div>
-          <p class="ml-3 text-farafina-accent">Chargement des actualités...</p>
-        </div>
-      </div>
-      <button
-        id="loadMoreNews"
-        class="mt-4 px-4 py-2 bg-farafina-accent text-white rounded-lg hover:bg-transparent hover:border hover:border-farafina-accent hover:text-farafina-accent transition-colors w-full hidden"
-        onclick="loadMoreNews()"
-      >
-        Voir plus
-      </button>
-
-          <script>
-            // Configuration
-            const CONFIG = {
-              maxArticles: 2,
-              loadMoreIncrement: 2,
-              descriptionLength: 150,
-              dateOptions: {
-                weekday: "short",
-                year: "numeric",
-                month: "long",
-              }
-            };
-
-            // Helper functions
-            const helpers = {
-              formatDate(pubDate) {
-                return new Date(pubDate).toLocaleDateString("fr-FR", CONFIG.dateOptions);
-              },
-
-              cleanHtml(text) {
-                return text.replace(/<[^>]*>?/gm, "");
-              },
-
-              createNewsElement(item) {
-                const div = document.createElement("div");
-                div.className = "border-b border-gray-100 pb-4 last:border-0 last:pb-0";
-
-                const cleanDescription = this.cleanHtml(item.description);
-
-                div.innerHTML = `
-                  <h3 class="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
-                    <a href="${item.link}" target="_blank">${item.title}</a>
-                  </h3>
-                  <p class="text-sm text-gray-500 mb-2">🗓️ ${this.formatDate(item.pubDate)}</p>
-                `;
-
-                return div;
-              },
-
-              showError(newsList, message) {
-                newsList.innerHTML = `<p class="text-sm text-gray-500">${message}</p>`;
-              }
-            };
-
-            let allNewsItems = [];
-            let currentDisplayCount = CONFIG.maxArticles;
-
-            // Load more news function
-            function loadMoreNews() {
-              const nextItems = allNewsItems.slice(currentDisplayCount, currentDisplayCount + CONFIG.loadMoreIncrement);
-              const newsList = document.getElementById("newsList");
-              
-              nextItems.forEach(item => newsList.appendChild(helpers.createNewsElement(item)));
-              currentDisplayCount += CONFIG.loadMoreIncrement;
-
-              // Hide button if no more items
-              if (currentDisplayCount >= allNewsItems.length) {
-                document.getElementById("loadMoreNews").classList.add("hidden");
-              }
-            }
-
-            // Main news fetching function
-            async function getNews() {
-              const country = document.getElementById("country").value;
-              const newsList = document.getElementById("newsList");
-              const loadMoreButton = document.getElementById("loadMoreNews");
-
-              if (!country) {
-                helpers.showError(newsList, "");
-                return;
-              }
-
-              try {
-                const query = encodeURIComponent(`élections présidentielles OR législatives ${country}`);
-                const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=fr&gl=FR&ceid=FR:fr`;
-                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
-                if (!data.items?.length) {
-                  helpers.showError(newsList, `Aucune actualité trouvée pour "${country}".`);
-                  return;
-                }
-
-                allNewsItems = data.items;
-                newsList.innerHTML = "";
-                
-                allNewsItems
-                  .slice(0, CONFIG.maxArticles)
-                  .forEach(item => newsList.appendChild(helpers.createNewsElement(item)));
-
-                // Show load more button if there are more items
-                if (allNewsItems.length > CONFIG.maxArticles) {
-                  loadMoreButton.classList.remove("hidden");
-                }
-
-              } catch (error) {
-                console.error(error);
-                helpers.showError(newsList, "Erreur lors du chargement des actualités.");
-              }
-            }
-
-            // Initialize news loading
-            getNews();
-          </script>
+          <CountryNews client:load countryName={country.name} maxArticles={2} />
         </div>
       </div>
     </div>
