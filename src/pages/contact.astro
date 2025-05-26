@@ -22,10 +22,11 @@ import Breadcrumbs from '../components/Breadcrumbs.tsx';
           </p>
 
           <form 
+            id="contact-form"
             class="space-y-6 animate-fade-in" 
-            action="https://formsubmit.co/info@africtivistes.org" 
             method="POST"
           >
+            <div id="form-success" class="hidden text-green-700 font-bold text-center mb-4">Votre message a bien été envoyé !</div>
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_next" value="/merci">
 
@@ -156,3 +157,28 @@ import Breadcrumbs from '../components/Breadcrumbs.tsx';
     </div>
   </main>
 </MainLayout>
+
+<script type="module">
+  const form = document.getElementById('contact-form');
+  const successMsg = document.getElementById('form-success');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    try {
+      const res = await fetch('/.netlify/functions/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        form.reset();
+        successMsg.classList.remove('hidden');
+      } else {
+        alert('Erreur lors de l\'envoi. Veuillez réessayer.');
+      }
+    } catch {
+      alert('Erreur lors de l\'envoi. Veuillez réessayer.');
+    }
+  });
+</script>
