@@ -72,7 +72,7 @@ const organizationTypes = organisationsCollection.reduce((acc, org) => {
   const type = org.data.typeOrganisation || 'Autre';
   acc[type] = (acc[type] || 0) + 1;
   return acc;
-}, {});
+}, {} as Record<string, number>);
 
 // Grouper les organisations par zone géographique
 const organizationsByZone = (() => {
