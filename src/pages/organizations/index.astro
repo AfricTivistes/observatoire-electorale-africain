@@ -13,6 +13,14 @@ const organisations = await getCollection('organisations');
 const pays = await getCollection('pays');
 const elections = await getCollection('elections');
 
+// Debug: Vérification des données NocoDB
+console.log('Total organisations récupérées:', organisations.length);
+console.log('Première organisation (exemple):', organisations[0]?.data);
+
+// Vérification des types d'organisations disponibles
+const typesDisponibles = organisations.map(org => org.data.typeOrganisation).filter(type => type);
+console.log('Types d\'organisations trouvés:', [...new Set(typesDisponibles)]);
+
 // Transformation des données pour les cartes
 const organizationsData = organisations.map(org => ({
   id: org.id,
@@ -339,6 +347,11 @@ const regions = [
       }
 
       console.log('Organizations data loaded:', allOrganizations.length);
+      console.log('Sample organization:', allOrganizations[0]);
+      
+      // Vérifier les types d'organisations disponibles
+      const availableTypes = [...new Set(allOrganizations.map(org => org.type).filter(type => type))];
+      console.log('Available organization types:', availableTypes);
 
       // Fonction pour appliquer tous les filtres
       function applyAllFilters() {
@@ -378,14 +391,19 @@ const regions = [
 
         // Filtre par type d'organisation (correspondance exacte)
         if (currentFilters.types.length > 0) {
+          console.log('Filtering by types:', currentFilters.types);
           filteredOrgs = filteredOrgs.filter(org => {
             const orgTypeLower = org.type.toLowerCase().trim();
+            console.log('Checking org type:', orgTypeLower, 'against filters:', currentFilters.types);
             return currentFilters.types.some(filterType => {
               const filterTypeLower = filterType.toLowerCase().trim();
               // Correspondance exacte
-              return orgTypeLower === filterTypeLower;
+              const matches = orgTypeLower === filterTypeLower;
+              console.log('Type match:', orgTypeLower, '===', filterTypeLower, '=', matches);
+              return matches;
             });
           });
+          console.log('After type filtering:', filteredOrgs.length);
         }
 
         // Filtre par région (basé sur le champ zone de NocoDB)

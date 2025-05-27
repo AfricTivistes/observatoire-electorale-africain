@@ -183,6 +183,14 @@ const sortOptions = [
 
     function loadOrganizationTypes() {
       console.log('Chargement des types d\'organisations...');
+      console.log('Types disponibles dans le filtre:', document.querySelectorAll('.type-filter').length);
+      
+      // Log des types disponibles
+      const typeFilters = document.querySelectorAll('.type-filter');
+      typeFilters.forEach(filter => {
+        console.log('Type disponible:', filter.dataset.value);
+      });
+      
       // Afficher un indicateur de chargement pour les types
       const typeSection = document.querySelector('div:has(.type-filter)');
       if (typeSection) {
@@ -196,7 +204,7 @@ const sortOptions = [
         setTimeout(() => {
           const loading = document.getElementById('types-loading');
           if (loading) {
-            loading.textContent = 'Types chargés ✓';
+            loading.textContent = `Types chargés ✓ (${typeFilters.length} types)`;
             setTimeout(() => loading.remove(), 1000);
           }
         }, 500);
