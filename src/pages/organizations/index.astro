@@ -377,11 +377,11 @@ const regions = [
             
             return currentFilters.regions.some(region => {
               const regionKeywords = {
-                'Afrique du Nord': ['Nord', 'north', 'afrique du nord', 'north africa'],
-                'Afrique de l\'Ouest': ['Ouest', 'west', 'afrique de l\'ouest', 'west africa', 'afrique ouest'],
-                'Afrique Centrale': ['Centrale', 'centre', 'afrique centrale', 'central africa'],
-                'Afrique de l\'Est': ['Est', 'east', 'afrique de l\'est', 'east africa', 'afrique est'],
-                'Afrique Australe': ['Australe', 'south', 'sud', 'afrique australe', 'southern africa', 'afrique du sud']
+                'Afrique du Nord': ['nord'],
+                'Afrique de l\'Ouest': ['ouest'],
+                'Afrique Centrale': ['centrale', 'central'],
+                'Afrique de l\'Est': ['est'],
+                'Afrique Australe': ['australe', 'sud']
               };
               
               const keywords = regionKeywords[region] || [];
@@ -391,24 +391,26 @@ const regions = [
                 return zone.some(z => {
                   if (!z) return false;
                   const zoneText = z.toLowerCase().trim();
+                  
                   return keywords.some(keyword => {
                     const keywordLower = keyword.toLowerCase();
-                    // Correspondance exacte ou contient le mot-clé
-                    return zoneText === keywordLower || 
-                           zoneText.includes(keywordLower) ||
-                           keywordLower.includes(zoneText);
+                    
+                    // Correspondance exacte de mots entiers uniquement
+                    const wordBoundaryPattern = new RegExp(`\\b${keywordLower}\\b`, 'i');
+                    return wordBoundaryPattern.test(zoneText) || zoneText === keywordLower;
                   });
                 });
               }
               
               if (typeof zone === 'string') {
                 const zoneText = zone.toLowerCase().trim();
+                
                 return keywords.some(keyword => {
                   const keywordLower = keyword.toLowerCase();
-                  // Correspondance exacte ou contient le mot-clé
-                  return zoneText === keywordLower || 
-                         zoneText.includes(keywordLower) ||
-                         keywordLower.includes(zoneText);
+                  
+                  // Correspondance exacte de mots entiers uniquement
+                  const wordBoundaryPattern = new RegExp(`\\b${keywordLower}\\b`, 'i');
+                  return wordBoundaryPattern.test(zoneText) || zoneText === keywordLower;
                 });
               }
               
