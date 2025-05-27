@@ -13,6 +13,9 @@
         "nom": {
           "type": "string"
         },
+        "zone": {
+          "type": "string"
+        },
         "statut": {
           "type": "string"
         },

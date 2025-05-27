@@ -210,8 +210,12 @@ const resultatsElections = defineCollection({
       id: record["Id"].toString(),
       resultats: record["résultats"] || "",
       nomPays: record["nom_pays"] || "",
-      typeStatut: Array.isArray(record["type_statut"]) ? record["type_statut"].map(s => s || "") : [""],
-      dateStatut: Array.isArray(record["date_statut"]) ? record["date_statut"].map(s => s || "") : [""],
+      typeStatut: Array.isArray(record["type_statut"])
+        ? record["type_statut"].map((s) => s || "")
+        : [""],
+      dateStatut: Array.isArray(record["date_statut"])
+        ? record["date_statut"].map((s) => s || "")
+        : [""],
       participation: parseInt(record["participation"]) || 0,
       electeur: parseInt(record["nombre_électeurs"]) || 0,
       source_résultats: record["source_résultats"] || "",
@@ -315,6 +319,7 @@ const organisations = defineCollection({
       originalId: record["Id"].toString(),
       nom: record["nom"] || "",
       statut: record["Statut"] || "",
+      zone: record["Zone"] || "",
       typeOrganisation: record["Type d’organisation -  institutions"] || "",
       nombreDePaysCouverts: record["nombre de pays couverts"] || "",
       ville: record["ville"] || "",
@@ -334,6 +339,7 @@ const organisations = defineCollection({
     id: z.string(),
     originalId: z.string(),
     nom: z.string(),
+    zone: z.string().optional(),
     statut: z.string(),
     typeOrganisation: z.string(),
     nombreDePaysCouverts: z.string(),

@@ -80,6 +80,7 @@ export const organisationsData = [
   "Id",
   "nom",
   "zones couvertes",
+  "Zone",
   "Statut",
   "Type d’organisation -  institutions",
   "nombre de pays couverts",
