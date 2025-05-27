@@ -315,7 +315,7 @@ const regions = [
     </div>
   </div>
 
-  <script is:inline define:vars={{ allOrganizations }}>
+  <script is:inline define:vars={{ allOrganizations, organizationsData }}>
     document.addEventListener('DOMContentLoaded', function() {
       const organizationsList = document.getElementById('organizations-list');
       const organizationCount = document.getElementById('organization-count');
@@ -328,9 +328,12 @@ const regions = [
         searchTerm: ''
       };
 
+      console.log('Organizations data loaded:', allOrganizations.length);
+
       // Fonction pour appliquer tous les filtres
       function applyAllFilters() {
-        let filteredOrgs = allOrganizations;
+        console.log('Applying filters with:', currentFilters);
+        let filteredOrgs = allOrganizations.slice(); // Copy array
 
         // Filtre par recherche
         if (currentFilters.searchTerm) {
@@ -366,7 +369,7 @@ const regions = [
         if (currentFilters.regions.length > 0) {
           filteredOrgs = filteredOrgs.filter(org => {
             // Trouver l'organisation correspondante dans les données originales
-            const originalOrg = ${JSON.stringify(organizationsData)}.find(o => o.id === org.id);
+            const originalOrg = organizationsData.find(o => o.id === org.id);
             if (!originalOrg || !originalOrg.zone) return false;
             
             return currentFilters.regions.some(region => {
@@ -400,17 +403,20 @@ const regions = [
           });
         }
 
+        console.log(`Filtered from ${allOrganizations.length} to ${filteredOrgs.length} organizations`);
         showOrganizations(filteredOrgs);
       }
 
       // Écouter l'événement de recherche depuis le composant Hero
       window.addEventListener('organizationSearch', function(event) {
+        console.log('Search event received:', event.detail);
         currentFilters.searchTerm = event.detail.searchTerm.toLowerCase().trim();
         applyAllFilters();
       });
 
       // Écouter l'événement de filtrage depuis le composant Filter
       window.addEventListener('organizationFilter', function(event) {
+        console.log('Filter event received:', event.detail);
         currentFilters.expertise = event.detail.expertise;
         currentFilters.regions = event.detail.regions;
         currentFilters.types = event.detail.types;
