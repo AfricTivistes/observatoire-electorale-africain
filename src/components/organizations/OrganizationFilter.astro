@@ -39,11 +39,11 @@ const regionOptions = [
 import { FaGlobe, FaHandshake, FaUniversity, FaUsers, FaLandmark, FaNetworkWired } from 'react-icons/fa';
 
 const typeOptions = [
-  { label: "ONG Internationale", icon: FaGlobe },
-  { label: "Organisation Locale", icon: FaHandshake },
-  { label: "Institution Académique", icon: FaUniversity },
-  { label: "Réseau Régional", icon: FaNetworkWired },
-  { label: "Organisme Gouvernemental", icon: FaLandmark }
+  { label: "ONG", icon: FaGlobe },
+  { label: "Organisation internationale", icon: FaGlobe },
+  { label: "Institution gouvernementale", icon: FaLandmark },
+  { label: "Réseau régional", icon: FaNetworkWired },
+  { label: "Centre de recherche", icon: FaUniversity }
 ];
 
 const sortOptions = [
@@ -67,7 +67,11 @@ const sortOptions = [
       <div class="space-y-2 max-h-48 overflow-y-auto pr-2">
         {expertiseOptions.map(option => (
           <label class="flex items-center">
-            <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
+            <input 
+              type="checkbox" 
+              class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary expertise-filter" 
+              data-value={option}
+            />
             <span class="ml-2 text-gray-700 text-sm">{option}</span>
           </label>
         ))}
@@ -81,7 +85,11 @@ const sortOptions = [
         <div class="space-y-2">
           {regionOptions.map(option => (
             <label class="flex items-center">
-              <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
+              <input 
+                type="checkbox" 
+                class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary region-filter" 
+                data-value={option}
+              />
               <span class="ml-2 text-gray-700 text-sm">{option}</span>
             </label>
           ))}
@@ -96,7 +104,11 @@ const sortOptions = [
         <div class="space-y-2">
           {typeOptions.map(option => (
             <label class="flex items-center">
-              <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
+              <input 
+                type="checkbox" 
+                class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary type-filter" 
+                data-value={option.label}
+              />
               <span class="ml-2 text-gray-700 text-sm">{option.label}</span>
             </label>
           ))}
@@ -147,10 +159,10 @@ const sortOptions = [
 
     <!-- Boutons d'action -->
     <div class="pt-4 border-t border-gray-200 flex flex-col space-y-3">
-      <button class="w-full py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors">
+      <button id="apply-filters" class="w-full py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors">
         Appliquer les filtres
       </button>
-      <button class="w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+      <button id="reset-filters" class="w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
         Réinitialiser
       </button>
     </div>
@@ -158,15 +170,60 @@ const sortOptions = [
 </div>
 
 <script>
-  // Script pour gérer les filtres côté client
   document.addEventListener('DOMContentLoaded', () => {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    const resetButton = document.querySelector('button:last-child');
+    const expertiseFilters = document.querySelectorAll('.expertise-filter');
+    const regionFilters = document.querySelectorAll('.region-filter');
+    const typeFilters = document.querySelectorAll('.type-filter');
+    const applyButton = document.getElementById('apply-filters');
+    const resetButton = document.getElementById('reset-filters');
 
-    resetButton?.addEventListener('click', () => {
-      checkboxes.forEach(checkbox => {
-        (checkbox as HTMLInputElement).checked = false;
+    function applyFilters() {
+      const selectedExpertise = Array.from(expertiseFilters)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.dataset.value);
+      
+      const selectedRegions = Array.from(regionFilters)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.dataset.value);
+      
+      const selectedTypes = Array.from(typeFilters)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.dataset.value);
+
+      // Dispatch custom event pour la page organisations
+      const event = new CustomEvent('organizationFilter', {
+        detail: { 
+          expertise: selectedExpertise,
+          regions: selectedRegions,
+          types: selectedTypes
+        }
       });
+      window.dispatchEvent(event);
+    }
+
+    function resetFilters() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      
+      // Apply empty filters
+      const event = new CustomEvent('organizationFilter', {
+        detail: { 
+          expertise: [],
+          regions: [],
+          types: []
+        }
+      });
+      window.dispatchEvent(event);
+    }
+
+    // Auto-apply filters when checkboxes change
+    [...expertiseFilters, ...regionFilters, ...typeFilters].forEach(checkbox => {
+      checkbox.addEventListener('change', applyFilters);
     });
+
+    applyButton?.addEventListener('click', applyFilters);
+    resetButton?.addEventListener('click', resetFilters);
   });
 </script>

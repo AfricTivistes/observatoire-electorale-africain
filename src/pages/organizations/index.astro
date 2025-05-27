@@ -247,27 +247,79 @@ organisations.forEach(org => {
       const organizationCount = document.getElementById('organization-count');
       const noResults = document.getElementById('no-results');
       
+      let currentFilters = {
+        expertise: [],
+        regions: [],
+        types: [],
+        searchTerm: ''
+      };
+
+      // Fonction pour appliquer tous les filtres
+      function applyAllFilters() {
+        let filteredOrgs = allOrganizations;
+
+        // Filtre par recherche
+        if (currentFilters.searchTerm) {
+          filteredOrgs = filteredOrgs.filter(org => 
+            org.name.toLowerCase().includes(currentFilters.searchTerm) ||
+            org.country.toLowerCase().includes(currentFilters.searchTerm) ||
+            org.type.toLowerCase().includes(currentFilters.searchTerm) ||
+            (org.expertise && org.expertise.some(exp => 
+              exp.toLowerCase().includes(currentFilters.searchTerm)
+            ))
+          );
+        }
+
+        // Filtre par expertise
+        if (currentFilters.expertise.length > 0) {
+          filteredOrgs = filteredOrgs.filter(org => 
+            org.expertise && org.expertise.some(exp => 
+              currentFilters.expertise.some(filterExp => 
+                exp.toLowerCase().includes(filterExp.toLowerCase())
+              )
+            )
+          );
+        }
+
+        // Filtre par type
+        if (currentFilters.types.length > 0) {
+          filteredOrgs = filteredOrgs.filter(org => 
+            currentFilters.types.includes(org.type)
+          );
+        }
+
+        // Filtre par région (basé sur le pays)
+        if (currentFilters.regions.length > 0) {
+          const regionCountries = {
+            'Afrique du Nord': ['Algérie', 'Maroc', 'Tunisie', 'Libye', 'Égypte'],
+            'Afrique de l\'Ouest': ['Sénégal', 'Ghana', 'Nigeria', 'Mali', 'Burkina Faso', 'Niger', 'Côte d\'Ivoire', 'Guinée', 'Sierra Leone', 'Liberia', 'Bénin', 'Togo', 'Mauritanie', 'Gambie', 'Guinée-Bissau', 'Cap-Vert'],
+            'Afrique Centrale': ['Cameroun', 'République centrafricaine', 'Tchad', 'République démocratique du Congo', 'République du Congo', 'Guinée équatoriale', 'Gabon', 'São Tomé-et-Príncipe'],
+            'Afrique de l\'Est': ['Kenya', 'Tanzanie', 'Ouganda', 'Rwanda', 'Burundi', 'Éthiopie', 'Érythrée', 'Djibouti', 'Somalie', 'Soudan', 'Soudan du Sud'],
+            'Afrique Australe': ['Afrique du Sud', 'Zimbabwe', 'Zambie', 'Malawi', 'Mozambique', 'Botswana', 'Namibie', 'Lesotho', 'Eswatini', 'Madagascar', 'Maurice', 'Comores', 'Seychelles']
+          };
+
+          filteredOrgs = filteredOrgs.filter(org => 
+            currentFilters.regions.some(region => 
+              regionCountries[region] && regionCountries[region].includes(org.country)
+            )
+          );
+        }
+
+        showOrganizations(filteredOrgs);
+      }
+
       // Écouter l'événement de recherche depuis le composant Hero
       window.addEventListener('organizationSearch', function(event) {
-        const searchTerm = event.detail.searchTerm.toLowerCase().trim();
-        
-        if (!searchTerm) {
-          // Afficher toutes les organisations
-          showOrganizations(allOrganizations);
-          return;
-        }
-        
-        // Filtrer les organisations
-        const filteredOrgs = allOrganizations.filter(org => 
-          org.name.toLowerCase().includes(searchTerm) ||
-          org.country.toLowerCase().includes(searchTerm) ||
-          org.type.toLowerCase().includes(searchTerm) ||
-          (org.expertise && org.expertise.some(exp => 
-            exp.toLowerCase().includes(searchTerm)
-          ))
-        );
-        
-        showOrganizations(filteredOrgs);
+        currentFilters.searchTerm = event.detail.searchTerm.toLowerCase().trim();
+        applyAllFilters();
+      });
+
+      // Écouter l'événement de filtrage depuis le composant Filter
+      window.addEventListener('organizationFilter', function(event) {
+        currentFilters.expertise = event.detail.expertise;
+        currentFilters.regions = event.detail.regions;
+        currentFilters.types = event.detail.types;
+        applyAllFilters();
       });
       
       function showOrganizations(organizations) {
