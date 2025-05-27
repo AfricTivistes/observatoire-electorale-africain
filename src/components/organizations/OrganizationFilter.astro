@@ -36,12 +36,14 @@ const regionOptions = [
   "Afrique Australe",
 ];
 
+import { FaGlobe, FaHandshake, FaUniversity, FaUsers, FaLandmark, FaNetworkWired } from 'react-icons/fa';
+
 const typeOptions = [
-  "ONG Internationale",
-  "Organisation Locale",
-  "Institution Académique",
-  "Réseau Régional",
-  "Organisme Gouvernemental"
+  { label: "ONG Internationale", icon: FaGlobe },
+  { label: "Organisation Locale", icon: FaHandshake },
+  { label: "Institution Académique", icon: FaUniversity },
+  { label: "Réseau Régional", icon: FaNetworkWired },
+  { label: "Organisme Gouvernemental", icon: FaLandmark }
 ];
 
 const sortOptions = [
@@ -95,7 +97,7 @@ const sortOptions = [
           {typeOptions.map(option => (
             <label class="flex items-center">
               <input type="checkbox" class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary" />
-              <span class="ml-2 text-gray-700 text-sm">{option}</span>
+              <span class="ml-2 text-gray-700 text-sm">{option.label}</span>
             </label>
           ))}
         </div>
@@ -168,4 +170,3 @@ const sortOptions = [
     });
   });
 </script>
-

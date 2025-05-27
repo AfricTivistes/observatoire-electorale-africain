@@ -1,6 +1,20 @@
 
 ---
-import { FaUsers, FaGlobeAfrica, FaEnvelope, FaPhone, FaMapMarkerAlt, FaExternalLinkAlt, FaBuilding } from 'react-icons/fa';
+import { FaUsers, FaGlobeAfrica, FaEnvelope, FaPhone, FaMapMarkerAlt, FaExternalLinkAlt, FaBuilding, FaGlobe, FaHandshake, FaUniversity, FaLandmark, FaNetworkWired } from 'react-icons/fa';
+
+// Fonction pour obtenir l'icône selon le type d'organisation
+function getOrganizationIcon(type: string) {
+  const typeMap: { [key: string]: any } = {
+    'ONG': FaUsers,
+    'Organisation internationale': FaGlobe,
+    'Institution gouvernementale': FaLandmark,
+    'Réseau régional': FaNetworkWired,
+    'Centre de recherche': FaUniversity,
+    'default': FaBuilding
+  };
+  
+  return typeMap[type] || typeMap['default'];
+}
 
 interface Props {
   organization: {
@@ -32,7 +46,7 @@ const { organization, variant = 'default' } = Astro.props;
           {organization.logo ? (
             <img src={organization.logo || "/placeholder.svg"} alt={`Logo ${organization.name}`} class="w-10 h-10 object-contain" />
           ) : (
-            <FaBuilding className="text-farafina-primary text-2xl" />
+            React.createElement(getOrganizationIcon(organization.type), { className: "text-farafina-primary text-2xl" })
           )}
         </div>
         <div class="flex-1 min-w-0">
@@ -125,7 +139,7 @@ const { organization, variant = 'default' } = Astro.props;
         {organization.logo ? (
           <img src={organization.logo || "/placeholder.svg"} alt={`Logo ${organization.name}`} class="w-8 h-8 object-contain" />
         ) : (
-          <FaBuilding className="text-farafina-primary text-lg" />
+          React.createElement(getOrganizationIcon(organization.type), { className: "text-farafina-primary text-lg" })
         )}
       </div>
       <div class="flex-1 min-w-0">

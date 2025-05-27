@@ -311,7 +311,8 @@ const organisations = defineCollection({
     };
     const records = await listTableRecords(tableId, fields, params);
     return records.map((record) => ({
-      id: record["Id"].toString(),
+      id: generateSlug(record["nom"] || `org-${record["Id"]}`),
+      originalId: record["Id"].toString(),
       nom: record["nom"] || "",
       statut: record["Statut"] || "",
       typeOrganisation: record["Type d’organisation -  institutions"] || "",
@@ -331,6 +332,7 @@ const organisations = defineCollection({
   },
   schema: z.object({
     id: z.string(),
+    originalId: z.string(),
     nom: z.string(),
     statut: z.string(),
     typeOrganisation: z.string(),
