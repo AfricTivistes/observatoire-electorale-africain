@@ -64,7 +64,7 @@ const stats = [
 ];
 
 // Organisations en vedette (les 2 premières)
-const featuredOrganizations = organizationsData.slice(0, 2);
+const featuredOrganizations = organizationsData.slice(0, 8);
 
 // Calcul des types d'organisations pour les statistiques
 const organisationTypes = organisations.reduce((acc, org) => {
@@ -118,8 +118,8 @@ organisations.forEach(org => {
       </div>
     </div>
 
-    <!-- Types de partenariats -->
-    <PartnershipTypes />
+    <!-- Types de partenariats >
+    <PartnershipTypes /-->
 
     <!-- Initiatives et Programmes -->
     <div class="my-12">
