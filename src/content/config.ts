@@ -9,7 +9,7 @@ import {
   organisationsData,
 } from "./fields";
 
-// Fonction utilitaire pour générer un slug à partir d’une chaîne
+// Fonction utilitaire pour générer un slug à partir d'une chaîne
 function generateSlug(text: string): string {
   return text
     .toLowerCase()
@@ -210,8 +210,12 @@ const resultatsElections = defineCollection({
       id: record["Id"].toString(),
       resultats: record["résultats"] || "",
       nomPays: record["nom_pays"] || "",
-      typeStatut: Array.isArray(record["type_statut"]) ? record["type_statut"].map(s => s || "") : [""],
-      dateStatut: Array.isArray(record["date_statut"]) ? record["date_statut"].map(s => s || "") : [""],
+      typeStatut: Array.isArray(record["type_statut"]) 
+        ? record["type_statut"].map(t => t || "") 
+        : [record["type_statut"] || ""],
+      dateStatut: Array.isArray(record["date_statut"]) 
+        ? record["date_statut"].map(d => d || "") 
+        : [record["date_statut"] || ""],
       participation: parseInt(record["participation"]) || 0,
       electeur: parseInt(record["nombre_électeurs"]) || 0,
       source_résultats: record["source_résultats"] || "",
@@ -246,9 +250,7 @@ const defisElections = defineCollection({
       id: record["Id"].toString(),
       libelleDefis: record["libellé defis"] || "",
       typeDefi: record["type_défi"] || "",
-      code_pays: record["code_pays"] || "",
       nomPays: record["nom_pays"] || "",
-      zone: record["zone"] || "",
       sourceDefi: record["source_defi"] || "",
       ResultatsElections: record["Résultats elections"] || "",
       resultats: record["Résultats Élections_id"]
@@ -260,8 +262,6 @@ const defisElections = defineCollection({
     id: z.string(),
     libelleDefis: z.string(),
     typeDefi: z.string(),
-    zone: z.string(),
-    code_pays: z.string(),
     nomPays: z.string(),
     sourceDefi: z.string(),
     ResultatsElections: z.string(),
@@ -314,7 +314,7 @@ const organisations = defineCollection({
       id: record["Id"].toString(),
       nom: record["nom"] || "",
       statut: record["Statut"] || "",
-      typeOrganisation: record["Type d’organisation -  institutions"] || "",
+      typeOrganisation: record["Type d'organisation -  institutions"] || "",
       nombreDePaysCouverts: record["nombre de pays couverts"] || "",
       ville: record["ville"] || "",
       anneeDeCreation: record["annee de creation"] || 0,

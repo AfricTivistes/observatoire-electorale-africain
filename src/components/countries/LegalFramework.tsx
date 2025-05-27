@@ -1,24 +1,13 @@
-import React, { useState } from "react";
-import {
-  FaFileAlt,
-  FaLink,
-  FaCalendarAlt,
-  FaTools,
-  FaMapMarkerAlt,
-  FaBuilding,
-  FaEnvelope,
-  FaPhone,
-  FaUsers,
-  FaGlobe,
-} from "react-icons/fa";
+import React, { useState } from 'react';
+import { FaFileAlt, FaLink, FaCalendarAlt, FaTools, FaMapMarkerAlt, FaBuilding, FaEnvelope, FaPhone, FaUsers, FaGlobe } from 'react-icons/fa';
 
-interface LegalDocument {
-  title: string;
-  type: string;
-  year: number;
-  url?: string;
-  description: string;
-}
+    interface LegalDocument {
+      title: string;
+      type: string;
+      year: number;
+      url?: string;
+      description: string;
+    }
 
 interface LegalFrameworkProps {
   documents: LegalDocument[];
@@ -37,32 +26,24 @@ interface LegalFrameworkProps {
     email: string;
     pays: string;
   }>;
-  timeline: Array<{
-    year: number;
-    event: string;
-    type: "constitution" | "election-law" | "amendment";
-  }>;
-}
+      timeline: Array<{
+        year: number;
+        event: string;
+        type: 'constitution' | 'election-law' | 'amendment'
+      }>;
+    }
 
-const LegalFramework: React.FC<LegalFrameworkProps> = ({
-  documents,
-  timeline,
-  organisations,
-}) => {
-  const [activeTab, setActiveTab] = useState<
-    "documents" | "timeline" | "organisations"
-  >("documents");
+    const LegalFramework: React.FC<LegalFrameworkProps> = ({   documents, timeline, organisations }) => {
+  const [activeTab, setActiveTab] = useState<'documents' | 'timeline' | 'organisations'>('documents');
   const [selectedOrg, setSelectedOrg] = useState<any>(null);
-  const [showAllDocs, setShowAllDocs] = useState(false);
-  const [showAllOrgs, setShowAllOrgs] = useState(false);
 
   const renderTimelineIcon = (type: string) => {
     switch (type) {
-      case "constitution":
+      case 'constitution':
         return <FaFileAlt className="text-blue-500" />;
-      case "election-law":
+      case 'election-law':
         return <FaLink className="text-green-500" />;
-      case "amendment":
+      case 'amendment':
         return <FaCalendarAlt className="text-red-500" />;
       default:
         return null;
@@ -79,53 +60,41 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
     setSelectedOrg(null);
   };
 
-  const displayedDocuments = showAllDocs ? documents : documents.slice(0, 6);
-  const displayedOrganisations = showAllOrgs
-    ? organisations
-    : organisations.slice(0, 8);
-
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <div className="flex mb-6 border-b">
         <button
           className={`
             px-4 py-2 mr-2 
-            ${activeTab === "documents" ? "border-b-2 border-africa-secondary bg-farafina-blue/10 text-africa-secondary" : "text-gray-600 "}
+            ${activeTab === 'documents' ? 'border-b-2 border-africa-secondary bg-farafina-blue/10 text-africa-secondary' : 'text-gray-600 '}
           `}
-          onClick={() => setActiveTab("documents")}
+          onClick={() => setActiveTab('documents')}
         >
           Données système électoral
         </button>
         <button
           className={`
             px-4 py-2 mr-2 
-            ${activeTab === "organisations" ? "border-b-2  border-africa-secondary bg-farafina-blue/10 text-africa-secondary" : "text-gray-600"}
+            ${activeTab === 'organisations' ? 'border-b-2  border-africa-secondary bg-farafina-blue/10 text-africa-secondary' : 'text-gray-600'}
           `}
-          onClick={() => setActiveTab("organisations")}
+          onClick={() => setActiveTab('organisations')}
         >
           Acteurs clés ({organisations.length})
         </button>
       </div>
 
-      {activeTab === "documents" && (
+      {activeTab === 'documents' && (
         <div className="space-y-4">
-          {displayedDocuments.map((doc, index) => (
-            <div
-              key={index}
-              className="border text-farafina-blue rounded-lg p-4 hover:shadow-sm transition-shadow"
-            >
+          {documents.map((doc, index) => (
+            <div key={index} className="border text-farafina-blue rounded-lg p-4 hover:shadow-sm transition-shadow">
               <div className="flex items-center mb-2">
                 <FaFileAlt className="mr-2 text-africa-accent" />
                 {doc.url ? (
                   <a href={doc.url} target="_blank" rel="noopener noreferrer">
-                    <h3 className="font-semibold text-farafina-blue">
-                      {doc.title}
-                    </h3>
+                    <h3 className="font-semibold text-farafina-blue">{doc.title}</h3>
                   </a>
                 ) : (
-                  <h3 className="font-semibold text-farafina-blue">
-                    {doc.title}
-                  </h3>
+                  <h3 className="font-semibold text-farafina-blue">{doc.title}</h3>
                 )}
               </div>
               <p className="text-sm text-gray-600 mb-2">{doc.description}</p>
@@ -134,30 +103,17 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
                   {doc.type} - {doc.year}
                 </span>
                 {doc.url && (
-                  <a
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-africa-secondary hover:underline"
-                  >
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-africa-secondary hover:underline">
                     Consulter
                   </a>
                 )}
               </div>
             </div>
           ))}
-          {documents.length > 3 && (
-            <button
-              onClick={() => setShowAllDocs(!showAllDocs)}
-              className="mt-4 px-4 py-2 bg-farafina-blue text-white rounded-lg hover:bg-transparent hover:text-farafina-blue hover:border hover:border-farafina-blue transition-colors w-full"
-            >
-              {showAllDocs ? "Voir moins" : "Voir plus"}
-            </button>
-          )}
         </div>
       )}
 
-      {activeTab === "timeline" && (
+      {activeTab === 'timeline' && (
         <div className="relative pl-6 border-l-2 border-gray-200">
           {timeline.map((item, index) => (
             <div key={index} className="mb-4 pl-4 relative">
@@ -174,9 +130,9 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
         </div>
       )}
 
-      {activeTab === "organisations" && (
+      {activeTab === 'organisations' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 p-4">
-          {displayedOrganisations.map((org, index) => (
+          {organisations.slice(0, 8).map((org, index) => (
             <div
               key={org.id || index}
               className="relative rounded-xl border border-gray-200 bg-white p-6 transition-shadow duration-300 hover:shadow-lg cursor-pointer"
@@ -185,20 +141,10 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
               {/* En-tête visible */}
               <div className="flex items-center space-x-3">
                 <FaBuilding className="text-farafina-blue text-xl" />
-                <h3 className="truncate text-lg font-semibold text-farafina-blue">
-                  {org.nom}
-                </h3>
+                <h3 className="truncate text-lg font-semibold text-farafina-blue">{org.nom}</h3>
               </div>
             </div>
           ))}
-          {organisations.length > 3 && (
-            <button
-              onClick={() => setShowAllOrgs(!showAllOrgs)}
-              className="mt-4 px-4 py-2 bg-farafina-blue text-white rounded-lg hover:bg-transparent hover:text-farafina-blue hover:border hover:border-farafina-blue transition-colors w-full"
-            >
-              {showAllOrgs ? "Voir moins" : "Voir plus"}
-            </button>
-          )}
         </div>
       )}
 
@@ -218,14 +164,11 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
             >
               ✕
             </button>
-            <h3 className="text-lg font-semibold text-black text-center mb-5">
-              {selectedOrg.nom}
-            </h3>
+            <h3 className="text-lg font-semibold text-black text-center mb-5">{selectedOrg.nom}</h3>
             <div className="space-y-2 text-black">
               <p>
                 <FaMapMarkerAlt className="inline-block mr-2" />
-                <strong>Localisation:</strong> {selectedOrg.ville} -{" "}
-                {selectedOrg.pays}
+                <strong>Localisation:</strong> {selectedOrg.ville} - {selectedOrg.pays}
               </p>
               <p>
                 <FaGlobe className="inline-block mr-2" />
@@ -233,34 +176,25 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
               </p>
               <p>
                 <FaBuilding className="inline-block mr-2" />
-                <strong>Type d'organisation:</strong>{" "}
-                {selectedOrg.typeOrganisation}
+                <strong>Type d'organisation:</strong> {selectedOrg.typeOrganisation}
               </p>
               <p>
                 <FaCalendarAlt className="inline-block mr-2" />
-                <strong>Année de Création:</strong>{" "}
-                {selectedOrg.anneeDeCreation}{" "}
-                <span>
-                  ({new Date().getFullYear() - selectedOrg.anneeDeCreation}{" "}
-                  année d'expertise)
-                </span>
+                <strong>Année de Création:</strong> {selectedOrg.anneeDeCreation}{' '}
+                <span>({new Date().getFullYear() - selectedOrg.anneeDeCreation} année d'expertise)</span>
               </p>
               <p>
                 <FaTools className="inline-block mr-2" />
-                <strong>Domaines d'Expertise:</strong>{" "}
-                {selectedOrg.domainesExpertise
-                  .split(",")
-                  .map((domaine: string) => domaine.trim())
-                  .join(" | ")}
+                <strong>Domaines d'Expertise:</strong>{' '}
+                {selectedOrg.domainesExpertise.split(',').map((domaine: string) => domaine.trim()).join(' | ')}
               </p>
               <p>
                 <FaUsers className="inline-block mr-2" />
-                <strong>Mobilisations d'Observateurs:</strong>{" "}
-                {selectedOrg.mobilisationsObservateurs}
+                <strong>Mobilisations d'Observateurs:</strong> {selectedOrg.mobilisationsObservateurs}
               </p>
               <p>
                 <FaLink className="inline-block mr-2" />
-                <strong>Site web:</strong>{" "}
+                <strong>Site web:</strong>{' '}
                 <a
                   href={selectedOrg.siteweb}
                   target="_blank"
@@ -272,9 +206,9 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
               </p>
               <p>
                 <FaPhone className="inline-block mr-2" />
-                <strong>Téléphone:</strong>{" "}
+                <strong>Téléphone:</strong>{' '}
                 <a
-                  href={`tel:${selectedOrg.telephone.replace(/[^+0-9]/g, "")}`}
+                  href={`tel:${selectedOrg.telephone.replace(/[^+0-9]/g, '')}`}
                   className="text-black hover:underline"
                 >
                   {selectedOrg.telephone}
@@ -282,11 +216,8 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
               </p>
               <p>
                 <FaEnvelope className="inline-block mr-2" />
-                <strong>Email:</strong>{" "}
-                <a
-                  href={`mailto:${selectedOrg.email}`}
-                  className="text-black hover:underline"
-                >
+                <strong>Email:</strong>{' '}
+                <a href={`mailto:${selectedOrg.email}`} className="text-black hover:underline">
                   {selectedOrg.email}
                 </a>
               </p>
@@ -298,4 +229,4 @@ const LegalFramework: React.FC<LegalFrameworkProps> = ({
   );
 };
 
-export default LegalFramework;
+    export default LegalFramework;
