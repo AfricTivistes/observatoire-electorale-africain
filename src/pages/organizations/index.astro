@@ -15,12 +15,13 @@ const elections = await getCollection('elections');
 
 // Transformation des données pour les cartes
 const organizationsData = organisations.map(org => ({
-  id: org.id, // Utilise maintenant le slug généré
+  id: org.id,
+  originalId: org.data.originalId,
   name: org.data.nom,
   country: org.data.pays || 'Non spécifié',
   type: org.data.typeOrganisation || 'Organisation',
-  zone: org.data.zone, // Ajouter le champ zone pour le filtrage
-  expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(d => d.trim()) : [],
+  zone: org.data.zone, // Champ zone pour le filtrage
+  expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(d => d.trim()).filter(d => d) : [],
   logo: null, // Pas de logo dans les données NocoDB
   website: org.data.siteweb || '',
   description: `Organisation ${org.data.typeOrganisation} basée à ${org.data.ville || 'localisation non spécifiée'}, couvrant ${org.data.nombreDePaysCouverts || '1'} pays dans les zones: ${org.data.zonesCouverts || 'Non spécifié'}.`,
@@ -317,7 +318,7 @@ const regions = [
     </div>
   </div>
 
-  <script is:inline define:vars={{ allOrganizations, organizationsData }}>
+  <script is:inline define:vars={{ allOrganizations: organizationsData }}>
     document.addEventListener('DOMContentLoaded', function() {
       const organizationsList = document.getElementById('organizations-list');
       const organizationCount = document.getElementById('organization-count');
@@ -370,9 +371,7 @@ const regions = [
         // Filtre par région (basé sur le champ zone de NocoDB)
         if (currentFilters.regions.length > 0) {
           filteredOrgs = filteredOrgs.filter(org => {
-            // Trouver l'organisation correspondante dans les données originales
-            const originalOrg = organizationsData.find(o => o.id === org.id);
-            if (!originalOrg || !originalOrg.zone) return false;
+            if (!org.zone) return false;
             
             return currentFilters.regions.some(region => {
               const regionKeywords = {
@@ -384,7 +383,7 @@ const regions = [
               };
               
               const keywords = regionKeywords[region] || [];
-              const zone = originalOrg.zone;
+              const zone = org.zone;
               
               if (Array.isArray(zone)) {
                 return zone.some(z => 
