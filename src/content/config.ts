@@ -138,7 +138,7 @@ const ressources = defineCollection({
       limit: "1000",
       sort: "année",
     };
-    const records = await listTableRecords(tableId, params);
+    const records = await listTableRecords(tableId, [], params);
     return records.map((record) => ({
       id: record["Id"].toString(),
       title: record.titre || "",
