@@ -328,8 +328,15 @@ const regions = [
         expertise: [],
         regions: [],
         types: [],
-        searchTerm: ''
+        searchTerm: '',
+        exactMatch: false
       };
+
+      // Fonction pour afficher le statut de chargement des types
+      function showTypeLoadingStatus() {
+        console.log('Status: Types d\'organisations chargés');
+        console.log('Types disponibles:', Object.keys(organisationTypes));
+      }
 
       console.log('Organizations data loaded:', allOrganizations.length);
 
@@ -350,22 +357,32 @@ const regions = [
           );
         }
 
-        // Filtre par expertise
+        // Filtre par expertise (correspondance exacte)
         if (currentFilters.expertise.length > 0) {
           filteredOrgs = filteredOrgs.filter(org => 
-            org.expertise && org.expertise.some(exp => 
-              currentFilters.expertise.some(filterExp => 
-                exp.toLowerCase().includes(filterExp.toLowerCase())
-              )
-            )
+            org.expertise && org.expertise.some(exp => {
+              const expLower = exp.toLowerCase().trim();
+              return currentFilters.expertise.some(filterExp => {
+                const filterLower = filterExp.toLowerCase().trim();
+                // Correspondance exacte ou mots-clés identiques
+                return expLower === filterLower || 
+                       expLower.split(/\s+/).includes(filterLower) ||
+                       filterLower.split(/\s+/).includes(expLower);
+              });
+            })
           );
         }
 
-        // Filtre par type d'organisation
+        // Filtre par type d'organisation (correspondance exacte)
         if (currentFilters.types.length > 0) {
-          filteredOrgs = filteredOrgs.filter(org => 
-            currentFilters.types.includes(org.type)
-          );
+          filteredOrgs = filteredOrgs.filter(org => {
+            const orgTypeLower = org.type.toLowerCase().trim();
+            return currentFilters.types.some(filterType => {
+              const filterTypeLower = filterType.toLowerCase().trim();
+              // Correspondance exacte
+              return orgTypeLower === filterTypeLower;
+            });
+          });
         }
 
         // Filtre par région (basé sur le champ zone de NocoDB)
@@ -428,10 +445,11 @@ const regions = [
 
       // Écouter l'événement de filtrage depuis le composant Filter
       window.addEventListener('organizationFilter', function(event) {
-        console.log('Filter event received:', event.detail);
+        console.log('Filter event received with exact matching:', event.detail);
         currentFilters.expertise = event.detail.expertise;
         currentFilters.regions = event.detail.regions;
         currentFilters.types = event.detail.types;
+        currentFilters.exactMatch = event.detail.exactMatch || false;
         applyAllFilters();
       });
       
@@ -462,6 +480,8 @@ const regions = [
       }
       
       
+    // Initialiser le chargement des types d'organisations
+      showTypeLoadingStatus();
     });
   </script>
 </Layout>

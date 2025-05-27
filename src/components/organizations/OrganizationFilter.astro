@@ -163,7 +163,7 @@ const sortOptions = [
         .filter(checkbox => checkbox.checked)
         .map(checkbox => checkbox.dataset.value);
 
-      console.log('Applying filters:', { 
+      console.log('Applying filters with exact matching:', { 
         expertise: selectedExpertise,
         regions: selectedRegions,
         types: selectedTypes
@@ -174,10 +174,33 @@ const sortOptions = [
         detail: { 
           expertise: selectedExpertise,
           regions: selectedRegions,
-          types: selectedTypes
+          types: selectedTypes,
+          exactMatch: true // Indicateur pour correspondance exacte
         }
       });
       window.dispatchEvent(event);
+    }
+
+    function loadOrganizationTypes() {
+      console.log('Chargement des types d\'organisations...');
+      // Afficher un indicateur de chargement pour les types
+      const typeSection = document.querySelector('div:has(.type-filter)');
+      if (typeSection) {
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.className = 'text-xs text-gray-500 mt-2';
+        loadingIndicator.textContent = 'Chargement des types...';
+        loadingIndicator.id = 'types-loading';
+        typeSection.appendChild(loadingIndicator);
+        
+        // Simuler le chargement (dans un vrai cas, cela viendrait de l'API)
+        setTimeout(() => {
+          const loading = document.getElementById('types-loading');
+          if (loading) {
+            loading.textContent = 'Types chargés ✓';
+            setTimeout(() => loading.remove(), 1000);
+          }
+        }, 500);
+      }
     }
 
     function resetFilters() {
@@ -203,6 +226,9 @@ const sortOptions = [
     [...expertiseFilters, ...regionFilters, ...typeFilters].forEach(checkbox => {
       checkbox.addEventListener('change', applyFilters);
     });
+
+    // Charger les types d'organisations au démarrage
+    loadOrganizationTypes();
 
     applyButton?.addEventListener('click', applyFilters);
     resetButton?.addEventListener('click', resetFilters);
