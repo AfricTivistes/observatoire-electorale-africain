@@ -357,21 +357,6 @@ const regions = [
           );
         }
 
-        // Filtre par expertise (correspondance exacte)
-        if (currentFilters.expertise.length > 0) {
-          filteredOrgs = filteredOrgs.filter(org => 
-            org.expertise && org.expertise.some(exp => {
-              const expLower = exp.toLowerCase().trim();
-              return currentFilters.expertise.some(filterExp => {
-                const filterLower = filterExp.toLowerCase().trim();
-                // Correspondance exacte ou mots-clés identiques
-                return expLower === filterLower || 
-                       expLower.split(/\s+/).includes(filterLower) ||
-                       filterLower.split(/\s+/).includes(expLower);
-              });
-            })
-          );
-        }
 
         // Filtre par type d'organisation (correspondance exacte)
         if (currentFilters.types.length > 0) {
@@ -392,11 +377,11 @@ const regions = [
             
             return currentFilters.regions.some(region => {
               const regionKeywords = {
-                'Afrique du Nord': ['nord', 'north', 'afrique du nord', 'north africa'],
-                'Afrique de l\'Ouest': ['ouest', 'west', 'afrique de l\'ouest', 'west africa', 'afrique ouest'],
-                'Afrique Centrale': ['central', 'centre', 'afrique centrale', 'central africa'],
-                'Afrique de l\'Est': ['est', 'east', 'afrique de l\'est', 'east africa', 'afrique est'],
-                'Afrique Australe': ['austral', 'south', 'sud', 'afrique australe', 'southern africa', 'afrique du sud']
+                'Afrique du Nord': ['Nord', 'north', 'afrique du nord', 'north africa'],
+                'Afrique de l\'Ouest': ['Ouest', 'west', 'afrique de l\'ouest', 'west africa', 'afrique ouest'],
+                'Afrique Centrale': ['Centrale', 'centre', 'afrique centrale', 'central africa'],
+                'Afrique de l\'Est': ['Est', 'east', 'afrique de l\'est', 'east africa', 'afrique est'],
+                'Afrique Australe': ['Australe', 'south', 'sud', 'afrique australe', 'southern africa', 'afrique du sud']
               };
               
               const keywords = regionKeywords[region] || [];
@@ -431,8 +416,6 @@ const regions = [
             });
           });
         }
-
-        console.log(`Filtered from ${allOrganizations.length} to ${filteredOrgs.length} organizations`);
         showOrganizations(filteredOrgs);
       }
 
