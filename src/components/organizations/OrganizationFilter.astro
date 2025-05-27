@@ -14,7 +14,7 @@ const {
   showTypes = true, 
   showYears = true, 
   showSort = true,
-  organizations
+  organizations = []
 } = Astro.props;
 
 // Options de filtrage
@@ -31,7 +31,7 @@ const expertiseOptions = [
 ];
 
 // Extraire les régions uniques en gérant les tableaux et valeurs nulles
-const regions = [...new Set(
+const regions = organizations && organizations.length > 0 ? [...new Set(
   organizations.flatMap(org => {
     if (Array.isArray(org.zone)) {
       return org.zone.filter(z => z && z !== null && z !== "");
@@ -40,7 +40,7 @@ const regions = [...new Set(
     }
     return [];
   })
-)].sort();
+)].sort() : [];
 
 import { FaGlobe, FaHandshake, FaUniversity, FaUsers, FaLandmark, FaNetworkWired } from 'react-icons/fa';
 
