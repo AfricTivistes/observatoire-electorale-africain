@@ -375,28 +375,39 @@ const regions = [
             
             return currentFilters.regions.some(region => {
               const regionKeywords = {
-                'Afrique du Nord': ['nord', 'north'],
-                'Afrique de l\'Ouest': ['ouest', 'west'],
-                'Afrique Centrale': ['central', 'centre'],
-                'Afrique de l\'Est': ['est', 'east'],
-                'Afrique Australe': ['austral', 'south', 'sud']
+                'Afrique du Nord': ['nord', 'north', 'afrique du nord', 'north africa'],
+                'Afrique de l\'Ouest': ['ouest', 'west', 'afrique de l\'ouest', 'west africa', 'afrique ouest'],
+                'Afrique Centrale': ['central', 'centre', 'afrique centrale', 'central africa'],
+                'Afrique de l\'Est': ['est', 'east', 'afrique de l\'est', 'east africa', 'afrique est'],
+                'Afrique Australe': ['austral', 'south', 'sud', 'afrique australe', 'southern africa', 'afrique du sud']
               };
               
               const keywords = regionKeywords[region] || [];
               const zone = org.zone;
               
               if (Array.isArray(zone)) {
-                return zone.some(z => 
-                  z && keywords.some(keyword => 
-                    z.toLowerCase().includes(keyword)
-                  )
-                );
+                return zone.some(z => {
+                  if (!z) return false;
+                  const zoneText = z.toLowerCase().trim();
+                  return keywords.some(keyword => {
+                    const keywordLower = keyword.toLowerCase();
+                    // Correspondance exacte ou contient le mot-clé
+                    return zoneText === keywordLower || 
+                           zoneText.includes(keywordLower) ||
+                           keywordLower.includes(zoneText);
+                  });
+                });
               }
               
               if (typeof zone === 'string') {
-                return keywords.some(keyword => 
-                  zone.toLowerCase().includes(keyword)
-                );
+                const zoneText = zone.toLowerCase().trim();
+                return keywords.some(keyword => {
+                  const keywordLower = keyword.toLowerCase();
+                  // Correspondance exacte ou contient le mot-clé
+                  return zoneText === keywordLower || 
+                         zoneText.includes(keywordLower) ||
+                         keywordLower.includes(zoneText);
+                });
               }
               
               return false;
