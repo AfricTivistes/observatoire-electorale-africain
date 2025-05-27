@@ -62,8 +62,8 @@ const stats = [
   }
 ];
 
-// Organisations en vedette (les 2 premières)
-const featuredOrganizations = organizationsData.slice(0, 8);
+// Toutes les organisations
+const allOrganizations = organizationsData;
 
 // Calcul des types d'organisations pour les statistiques
 const organisationTypes = organisations.reduce((acc, org) => {
@@ -84,7 +84,7 @@ organisations.forEach(org => {
 ---
 
 <Layout title="Organisations | Observatoire des Élections en Afrique">
-  <OrganizationsHero />
+  <OrganizationsHero organizations={organizationsData} />
 
   <div class="container mx-auto px-4 py-12">
     <!-- Statistiques -->
@@ -193,28 +193,23 @@ organisations.forEach(org => {
         <div class="lg:col-span-3">
           <div class="bg-white rounded-xl shadow-md p-6 mb-6">
             <div class="flex justify-between items-center mb-6">
-              <h3 class="text-xl font-semibold text-farafina-dark">Acteurs clés en vedette</h3>
-              <div class="text-sm text-gray-600">
-                Affichage de {featuredOrganizations.length} sur {organizationsData.length} organisations
+              <h3 class="text-xl font-semibold text-farafina-dark">Tous les Acteurs Clés</h3>
+              <div class="text-sm text-gray-600" id="organization-count">
+                Affichage de {allOrganizations.length} organisations
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featuredOrganizations.map(org => (
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="organizations-list">
+              {allOrganizations.map(org => (
                 <OrganizationCard organization={org} />
               ))}
             </div>
 
-            <div class="mt-6 text-center">
-              <a 
-                href="/organizations/organisations" 
-                class="inline-block px-6 py-3 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors">
-                Voir tous les acteurs clés
-              </a>
+            <!-- Message si aucun résultat -->
+            <div id="no-results" class="text-center py-8 hidden">
+              <p class="text-gray-500">Aucune organisation trouvée pour cette recherche.</p>
             </div>
           </div>
-
-
         </div>
       </div>
     </div>
@@ -245,4 +240,92 @@ organisations.forEach(org => {
       </div>
     </div>
   </div>
+
+  <script is:inline define:vars={{ allOrganizations }}>
+    document.addEventListener('DOMContentLoaded', function() {
+      const organizationsList = document.getElementById('organizations-list');
+      const organizationCount = document.getElementById('organization-count');
+      const noResults = document.getElementById('no-results');
+      
+      // Écouter l'événement de recherche depuis le composant Hero
+      window.addEventListener('organizationSearch', function(event) {
+        const searchTerm = event.detail.searchTerm.toLowerCase().trim();
+        
+        if (!searchTerm) {
+          // Afficher toutes les organisations
+          showOrganizations(allOrganizations);
+          return;
+        }
+        
+        // Filtrer les organisations
+        const filteredOrgs = allOrganizations.filter(org => 
+          org.name.toLowerCase().includes(searchTerm) ||
+          org.country.toLowerCase().includes(searchTerm) ||
+          org.type.toLowerCase().includes(searchTerm) ||
+          (org.expertise && org.expertise.some(exp => 
+            exp.toLowerCase().includes(searchTerm)
+          ))
+        );
+        
+        showOrganizations(filteredOrgs);
+      });
+      
+      function showOrganizations(organizations) {
+        if (organizations.length === 0) {
+          organizationsList.classList.add('hidden');
+          noResults.classList.remove('hidden');
+          organizationCount.textContent = 'Aucune organisation trouvée';
+        } else {
+          organizationsList.classList.remove('hidden');
+          noResults.classList.add('hidden');
+          organizationCount.textContent = `Affichage de ${organizations.length} organisation${organizations.length > 1 ? 's' : ''}`;
+          
+          // Réafficher les cartes d'organisations
+          organizationsList.innerHTML = organizations.map(org => `
+            <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <a href="/organizations/${org.id}" class="block">
+                <div class="flex items-center mb-3">
+                  <div class="w-10 h-10 bg-farafina-primary/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                    <div class="text-farafina-primary text-lg">
+                      ${getOrganizationIcon(org.type)}
+                    </div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-semibold text-farafina-dark truncate">${org.name}</h3>
+                    <p class="text-sm text-gray-600">${org.country}</p>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <span class="inline-block px-2 py-1 bg-farafina-primary/10 text-farafina-primary rounded text-xs font-medium">
+                    ${org.type}
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 line-clamp-2 mb-3">${org.description}</p>
+                ${org.expertise.length > 0 ? `
+                  <div class="flex flex-wrap gap-1">
+                    ${org.expertise.slice(0, 2).map(exp => 
+                      `<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">${exp}</span>`
+                    ).join('')}
+                    ${org.expertise.length > 2 ? `<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">+${org.expertise.length - 2}</span>` : ''}
+                  </div>
+                ` : ''}
+              </a>
+            </div>
+          `).join('');
+        }
+      }
+      
+      function getOrganizationIcon(type) {
+        const iconMap = {
+          'ONG': '👥',
+          'Organisation internationale': '🌍',
+          'Institution gouvernementale': '🏛️',
+          'Réseau régional': '🔗',
+          'Centre de recherche': '🎓',
+          'default': '🏢'
+        };
+        return iconMap[type] || iconMap['default'];
+      }
+    });
+  </script>
 </Layout>
