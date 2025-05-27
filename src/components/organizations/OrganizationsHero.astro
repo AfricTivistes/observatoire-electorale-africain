@@ -66,9 +66,8 @@ const { organizations = [] } = Astro.props;
         `;
         
         suggestion.addEventListener('click', () => {
-          searchInput.value = org.name;
-          suggestions.classList.add('hidden');
-          performSearch(org.name);
+          // Navigation vers la page de l'organisation
+          window.location.href = `/organizations/${org.id}`;
         });
         
         suggestions.appendChild(suggestion);
@@ -82,6 +81,17 @@ const { organizations = [] } = Astro.props;
         detail: { searchTerm: searchTerm }
       });
       window.dispatchEvent(event);
+      
+      // Faire défiler vers la section "Tous les Acteurs Clés"
+      setTimeout(() => {
+        const acteursSection = document.querySelector('#acteurs-cles-section');
+        if (acteursSection) {
+          acteursSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 100);
     }
     
     // Événement de saisie dans le champ de recherche
