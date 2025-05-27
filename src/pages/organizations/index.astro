@@ -19,7 +19,7 @@ const organizationsData = organisations.map(org => ({
   name: org.data.nom,
   country: org.data.pays || 'Non spécifié',
   type: org.data.typeOrganisation || 'Organisation',
-  zone: org.data.zone, // Ajouter le champ zone
+  zone: org.data.zone, // Ajouter le champ zone pour le filtrage
   expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(d => d.trim()) : [],
   logo: null, // Pas de logo dans les données NocoDB
   website: org.data.siteweb || '',
@@ -355,7 +355,7 @@ const regions = [
           );
         }
 
-        // Filtre par type
+        // Filtre par type d'organisation
         if (currentFilters.types.length > 0) {
           filteredOrgs = filteredOrgs.filter(org => 
             currentFilters.types.includes(org.type)
@@ -365,32 +365,37 @@ const regions = [
         // Filtre par région (basé sur le champ zone de NocoDB)
         if (currentFilters.regions.length > 0) {
           filteredOrgs = filteredOrgs.filter(org => {
-            // Récupération des données d'organisation depuis les données originales
-            const orgData = allOrganizations.find(o => o.id === org.id);
-            if (!orgData || !orgData.zone) return false;
+            // Trouver l'organisation correspondante dans les données originales
+            const originalOrg = ${JSON.stringify(organizationsData)}.find(o => o.id === org.id);
+            if (!originalOrg || !originalOrg.zone) return false;
             
             return currentFilters.regions.some(region => {
               const regionKeywords = {
-                'Afrique du Nord': ['nord'],
-                'Afrique de l\'Ouest': ['ouest'],
+                'Afrique du Nord': ['nord', 'north'],
+                'Afrique de l\'Ouest': ['ouest', 'west'],
                 'Afrique Centrale': ['central', 'centre'],
-                'Afrique de l\'Est': ['est'],
-                'Afrique Australe': ['austral', 'sud']
+                'Afrique de l\'Est': ['est', 'east'],
+                'Afrique Australe': ['austral', 'south', 'sud']
               };
               
               const keywords = regionKeywords[region] || [];
+              const zone = originalOrg.zone;
               
-              if (Array.isArray(orgData.zone)) {
-                return orgData.zone.some(z => 
+              if (Array.isArray(zone)) {
+                return zone.some(z => 
                   z && keywords.some(keyword => 
                     z.toLowerCase().includes(keyword)
                   )
                 );
               }
               
-              return keywords.some(keyword => 
-                orgData.zone.toLowerCase().includes(keyword)
-              );
+              if (typeof zone === 'string') {
+                return keywords.some(keyword => 
+                  zone.toLowerCase().includes(keyword)
+                );
+              }
+              
+              return false;
             });
           });
         }

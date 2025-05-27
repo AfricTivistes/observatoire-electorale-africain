@@ -15,18 +15,31 @@ const {
   showSort = true 
 } = Astro.props;
 
-// Options de filtrage
-const expertiseOptions = [
-  "Observation Électorale",
-  "Transparence",
-  "Formation Civique",
-  "Monitoring Électoral",
-  "Analyse Politique",
-  "Éducation Civique",
-  "Droits Humains",
-  "Médias",
-  "Technologie Électorale"
-];
+// Récupération des données depuis Astro.props pour générer les options dynamiquement
+import { getCollection } from 'astro:content';
+
+// Récupération des organisations pour extraire les options
+const allOrganisations = await getCollection('organisations');
+
+// Extraction des domaines d'expertise uniques
+const allExpertiseSet = new Set();
+allOrganisations.forEach(org => {
+  if (org.data.domainesExpertise) {
+    org.data.domainesExpertise.split(',').forEach(exp => {
+      if (exp.trim()) allExpertiseSet.add(exp.trim());
+    });
+  }
+});
+const expertiseOptions = Array.from(allExpertiseSet).sort();
+
+// Extraction des types d'organisations uniques
+const allTypesSet = new Set();
+allOrganisations.forEach(org => {
+  if (org.data.typeOrganisation && org.data.typeOrganisation.trim()) {
+    allTypesSet.add(org.data.typeOrganisation.trim());
+  }
+});
+const typeOptionsLabels = Array.from(allTypesSet).sort();
 
 const regionOptions = [
   "Afrique du Nord",
@@ -38,13 +51,10 @@ const regionOptions = [
 
 import { FaGlobe, FaHandshake, FaUniversity, FaUsers, FaLandmark, FaNetworkWired } from 'react-icons/fa';
 
-const typeOptions = [
-  { label: "ONG", icon: FaGlobe },
-  { label: "Organisation internationale", icon: FaGlobe },
-  { label: "Institution gouvernementale", icon: FaLandmark },
-  { label: "Réseau régional", icon: FaNetworkWired },
-  { label: "Centre de recherche", icon: FaUniversity }
-];
+const typeOptions = typeOptionsLabels.map(label => ({
+  label,
+  icon: FaGlobe // Icon par défaut, peut être personnalisé selon le type
+}));
 
 const sortOptions = [
   { label: "Alphabétique (A-Z)", value: "alpha-asc" },
