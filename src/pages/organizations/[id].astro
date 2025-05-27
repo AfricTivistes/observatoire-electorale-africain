@@ -78,7 +78,9 @@ const organizationData = {
               Organisation {organizationData.type} basée à {organizationData.ville || 'localisation non spécifiée'}, 
               couvrant {organizationData.nombrePaysCouverts || '1'} pays dans les zones: {organizationData.zonesCouverts || 'Non spécifié'}.
               {organizationData.mobilisationObservateurs && (
-                ` Cette organisation est également impliquée dans: ${organizationData.mobilisationObservateurs}.`
+                {organizationData.mobilisationObservateurs === 'OUI' && (
+                  ` Cette organisation est également impliquée dans la: ${organizationData.mobilisationObservateurs}.`
+                )}
               )}
             </p>
           </div>
