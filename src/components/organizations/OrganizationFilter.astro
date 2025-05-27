@@ -6,15 +6,13 @@ interface Props {
   showTypes?: boolean;
   showYears?: boolean;
   showSort?: boolean;
-  organizations: any[];
 }
 
 const { 
   showRegions = true, 
   showTypes = true, 
   showYears = true, 
-  showSort = true,
-  organizations = []
+  showSort = true 
 } = Astro.props;
 
 // Options de filtrage
@@ -30,17 +28,13 @@ const expertiseOptions = [
   "Technologie Électorale"
 ];
 
-// Extraire les régions uniques en gérant les tableaux et valeurs nulles
-const regions = organizations && organizations.length > 0 ? [...new Set(
-  organizations.flatMap(org => {
-    if (Array.isArray(org.zone)) {
-      return org.zone.filter(z => z && z !== null && z !== "");
-    } else if (org.zone && org.zone !== null && org.zone !== "") {
-      return [org.zone];
-    }
-    return [];
-  })
-)].sort() : [];
+const regionOptions = [
+  "Afrique du Nord",
+  "Afrique de l'Ouest",
+  "Afrique Centrale",
+  "Afrique de l'Est",
+  "Afrique Australe",
+];
 
 import { FaGlobe, FaHandshake, FaUniversity, FaUsers, FaLandmark, FaNetworkWired } from 'react-icons/fa';
 
@@ -89,7 +83,7 @@ const sortOptions = [
       <div>
         <h3 class="font-semibold mb-3 text-farafina-secondary">Régions</h3>
         <div class="space-y-2">
-          {regions.map(option => (
+          {regionOptions.map(option => (
             <label class="flex items-center">
               <input 
                 type="checkbox" 
@@ -187,11 +181,11 @@ const sortOptions = [
       const selectedExpertise = Array.from(expertiseFilters)
         .filter(checkbox => checkbox.checked)
         .map(checkbox => checkbox.dataset.value);
-
+      
       const selectedRegions = Array.from(regionFilters)
         .filter(checkbox => checkbox.checked)
         .map(checkbox => checkbox.dataset.value);
-
+      
       const selectedTypes = Array.from(typeFilters)
         .filter(checkbox => checkbox.checked)
         .map(checkbox => checkbox.dataset.value);
@@ -212,7 +206,7 @@ const sortOptions = [
       checkboxes.forEach(checkbox => {
         checkbox.checked = false;
       });
-
+      
       // Apply empty filters
       const event = new CustomEvent('organizationFilter', {
         detail: { 
@@ -232,44 +226,4 @@ const sortOptions = [
     applyButton?.addEventListener('click', applyFilters);
     resetButton?.addEventListener('click', resetFilters);
   });
-
-  // Fonction pour filtrer les organisations
-  function filterOrganizations() {
-    const selectedTypes = Array.from(document.querySelectorAll('input[name="organizationType"]:checked'))
-      .map(input => input.value);
-
-    const selectedDomains = Array.from(document.querySelectorAll('input[name="expertiseDomain"]:checked'))
-      .map(input => input.value);
-
-    const selectedRegions = Array.from(document.querySelectorAll('input[name="region"]:checked'))
-      .map(input => input.value);
-
-    const filteredOrgs = organizations.filter(org => {
-      // Filtre par type
-      const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(org.typeOrganisation);
-
-      // Filtre par domaine d'expertise
-      const domaineMatch = selectedDomains.length === 0 || 
-        selectedDomains.some(domain => 
-          org.domainesExpertise && org.domainesExpertise.includes(domain)
-        );
-
-      // Filtre par région - gérer les tableaux et valeurs nulles
-      const regionMatch = selectedRegions.length === 0 || (() => {
-        if (Array.isArray(org.zone)) {
-          return org.zone.some(z => selectedRegions.includes(z));
-        } else if (org.zone && org.zone !== null && org.zone !== "") {
-          return selectedRegions.includes(org.zone);
-        }
-        return false;
-      })();
-
-      return typeMatch && domaineMatch && regionMatch;
-    });
-
-    // Dispatch l'événement avec les organisations filtrées
-    window.dispatchEvent(new CustomEvent('organizationsFiltered', {
-      detail: filteredOrgs
-    }));
-  }
 </script>

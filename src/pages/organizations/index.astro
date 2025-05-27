@@ -1,52 +1,47 @@
-` tags. I will pay close attention to indentation, structure, and avoid any forbidden words or placeholders.
-
-```
-<replit_final_file>
 ---
 import Layout from '../../layouts/MainLayout.astro';
 import OrganizationsHero from '../../components/organizations/OrganizationsHero.astro';
 import OrganizationCard from '../../components/organizations/OrganizationCard.astro';
 import OrganizationFilter from '../../components/organizations/OrganizationFilter.astro';
-import { FaUsers, FaHandshake, FaGlobeAfrica, FaChartBar, FaBuilding } from 'react-icons/fa';
+import PartnershipTypes from '../../components/organizations/PartnershipTypes.astro';
+import ObserverNetworks from '../../components/organizations/ObserverNetworks.astro';
+import { FaUsers, FaHandshake, FaGlobeAfrica, FaChartBar } from 'react-icons/fa';
 import { getCollection } from 'astro:content';
 
 // Récupération des données depuis NocoDB
-const organisationsCollection = await getCollection('organisations');
-const paysCollection = await getCollection('pays');
-const electionsCollection = await getCollection('elections');
+const organisations = await getCollection('organisations');
+const pays = await getCollection('pays');
+const elections = await getCollection('elections');
 
-// Transformation des données pour le composant
-const allOrganizations = organisationsCollection.map(org => ({
-  id: org.id,
+// Transformation des données pour les cartes
+const organizationsData = organisations.map(org => ({
+  id: org.id, // Utilise maintenant le slug généré
   name: org.data.nom,
   country: org.data.pays || 'Non spécifié',
-  city: org.data.ville || 'Non spécifié',
   type: org.data.typeOrganisation || 'Organisation',
   expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(d => d.trim()) : [],
-  zone: org.data.zone,
-  typeOrganisation: org.data.typeOrganisation || '',
-  domainesExpertise: org.data.domainesExpertise || '',
+  logo: null, // Pas de logo dans les données NocoDB
   website: org.data.siteweb || '',
-  email: org.data.email || '',
-  phone: org.data.telephone || '',
-  creationYear: org.data.anneeDeCreation || null,
-  countriesCovered: org.data.nombreDePaysCouverts || '',
-  observerMobilization: org.data.mobilisationsObservateurs || '',
-  description: `Organisation ${org.data.typeOrganisation} basée à ${org.data.ville || 'localisation non spécifiée'}, couvrant ${org.data.nombreDePaysCouverts || '1'} pays.`
+  description: `Organisation ${org.data.typeOrganisation} basée à ${org.data.ville || 'localisation non spécifiée'}, couvrant ${org.data.nombreDePaysCouverts || '1'} pays dans les zones: ${org.data.zonesCouverts || 'Non spécifié'}.`,
+  contacts: {
+    email: org.data.email || '',
+    phone: org.data.telephone || '',
+    address: `${org.data.ville || ''}, ${org.data.pays || ''}`
+  }
 }));
 
-// Statistiques Notre Réseau
-const networkStats = [
+// Calcul des statistiques basées sur les données réelles
+const stats = [
   { 
     icon: FaUsers, 
-    value: organisationsCollection.length.toString(), 
+    value: organisations.length.toString(), 
     label: "Organisations Partenaires",
     color: "bg-farafina-primary/10",
     textColor: "text-farafina-primary"
   },
   { 
     icon: FaHandshake, 
-    value: paysCollection.length.toString(), 
+    value: pays.length.toString(), 
     label: "Pays Représentés",
     color: "bg-farafina-secondary/10",
     textColor: "text-farafina-secondary"
@@ -54,183 +49,151 @@ const networkStats = [
   { 
     icon: FaGlobeAfrica, 
     value: "5", 
-    label: "Régions Africaines",
+    label: "Réseaux Régionaux",
     color: "bg-farafina-accent/10",
     textColor: "text-farafina-accent"
   },
   { 
     icon: FaChartBar, 
-    value: electionsCollection.length.toString(), 
+    value: elections.length.toString(), 
     label: "Élections Observées",
     color: "bg-farafina-blue/10",
     textColor: "text-farafina-blue"
-  },
+  }
 ];
 
-// Calcul des types d'organisations
-const organizationTypes = organisationsCollection.reduce((acc, org) => {
+// Toutes les organisations
+const allOrganizations = organizationsData;
+
+// Calcul des types d'organisations pour les statistiques
+const organisationTypes = organisations.reduce((acc, org) => {
   const type = org.data.typeOrganisation || 'Autre';
   acc[type] = (acc[type] || 0) + 1;
   return acc;
 }, {} as Record<string, number>);
 
-// Grouper les organisations par zone géographique
-const organizationsByZone = (() => {
-  const zoneMap = new Map();
-
-  allOrganizations.forEach(org => {
-    let zones = [];
-
-    if (Array.isArray(org.zone)) {
-      zones = org.zone.filter(z => z && z !== null && z !== "");
-    } else if (org.zone && org.zone !== null && org.zone !== "") {
-      zones = [org.zone];
-    }
-
-    // Si aucune zone valide, ajouter à "Zone non spécifiée"
-    if (zones.length === 0) {
-      zones = ["Zone non spécifiée"];
-    }
-
-    zones.forEach(zone => {
-      if (!zoneMap.has(zone)) {
-        zoneMap.set(zone, []);
-      }
-      zoneMap.get(zone).push(org);
+// Calcul des zones géographiques couvertes
+const zonesCouvertes = new Set();
+organisations.forEach(org => {
+  if (org.data.zonesCouverts) {
+    org.data.zonesCouverts.split(',').forEach(zone => {
+      zonesCouvertes.add(zone.trim());
     });
-  });
-
-  return Array.from(zoneMap.entries())
-    .map(([zone, organizations]) => ({
-      zone,
-      organizations,
-      count: organizations.length
-    }))
-    .sort((a, b) => a.zone.localeCompare(b.zone));
-})();
+  }
+});
 ---
 
 <Layout title="Organisations | Observatoire des Élections en Afrique">
-  <OrganizationsHero organizations={allOrganizations} />
+  <OrganizationsHero organizations={organizationsData} />
 
   <div class="container mx-auto px-4 py-12">
-
-    <!-- Section Notre Réseau -->
-    <section class="mb-16">
-      <div class="bg-white rounded-xl shadow-md p-8">
-        <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold text-farafina-dark mb-4">Notre Réseau</h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">
-            Un écosystème dynamique d'organisations engagées pour la transparence et l'intégrité des processus électoraux en Afrique.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {networkStats.map(stat => (
-            <div class={`${stat.color} rounded-lg p-6 text-center transition-transform hover:scale-105`}>
-              <div class="flex justify-center mb-4">
-                <stat.icon className={`${stat.textColor} text-4xl`} />
-              </div>
-              <div class={`text-3xl font-bold ${stat.textColor} mb-2`}>{stat.value}</div>
-              <div class="text-gray-700 font-medium">{stat.label}</div>
+    <!-- Statistiques -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Notre Réseau</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div class={`${stat.color} rounded-lg p-5 text-center`}>
+            <div class="flex justify-center mb-3">
+              <stat.icon className={`${stat.textColor} text-3xl`} />
             </div>
-          ))}
-        </div>
+            <span class={`block text-3xl font-bold ${stat.textColor}`}>{stat.value}</span>
+            <span class="text-gray-600">{stat.label}</span>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
 
-    <!-- Section Types d'Organisations -->
-    <section class="mb-16">
-      <div class="bg-white rounded-xl shadow-md p-8">
-        <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold text-farafina-dark mb-4">Types d'Organisations</h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">
-            Diversité des acteurs impliqués dans l'observation électorale et la promotion démocratique.
-          </p>
-        </div>
+    <!-- Aperçu des types d'organisations -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Types d'Organisations</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Object.entries(organisationTypes).map(([type, count]) => (
+          <div class="bg-farafina-primary/5 rounded-lg p-4">
+            <h3 class="font-semibold text-farafina-dark">{type}</h3>
+            <p class="text-2xl font-bold text-farafina-primary">{count}</p>
+            <p class="text-sm text-gray-600">organisations</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Types de partenariats >
+    <PartnershipTypes /-->
+
+    <!-- Initiatives et Programmes -->
+    <div class="my-12">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-2xl font-bold text-farafina-dark mb-6">Initiatives et Programmes Phares</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Object.entries(organizationTypes).map(([type, count]) => (
-            <div class="bg-gradient-to-br from-farafina-primary/5 to-farafina-primary/10 border border-farafina-primary/20 rounded-lg p-6 hover:shadow-md transition-shadow">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-farafina-primary/20 rounded-lg flex items-center justify-center mr-4">
-                  <FaBuilding className="text-farafina-primary text-xl" />
-                </div>
-                <div>
-                  <h3 class="font-semibold text-farafina-dark text-lg">{type}</h3>
-                  <p class="text-sm text-gray-600">organisations</p>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="text-3xl font-bold text-farafina-primary">{count}</div>
-              </div>
+          <div class="bg-gradient-to-br from-farafina-primary/10 to-farafina-primary/5 rounded-lg p-6">
+            <div class="w-12 h-12 bg-farafina-primary/20 rounded-lg flex items-center justify-center mb-4">
+              <FaChartBar className="text-farafina-primary text-xl" />
             </div>
-          ))}
+            <h3 class="font-semibold text-farafina-dark mb-3">Observatoire Electoral</h3>
+            <p class="text-gray-600 text-sm mb-4">Surveillance et analyse en temps réel des processus électoraux africains</p>
+            <div class="text-2xl font-bold text-farafina-primary">{elections.length}</div>
+            <div class="text-xs text-gray-600">Élections suivies</div>
+          </div>
+
+          <div class="bg-gradient-to-br from-farafina-secondary/10 to-farafina-secondary/5 rounded-lg p-6">
+            <div class="w-12 h-12 bg-farafina-secondary/20 rounded-lg flex items-center justify-center mb-4">
+              <FaUsers className="text-farafina-secondary text-xl" />
+            </div>
+            <h3 class="font-semibold text-farafina-dark mb-3">Réseau de Formation</h3>
+            <p class="text-gray-600 text-sm mb-4">Renforcement des capacités des acteurs de la société civile</p>
+            <div class="text-2xl font-bold text-farafina-secondary">15+</div>
+            <div class="text-xs text-gray-600">Programmes actifs</div>
+          </div>
+
+          <div class="bg-gradient-to-br from-farafina-accent/10 to-farafina-accent/5 rounded-lg p-6">
+            <div class="w-12 h-12 bg-farafina-accent/20 rounded-lg flex items-center justify-center mb-4">
+              <FaGlobeAfrica className="text-farafina-accent text-xl" />
+            </div>
+            <h3 class="font-semibold text-farafina-dark mb-3">Plaidoyer Régional</h3>
+            <p class="text-gray-600 text-sm mb-4">Promotion de la démocratie et de la transparence électorale</p>
+            <div class="text-2xl font-bold text-farafina-accent">{Array.from(zonesCouvertes).length}</div>
+            <div class="text-xs text-gray-600">Zones d'intervention</div>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Sections par Zone Géographique -->
-    <section class="mb-16">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold text-farafina-dark mb-4">Répartition par Zone Géographique</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">
-          Découvrez la présence de nos organisations partenaires à travers le continent africain.
-        </p>
-      </div>
-
-      {organizationsByZone.map(({ zone, organizations: zoneOrgs, count }) => (
-        <div class="mb-12">
-          <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <!-- En-tête de zone -->
-            <div class="bg-gradient-to-r from-farafina-primary to-farafina-secondary p-6">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center text-white">
-                  <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mr-4">
-                    <FaGlobeAfrica className="text-white text-xl" />
-                  </div>
-                  <div>
-                    <h3 class="text-2xl font-bold">{zone}</h3>
-                    <p class="text-white/90">{count} organisation{count > 1 ? 's' : ''}</p>
-                  </div>
-                </div>
-                <div class="text-white/80 text-sm">
-                  {Math.round((count / allOrganizations.length) * 100)}% du réseau
-                </div>
-              </div>
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="border border-gray-200 rounded-lg p-5">
+            <h4 class="font-semibold text-farafina-dark mb-3">Programme de Mentorat</h4>
+            <p class="text-gray-600 text-sm mb-4">Accompagnement des jeunes organisations dans le développement de leurs capacités d'observation électorale.</p>
+            <div class="flex items-center text-sm text-farafina-primary">
+              <FaHandshake className="mr-2" />
+              <span>25 organisations mentorées en 2024</span>
             </div>
+          </div>
 
-            <!-- Grille des organisations -->
-            <div class="p-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {zoneOrgs.map(org => (
-                  <OrganizationCard organization={org} />
-                ))}
-              </div>
+          <div class="border border-gray-200 rounded-lg p-5">
+            <h4 class="font-semibold text-farafina-dark mb-3">Base de Données Partagée</h4>
+            <p class="text-gray-600 text-sm mb-4">Plateforme collaborative pour le partage d'informations et de bonnes pratiques entre organisations.</p>
+            <div class="flex items-center text-sm text-farafina-secondary">
+              <FaChartBar className="mr-2" />
+              <span>Plus de 500 ressources disponibles</span>
             </div>
           </div>
         </div>
-      ))}
-    </section>
-
-    <!-- Section Acteurs Clés avec Filtres -->
-    <section id="acteurs-cles-section" class="mb-16">
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-farafina-dark mb-4">Tous les Acteurs Clés</h2>
-        <p class="text-gray-600">Explorez l'ensemble de notre réseau d'organisations partenaires</p>
       </div>
+    </div>
+
+    <!-- Acteurs clés et filtres -->
+    <div id="acteurs-cles-section" class="mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Acteurs clés</h2>
 
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Filtres -->
         <div class="lg:col-span-1">
-          <OrganizationFilter organizations={allOrganizations} />
+          <OrganizationFilter />
         </div>
 
         <!-- Liste des organisations -->
         <div class="lg:col-span-3">
-          <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="bg-white rounded-xl shadow-md p-6 mb-6">
             <div class="flex justify-between items-center mb-6">
-              <h3 class="text-xl font-semibold text-farafina-dark">Résultats</h3>
+              <h3 class="text-xl font-semibold text-farafina-dark">Tous les Acteurs Clés</h3>
               <div class="text-sm text-gray-600" id="organization-count">
                 Affichage de {allOrganizations.length} organisations
               </div>
@@ -243,60 +206,39 @@ const organizationsByZone = (() => {
             </div>
 
             <!-- Message si aucun résultat -->
-            <div id="no-results" class="text-center py-12 hidden">
-              <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaUsers className="text-gray-400 text-2xl" />
-              </div>
-              <p class="text-gray-500 text-lg mb-2">Aucune organisation trouvée</p>
-              <p class="text-gray-400 text-sm">Essayez de modifier vos critères de recherche</p>
+            <div id="no-results" class="text-center py-8 hidden">
+              <p class="text-gray-500">Aucune organisation trouvée pour cette recherche.</p>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
     <!-- Appel à l'action -->
-    <section class="mb-16">
-      <div class="bg-gradient-to-r from-farafina-primary to-farafina-secondary rounded-xl shadow-lg overflow-hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2">
-          <div class="p-8 text-white">
-            <h2 class="text-3xl font-bold mb-4">Rejoignez Notre Réseau</h2>
-            <p class="mb-6 text-white/90 text-lg">
-              Votre organisation œuvre pour la démocratie et la transparence électorale ? 
-              Rejoignez notre communauté d'acteurs engagés pour l'avenir démocratique de l'Afrique.
-            </p>
-            <div class="space-y-4 mb-6">
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-white rounded-full mr-3"></div>
-                <span class="text-white/90">Accès à notre plateforme collaborative</span>
-              </div>
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-white rounded-full mr-3"></div>
-                <span class="text-white/90">Programmes de formation et de renforcement</span>
-              </div>
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-white rounded-full mr-3"></div>
-                <span class="text-white/90">Visibilité à travers notre réseau continental</span>
-              </div>
-            </div>
-            <a 
-              href="/contact" 
-              class="inline-block px-8 py-4 bg-white text-farafina-primary font-semibold rounded-lg hover:bg-white/90 transition-colors shadow-lg"
-            >
-              Devenir Partenaire
-            </a>
-          </div>
-          <div class="hidden md:block relative">
-            <img 
-              src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
-              alt="Collaboration entre organisations" 
-              class="w-full h-full object-cover"
-            />
-            <div class="absolute inset-0 bg-black/20"></div>
-          </div>
+    <div class="bg-gradient-to-r from-farafina-primary to-farafina-secondary rounded-xl shadow-md overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="p-8 text-white">
+          <h2 class="text-2xl font-bold mb-4">Rejoignez notre réseau</h2>
+          <p class="mb-6 text-white/90">
+            Votre organisation travaille dans le domaine de l'observation électorale ou de la promotion de la démocratie ? Rejoignez notre réseau de partenaires pour contribuer à la transparence des processus électoraux en Afrique.
+          </p>
+          <a 
+            href="/contact" 
+            class="inline-block px-6 py-3 bg-white text-farafina-primary font-medium rounded-lg hover:bg-white/90 transition-colors"
+          >
+            Devenir partenaire
+          </a>
+        </div>
+        <div class="hidden md:block relative">
+          <img 
+            src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+            alt="Collaboration entre organisations" 
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-black/20"></div>
         </div>
       </div>
-    </section>
+    </div>
   </div>
 
   <script is:inline define:vars={{ allOrganizations }}>
@@ -304,7 +246,7 @@ const organizationsByZone = (() => {
       const organizationsList = document.getElementById('organizations-list');
       const organizationCount = document.getElementById('organization-count');
       const noResults = document.getElementById('no-results');
-
+      
       let currentFilters = {
         expertise: [],
         regions: [],
@@ -346,16 +288,21 @@ const organizationsByZone = (() => {
           );
         }
 
-        // Filtre par région
+        // Filtre par région (basé sur le pays)
         if (currentFilters.regions.length > 0) {
-          filteredOrgs = filteredOrgs.filter(org => {
-            if (Array.isArray(org.zone)) {
-              return org.zone.some(z => currentFilters.regions.includes(z));
-            } else if (org.zone) {
-              return currentFilters.regions.includes(org.zone);
-            }
-            return false;
-          });
+          const regionCountries = {
+            'Afrique du Nord': ['Algérie', 'Maroc', 'Tunisie', 'Libye', 'Égypte'],
+            'Afrique de l\'Ouest': ['Sénégal', 'Ghana', 'Nigeria', 'Mali', 'Burkina Faso', 'Niger', 'Côte d\'Ivoire', 'Guinée', 'Sierra Leone', 'Liberia', 'Bénin', 'Togo', 'Mauritanie', 'Gambie', 'Guinée-Bissau', 'Cap-Vert'],
+            'Afrique Centrale': ['Cameroun', 'République centrafricaine', 'Tchad', 'République démocratique du Congo', 'République du Congo', 'Guinée équatoriale', 'Gabon', 'São Tomé-et-Príncipe'],
+            'Afrique de l\'Est': ['Kenya', 'Tanzanie', 'Ouganda', 'Rwanda', 'Burundi', 'Éthiopie', 'Érythrée', 'Djibouti', 'Somalie', 'Soudan', 'Soudan du Sud'],
+            'Afrique Australe': ['Afrique du Sud', 'Zimbabwe', 'Zambie', 'Malawi', 'Mozambique', 'Botswana', 'Namibie', 'Lesotho', 'Eswatini', 'Madagascar', 'Maurice', 'Comores', 'Seychelles']
+          };
+
+          filteredOrgs = filteredOrgs.filter(org => 
+            currentFilters.regions.some(region => 
+              regionCountries[region] && regionCountries[region].includes(org.country)
+            )
+          );
         }
 
         showOrganizations(filteredOrgs);
@@ -374,7 +321,7 @@ const organizationsByZone = (() => {
         currentFilters.types = event.detail.types;
         applyAllFilters();
       });
-
+      
       function showOrganizations(organizations) {
         if (organizations.length === 0) {
           organizationsList.classList.add('hidden');
@@ -384,7 +331,7 @@ const organizationsByZone = (() => {
           organizationsList.classList.remove('hidden');
           noResults.classList.add('hidden');
           organizationCount.textContent = `Affichage de ${organizations.length} organisation${organizations.length > 1 ? 's' : ''}`;
-
+          
           // Réafficher les cartes d'organisations
           organizationsList.innerHTML = organizations.map(org => `
             <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.location.href='/organizations/${org.id}'">
@@ -417,7 +364,7 @@ const organizationsByZone = (() => {
           `).join('');
         }
       }
-
+      
       function getOrganizationIcon(type) {
         const iconMap = {
           'ONG': '👥',
