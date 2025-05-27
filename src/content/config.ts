@@ -339,7 +339,10 @@ const organisations = defineCollection({
     id: z.string(),
     originalId: z.string(),
     nom: z.string(),
-    zone: z.union([z.string(), z.array(z.string())]).optional(),
+    zone: z.union([
+      z.string(), 
+      z.array(z.string().nullable()).transform(arr => arr.filter(Boolean))
+    ]).optional(),
     statut: z.string(),
     typeOrganisation: z.string(),
     nombreDePaysCouverts: z.string(),
