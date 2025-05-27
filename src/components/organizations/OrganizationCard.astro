@@ -38,7 +38,7 @@ const { organization, variant = 'default' } = Astro.props;
 ---
 
 {variant === 'default' ? (
-  <a href={`/organizations/${organization.id}`} class="block bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-2px] overflow-hidden border border-gray-100">
+  <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-2px] overflow-hidden border border-gray-100">
     <div class="p-6">
       <div class="flex items-start mb-4">
         <div class="w-16 h-16 bg-farafina-primary/10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
@@ -131,15 +131,15 @@ const { organization, variant = 'default' } = Astro.props;
         )}
         <a 
           href={`/organizations/${organization.id}`} 
-          class="px-4 py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors text-sm"
+          class="px-4 py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors text-sm flex items-center"
         >
-          Voir le profil
+          Voir le profil <FaExternalLinkAlt className="ml-1" />
         </a>
       </div>
     </div>
-  </a>
+  </div>
 ) : (
-  <a href={`/organizations/${organization.id}`} class="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 border border-gray-100">
+  <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 border border-gray-100">
     <div class="flex items-center">
       <div class="w-12 h-12 bg-farafina-primary/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
         {organization.logo ? (
@@ -175,5 +175,5 @@ const { organization, variant = 'default' } = Astro.props;
         </span>
       )}
     </div>
-  </a>
+  </div>
 )}
