@@ -5,13 +5,72 @@ import OrganizationCard from '../../components/organizations/OrganizationCard.as
 import OrganizationFilter from '../../components/organizations/OrganizationFilter.astro';
 import PartnershipTypes from '../../components/organizations/PartnershipTypes.astro';
 import ObserverNetworks from '../../components/organizations/ObserverNetworks.astro';
-import { FaUsers, FaHandshake, FaGlobeAfrica, FaChartBar } from 'react-icons/fa';
+import { FaUsers, FaHandshake, FaGlobeAfrica, FaChartBar, FaBuilding } from 'react-icons/fa';
 import { getCollection } from 'astro:content';
 
 // Récupération des données depuis NocoDB
-const organisations = await getCollection('organisations');
+const organisationsCollection = await getCollection('organisations');
 const pays = await getCollection('pays');
 const elections = await getCollection('elections');
+
+// Transformation des données pour les cartes
+const organisations = await getCollection('organisations');
+const paysCollection = await getCollection('pays');
+const electionsCollection = await getCollection('elections');
+
+// Transformation des données pour le composant
+const allOrganizations = organisationsCollection.map(org => ({
+  id: org.id,
+  name: org.data.nom,
+  country: org.data.pays || 'Non spécifié',
+  city: org.data.ville || 'Non spécifié',
+  type: org.data.typeOrganisation || 'Organisation',
+  expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(d => d.trim()) : [],
+  zone: org.data.zone,
+  typeOrganisation: org.data.typeOrganisation || '',
+  domainesExpertise: org.data.domainesExpertise || '',
+  website: org.data.siteweb || '',
+  email: org.data.email || '',
+  phone: org.data.telephone || '',
+  creationYear: org.data.anneeDeCreation || null,
+  countriesCovered: org.data.nombreDePaysCouverts || '',
+  observerMobilization: org.data.mobilisationsObservateurs || ''
+}));
+
+// Grouper les organisations par zone géographique
+const organizationsByZone = (() => {
+  const zoneMap = new Map();
+
+  allOrganizations.forEach(org => {
+    let zones = [];
+
+    if (Array.isArray(org.zone)) {
+      zones = org.zone.filter(z => z && z !== null && z !== "");
+    } else if (org.zone && org.zone !== null && org.zone !== "") {
+      zones = [org.zone];
+    }
+
+    // Si aucune zone valide, ajouter à "Zone non spécifiée"
+    if (zones.length === 0) {
+      zones = ["Zone non spécifiée"];
+    }
+
+    zones.forEach(zone => {
+      if (!zoneMap.has(zone)) {
+        zoneMap.set(zone, []);
+      }
+      zoneMap.get(zone).push(org);
+    });
+  });
+
+  return Array.from(zoneMap.entries())
+    .map(([zone, organizations]) => ({
+      zone,
+      organizations,
+      count: organizations.length
+    }))
+    .sort((a, b) => a.zone.localeCompare(b.zone));
+})();
 
 // Transformation des données pour les cartes
 const organizationsData = organisations.map(org => ({
@@ -61,9 +120,6 @@ const stats = [
     textColor: "text-farafina-blue"
   }
 ];
-
-// Toutes les organisations
-const allOrganizations = organizationsData;
 
 // Calcul des types d'organisations pour les statistiques
 const organisationTypes = organisations.reduce((acc, org) => {
@@ -213,6 +269,82 @@ organisations.forEach(org => {
         </div>
       </div>
     </div>
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+      <div class="bg-white p-6 rounded-xl shadow-md text-center">
+        <div class="w-12 h-12 bg-farafina-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <FaUsers className="text-farafina-primary text-xl" />
+        </div>
+        <div class="text-3xl font-bold text-farafina-dark mb-2">{allOrganizations.length}</div>
+        <div class="text-gray-600">Organisations</div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-md text-center">
+        <div class="w-12 h-12 bg-farafina-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <FaGlobeAfrica className="text-farafina-secondary text-xl" />
+        </div>
+        <div class="text-3xl font-bold text-farafina-dark mb-2">
+          {[...new Set(allOrganizations.map(org => org.country))].length}
+        </div>
+        <div class="text-gray-600">Pays</div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-md text-center">
+        <div class="w-12 h-12 bg-farafina-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <FaBuilding className="text-farafina-primary text-xl" />
+        </div>
+        <div class="text-3xl font-bold text-farafina-dark mb-2">
+          {[...new Set(allOrganizations.map(org => org.type))].length}
+        </div>
+        <div class="text-gray-600">Types</div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-md text-center">
+        <div class="w-12 h-12 bg-farafina-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <FaGlobeAfrica className="text-farafina-secondary text-xl" />
+        </div>
+        <div class="text-3xl font-bold text-farafina-dark mb-2">
+          {organizationsByZone.length}
+        </div>
+        <div class="text-gray-600">Zones</div>
+      </div>
+    </div>
+    <!-- Sections par zone géographique -->
+    {organizationsByZone.map(({ zone, organizations: zoneOrgs, count }) => (
+      <section class="mb-16">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-farafina-primary/10 rounded-full flex items-center justify-center mr-4">
+              <FaGlobeAfrica className="text-farafina-primary text-xl" />
+            </div>
+            <div>
+              <h2 class="text-3xl font-bold text-farafina-dark">{zone}</h2>
+              <p class="text-gray-600">{count} organisation{count > 1 ? 's' : ''}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {zoneOrgs.map(org => (
+            <OrganizationCard organization={org} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <!-- Section Acteurs clés -->
+    <section id="acteurs-cles-section" class="mb-16">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl font-bold text-farafina-dark">Tous les Acteurs Clés</h2>
+        <span class="text-gray-600">{allOrganizations.length} organisations</span>
+      </div>
+
+      <div id="organizations-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {allOrganizations.map(org => (
+          <OrganizationCard organization={org} />
+        ))}
+      </div>
+    </section>
 
     <!-- Appel à l'action -->
     <div class="bg-gradient-to-r from-farafina-primary to-farafina-secondary rounded-xl shadow-md overflow-hidden">
@@ -246,7 +378,7 @@ organisations.forEach(org => {
       const organizationsList = document.getElementById('organizations-list');
       const organizationCount = document.getElementById('organization-count');
       const noResults = document.getElementById('no-results');
-      
+
       let currentFilters = {
         expertise: [],
         regions: [],
@@ -321,7 +453,7 @@ organisations.forEach(org => {
         currentFilters.types = event.detail.types;
         applyAllFilters();
       });
-      
+
       function showOrganizations(organizations) {
         if (organizations.length === 0) {
           organizationsList.classList.add('hidden');
@@ -331,7 +463,7 @@ organisations.forEach(org => {
           organizationsList.classList.remove('hidden');
           noResults.classList.add('hidden');
           organizationCount.textContent = `Affichage de ${organizations.length} organisation${organizations.length > 1 ? 's' : ''}`;
-          
+
           // Réafficher les cartes d'organisations
           organizationsList.innerHTML = organizations.map(org => `
             <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.location.href='/organizations/${org.id}'">
@@ -364,7 +496,7 @@ organisations.forEach(org => {
           `).join('');
         }
       }
-      
+
       function getOrganizationIcon(type) {
         const iconMap = {
           'ONG': '👥',
