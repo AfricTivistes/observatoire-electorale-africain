@@ -314,24 +314,13 @@ const organisations = defineCollection({
       limit: "1000",
     };
     const records = await listTableRecords(tableId, fields, params);
-
-    // Utiliser un Set pour éviter les doublons basés sur l'ID original
-    const uniqueRecords = new Map();
-
-    records.forEach((record) => {
-      const originalId = record["Id"].toString();
-      if (!uniqueRecords.has(originalId)) {
-        uniqueRecords.set(originalId, record);
-      }
-    });
-
-    return Array.from(uniqueRecords.values()).map((record) => ({
-      id: `org-${record["Id"]}`, // Utiliser l'ID original pour garantir l'unicité
+    return records.map((record) => ({
+      id: generateSlug(record["nom"] || `org-${record["Id"]}`),
       originalId: record["Id"].toString(),
       nom: record["nom"] || "",
       statut: record["Statut"] || "",
       zone: Array.isArray(record["Zone"]) ? record["Zone"] : (record["Zone"] || ""),
-      typeOrganisation: record["Type d'organisation -  institutions"] || "",
+      typeOrganisation: record["Type d’organisation -  institutions"] || "",
       nombreDePaysCouverts: record["nombre de pays couverts"] || "",
       ville: record["ville"] || "",
       anneeDeCreation: record["annee de creation"] || 0,
