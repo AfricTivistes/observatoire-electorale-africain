@@ -319,7 +319,9 @@ const organisations = defineCollection({
       originalId: record["Id"].toString(),
       nom: record["nom"] || "",
       statut: record["Statut"] || "",
-      zone: Array.isArray(record["Zone"]) ? record["Zone"] : (record["Zone"] || ""),
+      zone: Array.isArray(record["Zone"]) 
+        ? record["Zone"].filter(item => item !== null && item !== undefined && item !== "")
+        : (record["Zone"] || ""),
       typeOrganisation: record["Type d’organisation -  institutions"] || "",
       nombreDePaysCouverts: record["nombre de pays couverts"] || "",
       ville: record["ville"] || "",
