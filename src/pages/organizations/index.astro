@@ -344,6 +344,8 @@ const regions = [
       function applyAllFilters() {
         console.log('Applying filters with:', currentFilters);
         let filteredOrgs = allOrganizations.slice(); // Copy array
+        
+        console.log('Starting with', filteredOrgs.length, 'organizations');
 
         // Filtre par recherche
         if (currentFilters.searchTerm) {
@@ -357,6 +359,22 @@ const regions = [
           );
         }
 
+
+        // Filtre par domaines d'expertise
+        if (currentFilters.expertise.length > 0) {
+          filteredOrgs = filteredOrgs.filter(org => {
+            if (!org.expertise || org.expertise.length === 0) return false;
+            
+            return currentFilters.expertise.some(filterExpertise => {
+              return org.expertise.some(orgExp => {
+                const orgExpLower = orgExp.toLowerCase().trim();
+                const filterExpLower = filterExpertise.toLowerCase().trim();
+                // Correspondance exacte ou contient
+                return orgExpLower === filterExpLower || orgExpLower.includes(filterExpLower);
+              });
+            });
+          });
+        }
 
         // Filtre par type d'organisation (correspondance exacte)
         if (currentFilters.types.length > 0) {
@@ -418,6 +436,7 @@ const regions = [
             });
           });
         }
+        console.log('Final filtered organizations:', filteredOrgs.length);
         showOrganizations(filteredOrgs);
       }
 
@@ -435,6 +454,10 @@ const regions = [
         currentFilters.regions = event.detail.regions;
         currentFilters.types = event.detail.types;
         currentFilters.exactMatch = event.detail.exactMatch || false;
+        
+        console.log('Current filters applied:', currentFilters);
+        console.log('Total organizations before filtering:', allOrganizations.length);
+        
         applyAllFilters();
       });
       
