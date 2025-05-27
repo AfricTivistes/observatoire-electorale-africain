@@ -22,10 +22,17 @@ import Breadcrumbs from '../components/Breadcrumbs.tsx';
           </p>
 
           <form 
-            id="contact-form"
-            class="space-y-6 animate-fade-in" 
+            name="contact"
             method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            class="space-y-6 animate-fade-in"
+            action="/merci"
           >
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="hidden">
+              <label>Ne pas remplir ce champ : <input name="bot-field" /></label>
+            </p>
             <div id="form-success" class="hidden text-green-700 font-bold text-center mb-4">Merci pour votre message ! Nous avons bien reçu votre demande et nous vous répondrons dans les plus brefs délais.</div>
 
             <div>
@@ -155,34 +162,3 @@ import Breadcrumbs from '../components/Breadcrumbs.tsx';
     </div>
   </main>
 </MainLayout>
-
-<script type="module">
-  const form = document.getElementById('contact-form');
-  const successMsg = document.getElementById('form-success');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    // Validation simple côté client
-    if (!data.name || !data.email || !data.subject || !data.message) {
-      alert('Merci de remplir tous les champs du formulaire.');
-      return;
-    }
-    try {
-      const res = await fetch('/.netlify/functions/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        form.reset();
-        successMsg.classList.remove('hidden');
-        setTimeout(() => successMsg.classList.add('hidden'), 8000);
-      } else {
-        alert('Erreur lors de l\'envoi. Veuillez réessayer.');
-      }
-    } catch {
-      alert('Erreur lors de l\'envoi. Veuillez réessayer.');
-    }
-  });
-</script>
