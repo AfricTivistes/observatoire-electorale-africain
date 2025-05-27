@@ -245,7 +245,7 @@ const keyStats = [
 
   {
     label: "Prochaine élection",
-    value: upcomingElections[0]?.date
+    value: upcomingElections.reduce((closest, current) => !closest || new Date(current.date) < new Date(closest.date) ? current : closest, null)?.date
       ? new Date(upcomingElections[0].date).getFullYear()
       : "N/A",
     icon: FaCalendarAlt,

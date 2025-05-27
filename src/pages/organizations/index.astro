@@ -13,13 +13,7 @@ const organisations = await getCollection('organisations');
 const pays = await getCollection('pays');
 const elections = await getCollection('elections');
 
-// Debug: Vérification des données NocoDB
-console.log('Total organisations récupérées:', organisations.length);
-console.log('Première organisation (exemple):', organisations[0]?.data);
 
-// Vérification des types d'organisations disponibles
-const typesDisponibles = organisations.map(org => org.data.typeOrganisation).filter(type => type);
-console.log('Types d\'organisations trouvés:', [...new Set(typesDisponibles)]);
 
 // Transformation des données pour les cartes
 const organizationsData = organisations.map(org => ({
@@ -152,7 +146,7 @@ const regions = [
 ];
 ---
 
-<Layout title="Organisations | Observatoire des Élections en Afrique">
+<Layout title="Acteurs Clés | Observatoire des Élections en Afrique">
   <OrganizationsHero organizations={organizationsData} />
 
   <div class="container mx-auto px-4 py-12">
@@ -264,8 +258,6 @@ const regions = [
 
     <!-- Acteurs clés et filtres -->
     <div id="acteurs-cles-section" class="mb-12">
-      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Acteurs clés</h2>
-
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Filtres -->
         <div class="lg:col-span-1">
@@ -346,19 +338,11 @@ const regions = [
         console.log('Types disponibles:', Object.keys(organisationTypes));
       }
 
-      console.log('Organizations data loaded:', allOrganizations.length);
-      console.log('Sample organization:', allOrganizations[0]);
-      
-      // Vérifier les types d'organisations disponibles
-      const availableTypes = [...new Set(allOrganizations.map(org => org.type).filter(type => type))];
-      console.log('Available organization types:', availableTypes);
+    
 
       // Fonction pour appliquer tous les filtres
       function applyAllFilters() {
-        console.log('Applying filters with:', currentFilters);
         let filteredOrgs = allOrganizations.slice(); // Copy array
-        
-        console.log('Starting with', filteredOrgs.length, 'organizations');
 
         // Filtre par recherche
         if (currentFilters.searchTerm) {
@@ -391,19 +375,15 @@ const regions = [
 
         // Filtre par type d'organisation (correspondance exacte)
         if (currentFilters.types.length > 0) {
-          console.log('Filtering by types:', currentFilters.types);
           filteredOrgs = filteredOrgs.filter(org => {
             const orgTypeLower = org.type.toLowerCase().trim();
-            console.log('Checking org type:', orgTypeLower, 'against filters:', currentFilters.types);
             return currentFilters.types.some(filterType => {
               const filterTypeLower = filterType.toLowerCase().trim();
               // Correspondance exacte
               const matches = orgTypeLower === filterTypeLower;
-              console.log('Type match:', orgTypeLower, '===', filterTypeLower, '=', matches);
               return matches;
             });
           });
-          console.log('After type filtering:', filteredOrgs.length);
         }
 
         // Filtre par région (basé sur le champ zone de NocoDB)
@@ -454,27 +434,21 @@ const regions = [
             });
           });
         }
-        console.log('Final filtered organizations:', filteredOrgs.length);
         showOrganizations(filteredOrgs);
       }
 
       // Écouter l'événement de recherche depuis le composant Hero
       window.addEventListener('organizationSearch', function(event) {
-        console.log('Search event received:', event.detail);
         currentFilters.searchTerm = event.detail.searchTerm.toLowerCase().trim();
         applyAllFilters();
       });
 
       // Écouter l'événement de filtrage depuis le composant Filter
       window.addEventListener('organizationFilter', function(event) {
-        console.log('Filter event received with exact matching:', event.detail);
         currentFilters.expertise = event.detail.expertise;
         currentFilters.regions = event.detail.regions;
         currentFilters.types = event.detail.types;
         currentFilters.exactMatch = event.detail.exactMatch || false;
-        
-        console.log('Current filters applied:', currentFilters);
-        console.log('Total organizations before filtering:', allOrganizations.length);
         
         applyAllFilters();
       });

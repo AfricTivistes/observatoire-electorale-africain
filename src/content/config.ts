@@ -314,24 +314,14 @@ const organisations = defineCollection({
       limit: "1000",
     };
     const records = await listTableRecords(tableId, fields, params);
-
-    // Utiliser un Map pour éviter les doublons basés sur l'ID original
-    const uniqueRecords = new Map();
-
-    records.forEach((record) => {
-      const originalId = record["Id"].toString();
-      if (!uniqueRecords.has(originalId)) {
-        uniqueRecords.set(originalId, record);
-      }
-    });
-
-    return Array.from(uniqueRecords.values()).map((record) => ({
-      id: `org-${record["Id"]}`, // Utiliser l'ID original pour garantir l'unicité
-      originalId: record["Id"].toString(),
+    return records.map((record) => ({
+      id: record["Id"].toString(),
       nom: record["nom"] || "",
+      zone: Array.isArray(record["Zone"])
+        ? record["Zone"]
+        : record["Zone"] || "",
       statut: record["Statut"] || "",
-      zone: Array.isArray(record["Zone"]) ? record["Zone"] : (record["Zone"] || ""),
-      typeOrganisation: record["Type d'organisation -  institutions"] || "",
+      typeOrganisation: record["Type d’organisation -  institutions"] || "",
       nombreDePaysCouverts: record["nombre de pays couverts"] || "",
       ville: record["ville"] || "",
       anneeDeCreation: record["annee de creation"] || 0,
@@ -348,12 +338,13 @@ const organisations = defineCollection({
   },
   schema: z.object({
     id: z.string(),
-    originalId: z.string(),
     nom: z.string(),
-    zone: z.union([
-      z.string(), 
-      z.array(z.string().nullable()).transform(arr => arr.filter(Boolean))
-    ]).optional(),
+    zone: z
+      .union([
+        z.string(),
+        z.array(z.string().nullable()).transform((arr) => arr.filter(Boolean)),
+      ])
+      .optional(),
     statut: z.string(),
     typeOrganisation: z.string(),
     nombreDePaysCouverts: z.string(),

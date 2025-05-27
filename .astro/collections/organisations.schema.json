@@ -7,9 +7,6 @@
         "id": {
           "type": "string"
         },
-        "originalId": {
-          "type": "string"
-        },
         "nom": {
           "type": "string"
         },
@@ -71,7 +68,6 @@
       },
       "required": [
         "id",
-        "originalId",
         "nom",
         "statut",
         "typeOrganisation",
