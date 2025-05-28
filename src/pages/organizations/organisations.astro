@@ -1,3 +1,4 @@
+
 ---
 import Layout from '../../layouts/MainLayout.astro';
 import OrganizationCard from '../../components/organizations/OrganizationCard.astro';
@@ -30,9 +31,9 @@ const organizationsData = organisations.map(org => ({
 organizationsData.sort((a, b) => a.name.localeCompare(b.name));
 ---
 
-<Layout title="Toutes les Organisations Partenaires | Observatoire des Élections en Afrique">
+<Layout title="Toutes les Organisations | Observatoire des Élections en Afrique">
   <!-- Hero Section -->
-  <OrganizationsHero />
+  <OrganizationsHero organizations={organizationsData} />
 
   
   <div class="container mx-auto px-4 py-12">
@@ -53,7 +54,7 @@ organizationsData.sort((a, b) => a.name.localeCompare(b.name));
         <div class="mb-6">
           <div class="flex justify-between items-center">
             <h2 class="text-xl font-semibold text-farafina-dark">
-              Organisations Partenaires ({organizationsData.length})
+              Organisations ({organizationsData.length})
             </h2>
             <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm">
               <option value="name">Trier par nom</option>
@@ -63,20 +64,66 @@ organizationsData.sort((a, b) => a.name.localeCompare(b.name));
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div id="organizations-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           {organizationsData.map(org => (
             <OrganizationCard organization={org} />
           ))}
         </div>
 
-        {organizationsData.length === 0 && (
-          <div class="text-center py-12">
-            <FaUsers className="text-6xl text-gray-300 mx-auto mb-4" />
-            <h3 class="text-xl font-semibold text-gray-600 mb-2">Aucune organisation trouvée</h3>
-            <p class="text-gray-500">Essayez de modifier vos critères de recherche.</p>
-          </div>
-        )}
+        <div id="no-results" class="text-center py-12 hidden">
+          <FaUsers className="text-6xl text-gray-300 mx-auto mb-4" />
+          <h3 class="text-xl font-semibold text-gray-600 mb-2">Aucune organisation trouvée</h3>
+          <p class="text-gray-500">Essayez de modifier vos critères de recherche.</p>
+        </div>
       </div>
     </div>
   </div>
+
+  <script is:inline define:vars={{ organizationsData }}>
+    // Fonction de recherche
+    function filterOrganizations(searchTerm) {
+      const orgList = document.getElementById('organizations-list');
+      const noResults = document.getElementById('no-results');
+      const orgCards = orgList.querySelectorAll('[data-org-card]');
+      
+      if (!searchTerm.trim()) {
+        // Afficher toutes les organisations
+        orgCards.forEach(card => card.style.display = 'block');
+        noResults.classList.add('hidden');
+        return;
+      }
+      
+      let visibleCount = 0;
+      const searchLower = searchTerm.toLowerCase();
+      
+      orgCards.forEach(card => {
+        const orgData = JSON.parse(card.getAttribute('data-org-info'));
+        const matches = orgData.name.toLowerCase().includes(searchLower) ||
+                       orgData.country.toLowerCase().includes(searchLower) ||
+                       orgData.type.toLowerCase().includes(searchLower) ||
+                       (orgData.expertise && orgData.expertise.some(exp => 
+                         exp.toLowerCase().includes(searchLower)
+                       ));
+        
+        if (matches) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      
+      // Afficher/masquer le message "aucun résultat"
+      if (visibleCount === 0) {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+    }
+    
+    // Écouter les événements de recherche
+    window.addEventListener('organizationSearch', (event) => {
+      filterOrganizations(event.detail.searchTerm);
+    });
+  </script>
 </Layout>

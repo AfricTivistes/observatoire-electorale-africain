@@ -10,6 +10,22 @@
         "nom": {
           "type": "string"
         },
+        "zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          ]
+        },
         "statut": {
           "type": "string"
         },
