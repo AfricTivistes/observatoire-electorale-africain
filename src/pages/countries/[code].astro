@@ -245,9 +245,20 @@ const keyStats = [
 
   {
     label: "Prochaine élection",
-    value: upcomingElections[0]?.date
-      ? new Date(upcomingElections[0].date).getFullYear()
-      : "N/A",
+    value: (() => {
+      const futureElections = electionEvents.filter(e => 
+        (e.status === "En préparation" || e.status === "À venir") && 
+        new Date(e.date) > new Date()
+      );
+      
+      if (futureElections.length === 0) return "N/A";
+      
+      const nextElection = futureElections.reduce((closest, current) => 
+        !closest || new Date(current.date) < new Date(closest.date) ? current : closest
+      );
+      
+      return `${nextElection.type} (${new Date(nextElection.date).getFullYear()})`;
+    })(),
     icon: FaCalendarAlt,
     color: "text-farafina-blue",
   },

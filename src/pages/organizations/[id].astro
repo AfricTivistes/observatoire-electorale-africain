@@ -1,0 +1,216 @@
+
+---
+import Layout from '../../layouts/MainLayout.astro';
+import { FaUsers, FaGlobeAfrica, FaEnvelope, FaPhone, FaMapMarkerAlt, FaExternalLinkAlt, FaBuilding, FaCalendarAlt } from 'react-icons/fa';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const organisations = await getCollection('organisations');
+  
+  return organisations.map(org => ({
+    params: { id: org.id },
+    props: { organization: org }
+  }));
+}
+
+const { organization } = Astro.props;
+const org = organization.data;
+
+// Transformation des données
+const organizationData = {
+  id: organization.id,
+  name: org.nom,
+  country: org.pays || 'Non spécifié',
+  type: org.typeOrganisation || 'Organisation',
+  expertise: org.domainesExpertise ? org.domainesExpertise.split(',').map(d => d.trim()) : [],
+  website: org.siteweb || '',
+  ville: org.ville || '',
+  anneeCreation: org.anneeDeCreation || null,
+  zonesCouverts: org.zonesCouverts || '',
+  nombrePaysCouverts: org.nombreDePaysCouverts || '',
+  mobilisationObservateurs: org.mobilisationsObservateurs || '',
+  contacts: {
+    email: org.email || '',
+    phone: org.telephone || '',
+    address: `${org.ville || ''}, ${org.pays || ''}`
+  }
+};
+---
+
+<Layout title={`${organizationData.name} | Observatoire des Élections en Afrique`}>
+  <!-- Navigation -->
+  <nav class="pt-20 pb-4 bg-gray-50 border-b">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center text-sm text-gray-600">
+        <a href="/" class="hover:text-farafina-primary">Accueil</a>
+        <span class="mx-2">/</span>
+        <a href="/organizations" class="hover:text-farafina-primary">Organisations</a>
+        <span class="mx-2">/</span>
+        <span class="text-farafina-dark">{organizationData.name}</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Contenu principal -->
+      <div class="lg:col-span-2">
+        <!-- En-tête de l'organisation -->
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+          <div class="flex items-start mb-6">
+            <div class="w-20 h-20 bg-farafina-primary/10 rounded-xl flex items-center justify-center mr-6 flex-shrink-0">
+              <FaBuilding className="text-farafina-primary text-3xl" />
+            </div>
+            <div class="flex-1">
+              <h1 class="text-3xl font-bold text-farafina-dark mb-2">{organizationData.name}</h1>
+              <div class="flex items-center text-gray-600 mb-2">
+                <FaGlobeAfrica className="mr-2 text-farafina-secondary" />
+                <span>{organizationData.country}</span>
+              </div>
+              <div class="inline-block px-3 py-1 bg-farafina-primary/10 text-farafina-primary rounded-full text-sm font-medium">
+                {organizationData.type}
+              </div>
+            </div>
+          </div>
+
+          <div class="prose max-w-none">
+            <p class="text-gray-700 leading-relaxed">
+              {organizationData.type} basée à {organizationData.ville || 'localisation non spécifiée'}, 
+              couvrant {organizationData.nombrePaysCouverts || '1'} pays dans les zones: {organizationData.zonesCouverts || 'Non spécifié'}.
+              {organizationData.mobilisationObservateurs && (
+                ` Cette organisation est également impliquée dans la mobilisation d'observateurs.`
+              )}
+            </p>
+          </div>
+        </div>
+
+        <!-- Domaines d'expertise -->
+        {organizationData.expertise.length > 0 && (
+          <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h2 class="text-2xl font-bold text-farafina-dark mb-6">Domaines d'Expertise</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {organizationData.expertise.map(exp => (
+                <div class="flex items-center p-4 bg-farafina-primary/5 rounded-lg">
+                  <div class="w-3 h-3 bg-farafina-primary rounded-full mr-3"></div>
+                  <span class="text-farafina-dark font-medium">{exp}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Zones géographiques -->
+        {organizationData.zonesCouverts && (
+          <div class="bg-white rounded-xl shadow-md p-8">
+            <h2 class="text-2xl font-bold text-farafina-dark mb-6">Zones Géographiques Couvertes</h2>
+            <div class="flex flex-wrap gap-3">
+              {organizationData.zonesCouverts.split(',').map(zone => (
+                <span class="px-4 py-2 bg-farafina-secondary/10 text-farafina-secondary rounded-lg font-medium">
+                  {zone.trim()}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <!-- Informations de contact -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6 sticky top-4">
+          <h3 class="text-xl font-bold text-farafina-dark mb-4">Informations de Contact</h3>
+          
+          <div class="space-y-4">
+            {organizationData.contacts.email && (
+              <div class="flex items-center">
+                <FaEnvelope className="text-farafina-secondary mr-3 flex-shrink-0" />
+                <div>
+                  <p class="text-sm text-gray-600">Email</p>
+                  <a href={`mailto:${organizationData.contacts.email}`} class="text-farafina-primary hover:underline">
+                    {organizationData.contacts.email}
+                  </a>
+                </div>
+              </div>
+            )}
+            
+            {organizationData.contacts.phone && (
+              <div class="flex items-center">
+                <FaPhone className="text-farafina-secondary mr-3 flex-shrink-0" />
+                <div>
+                  <p class="text-sm text-gray-600">Téléphone</p>
+                  <a href={`tel:${organizationData.contacts.phone}`} class="text-farafina-primary hover:underline">
+                    {organizationData.contacts.phone}
+                  </a>
+                </div>
+              </div>
+            )}
+            
+            {organizationData.contacts.address && (
+              <div class="flex items-center">
+                <FaMapMarkerAlt className="text-farafina-secondary mr-3 flex-shrink-0" />
+                <div>
+                  <p class="text-sm text-gray-600">Adresse</p>
+                  <p class="text-farafina-dark">{organizationData.contacts.address}</p>
+                </div>
+              </div>
+            )}
+
+            {organizationData.anneeCreation && (
+              <div class="flex items-center">
+                <FaCalendarAlt className="text-farafina-secondary mr-3 flex-shrink-0" />
+                <div>
+                  <p class="text-sm text-gray-600">Année de création</p>
+                  <p class="text-farafina-dark">{organizationData.anneeCreation}</p>
+                </div>
+              </div>
+            )}
+            
+            {organizationData.website && (
+              <div class="mt-6">
+                <a 
+                  href={organizationData.website} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center px-4 py-3 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors"
+                >
+                  Visiter le site web <FaExternalLinkAlt className="ml-2" />
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <!-- Statistiques rapides -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h3 class="text-xl font-bold text-farafina-dark mb-4">Statistiques</h3>
+          
+          <div class="space-y-4">
+            <div class="text-center p-4 bg-farafina-primary/5 rounded-lg">
+              <div class="text-2xl font-bold text-farafina-primary">
+                {organizationData.nombrePaysCouverts || '1'}
+              </div>
+              <div class="text-sm text-gray-600">Pays couverts</div>
+            </div>
+            
+            <div class="text-center p-4 bg-farafina-secondary/5 rounded-lg">
+              <div class="text-2xl font-bold text-farafina-secondary">
+                {organizationData.expertise.length}
+              </div>
+              <div class="text-sm text-gray-600">Domaines d'expertise</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bouton retour -->
+    <div class="mt-12 text-center">
+      <a 
+        href="/organizations" 
+        class="inline-flex items-center px-6 py-3 bg-gray-100 text-farafina-dark rounded-lg hover:bg-gray-200 transition-colors"
+      >
+        ← Retour aux organisations
+      </a>
+    </div>
+  </div>
+</Layout>

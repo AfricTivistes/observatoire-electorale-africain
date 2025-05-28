@@ -1,5 +1,19 @@
 ---
-import { FaUsers, FaGlobeAfrica, FaEnvelope, FaPhone, FaMapMarkerAlt, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaUsers, FaGlobeAfrica, FaEnvelope, FaPhone, FaMapMarkerAlt, FaExternalLinkAlt, FaBuilding, FaGlobe, FaHandshake, FaUniversity, FaLandmark, FaNetworkWired } from 'react-icons/fa';
+
+// Fonction pour obtenir l'icône selon le type d'organisation
+function getOrganizationIcon(type: string) {
+  const typeMap: { [key: string]: string } = {
+    'ONG': 'FaUsers',
+    'Organisation internationale': 'FaGlobe',
+    'Institution gouvernementale': 'FaLandmark',
+    'Réseau régional': 'FaNetworkWired',
+    'Centre de recherche': 'FaUniversity',
+    'default': 'FaBuilding'
+  };
+
+  return typeMap[type] || typeMap['default'];
+}
 
 interface Props {
   organization: {
@@ -24,53 +38,73 @@ const { organization, variant = 'default' } = Astro.props;
 ---
 
 {variant === 'default' ? (
-  <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-5px] overflow-hidden border border-gray-100">
+  <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-2px] overflow-hidden border border-gray-100">
     <div class="p-6">
-      <div class="flex items-center mb-4">
+      <div class="flex items-start mb-4">
         <div class="w-16 h-16 bg-farafina-primary/10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
           {organization.logo ? (
             <img src={organization.logo || "/placeholder.svg"} alt={`Logo ${organization.name}`} class="w-10 h-10 object-contain" />
           ) : (
-            <FaUsers className="text-farafina-primary text-2xl" />
+            <div class="text-farafina-primary text-2xl">
+              {getOrganizationIcon(organization.type) === 'FaUsers' && <FaUsers />}
+              {getOrganizationIcon(organization.type) === 'FaGlobe' && <FaGlobe />}
+              {getOrganizationIcon(organization.type) === 'FaLandmark' && <FaLandmark />}
+              {getOrganizationIcon(organization.type) === 'FaNetworkWired' && <FaNetworkWired />}
+              {getOrganizationIcon(organization.type) === 'FaUniversity' && <FaUniversity />}
+              {getOrganizationIcon(organization.type) === 'FaBuilding' && <FaBuilding />}
+            </div>
           )}
         </div>
-        <div>
-          <h3 class="font-semibold text-farafina-dark text-xl">{organization.name}</h3>
-          <div class="flex items-center text-sm text-gray-600">
-            <FaGlobeAfrica className="mr-1 text-farafina-secondary" />
-            <span>{organization.country}</span>
+        <div class="flex-1 min-w-0">
+        <a
+        href={`/organizations/${organization.id}`}>
+        <h3 class="font-semibold text-farafina-dark text-lg leading-tight mb-1">{organization.name}</h3>
+        </a>
+          <div class="flex items-center text-sm text-gray-600 mb-1">
+            <FaGlobeAfrica className="mr-1 text-farafina-secondary flex-shrink-0" />
+            <span class="truncate">{organization.country}</span>
+          </div>
+          <div class="text-xs text-farafina-primary font-medium">
+            {organization.type}
           </div>
         </div>
       </div>
 
       {organization.description && (
-        <p class="text-gray-600 mb-4 line-clamp-3">{organization.description}</p>
+        <p class="text-gray-600 text-sm mb-4 line-clamp-3">{organization.description}</p>
       )}
 
-      <div class="mb-4">
-        <h4 class="text-sm text-gray-600 mb-2">Domaines d'expertise</h4>
-        <div class="flex flex-wrap gap-2">
-          {organization.expertise.map(exp => (
-            <span class="px-3 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full">
-              {exp}
-            </span>
-          ))}
+      {organization.expertise && organization.expertise.length > 0 && (
+        <div class="mb-4">
+          <h4 class="text-sm font-medium text-gray-700 mb-2">Domaines d'expertise</h4>
+          <div class="flex flex-wrap gap-1">
+            {organization.expertise.slice(0, 3).map(exp => (
+              <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full">
+                {exp}
+              </span>
+            ))}
+            {organization.expertise.length > 3 && (
+              <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                +{organization.expertise.length - 3}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {organization.contacts && (
         <div class="space-y-2 text-sm text-gray-600 mb-4">
           {organization.contacts.email && (
             <div class="flex items-center">
-              <FaEnvelope className="mr-2 text-farafina-secondary" />
-              <a href={`mailto:${organization.contacts.email}`} class="hover:text-farafina-primary transition-colors">
+              <FaEnvelope className="mr-2 text-farafina-secondary flex-shrink-0" />
+              <a href={`mailto:${organization.contacts.email}`} class="hover:text-farafina-primary transition-colors truncate">
                 {organization.contacts.email}
               </a>
             </div>
           )}
           {organization.contacts.phone && (
             <div class="flex items-center">
-              <FaPhone className="mr-2 text-farafina-secondary" />
+              <FaPhone className="mr-2 text-farafina-secondary flex-shrink-0" />
               <a href={`tel:${organization.contacts.phone}`} class="hover:text-farafina-primary transition-colors">
                 {organization.contacts.phone}
               </a>
@@ -78,29 +112,31 @@ const { organization, variant = 'default' } = Astro.props;
           )}
           {organization.contacts.address && (
             <div class="flex items-center">
-              <FaMapMarkerAlt className="mr-2 text-farafina-secondary" />
-              <span>{organization.contacts.address}</span>
+              <FaMapMarkerAlt className="mr-2 text-farafina-secondary flex-shrink-0" />
+              <span class="truncate">{organization.contacts.address}</span>
             </div>
           )}
         </div>
       )}
 
       <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
-        {organization.website && (
+        {organization.website ? (
           <a 
             href={organization.website} 
             target="_blank" 
             rel="noopener noreferrer" 
             class="text-farafina-secondary hover:text-farafina-secondary/80 transition-colors text-sm flex items-center"
           >
-            Visiter le site web <FaExternalLinkAlt className="ml-1" />
+            Site web <FaExternalLinkAlt className="ml-1" />
           </a>
+        ) : (
+          <span class="text-gray-400 text-sm">Aucun site web</span>
         )}
         <a 
           href={`/organizations/${organization.id}`} 
-          class="px-4 py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors text-sm"
+          class="px-4 py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors text-sm flex items-center"
         >
-          Voir le profil
+          Voir le profil <FaExternalLinkAlt className="ml-1" />
         </a>
       </div>
     </div>
@@ -112,24 +148,31 @@ const { organization, variant = 'default' } = Astro.props;
         {organization.logo ? (
           <img src={organization.logo || "/placeholder.svg"} alt={`Logo ${organization.name}`} class="w-8 h-8 object-contain" />
         ) : (
-          <FaUsers className="text-farafina-primary text-lg" />
+          <div class="text-farafina-primary text-lg">
+            {getOrganizationIcon(organization.type) === 'FaUsers' && <FaUsers />}
+            {getOrganizationIcon(organization.type) === 'FaGlobe' && <FaGlobe />}
+            {getOrganizationIcon(organization.type) === 'FaLandmark' && <FaLandmark />}
+            {getOrganizationIcon(organization.type) === 'FaNetworkWired' && <FaNetworkWired />}
+            {getOrganizationIcon(organization.type) === 'FaUniversity' && <FaUniversity />}
+            {getOrganizationIcon(organization.type) === 'FaBuilding' && <FaBuilding />}
+          </div>
         )}
       </div>
-      <div>
-        <h3 class="font-semibold text-farafina-dark">{organization.name}</h3>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-semibold text-farafina-dark truncate">{organization.name}</h3>
         <div class="flex items-center text-xs text-gray-600">
           <FaGlobeAfrica className="mr-1 text-farafina-secondary" />
-          <span>{organization.country}</span>
+          <span class="truncate">{organization.country}</span>
         </div>
       </div>
     </div>
     <div class="mt-3 flex flex-wrap gap-1">
-      {organization.expertise.slice(0, 2).map(exp => (
+      {organization.expertise && organization.expertise.slice(0, 2).map(exp => (
         <span class="px-2 py-0.5 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full">
           {exp}
         </span>
       ))}
-      {organization.expertise.length > 2 && (
+      {organization.expertise && organization.expertise.length > 2 && (
         <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
           +{organization.expertise.length - 2}
         </span>
@@ -137,4 +180,3 @@ const { organization, variant = 'default' } = Astro.props;
     </div>
   </div>
 )}
-

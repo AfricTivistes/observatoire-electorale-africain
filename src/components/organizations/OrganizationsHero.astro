@@ -1,5 +1,12 @@
+
 ---
 import { FaUsers, FaSearch } from 'react-icons/fa';
+
+interface Props {
+  organizations?: any[];
+}
+
+const { organizations = [] } = Astro.props;
 ---
 
 <section class="pt-28 pb-12 bg-gray-50 border-b border-gray-200">
@@ -8,20 +15,140 @@ import { FaUsers, FaSearch } from 'react-icons/fa';
       <div class="inline-flex items-center justify-center w-16 h-16 bg-farafina-primary/10 rounded-full mb-4">
         <FaUsers className="text-farafina-primary text-3xl" />
       </div>
-      <h1 class="text-3xl md:text-4xl font-bold text-farafina-dark mb-4">Organisations Partenaires</h1>
+      <h1 class="text-3xl md:text-4xl font-bold text-farafina-dark mb-4">Acteurs clés</h1>
       <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-        Découvrez les organisations qui contribuent à la transparence électorale et à la promotion de la démocratie en Afrique.
+        Découvrez les acteurs clés qui contribuent à la transparence électorale et à la promotion de la démocratie en Afrique.
       </p>
 
       <div class="relative max-w-xl mx-auto">
         <input
+          id="organization-search"
           type="text"
           placeholder="Rechercher une organisation..."
           class="w-full py-4 pl-12 pr-4 rounded-full border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent shadow-sm"
         />
         <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        
+        <!-- Suggestions de recherche -->
+        <div id="search-suggestions" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden z-10">
+          <div class="p-2 max-h-60 overflow-y-auto">
+            <!-- Les suggestions seront ajoutées ici dynamiquement -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<script is:inline define:vars={{ organizations }}>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('organization-search');
+    const suggestions = document.getElementById('search-suggestions');
+    let searchTimeout;
+    
+    if (!searchInput || !organizations) return;
+    
+    // Fonction pour créer les suggestions
+    function createSuggestions(filteredOrgs) {
+      suggestions.innerHTML = '';
+      
+      if (filteredOrgs.length === 0) {
+        suggestions.innerHTML = '<div class="p-3 text-gray-500 text-center">Aucune organisation trouvée</div>';
+        return;
+      }
+      
+      filteredOrgs.slice(0, 5).forEach(org => {
+        const suggestion = document.createElement('div');
+        suggestion.className = 'p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0';
+        suggestion.innerHTML = `
+          <div class="font-medium text-farafina-dark">${org.name}</div>
+          <div class="text-sm text-gray-600">${org.country} • ${org.type}</div>
+        `;
+        
+        suggestion.addEventListener('click', () => {
+          // Navigation vers la page de l'organisation
+          window.location.href = `/organizations/${org.id}`;
+        });
+        
+        suggestions.appendChild(suggestion);
+      });
+    }
+    
+    // Fonction pour effectuer la recherche
+    function performSearch(searchTerm) {
+      // Dispatch custom event pour la page organisations
+      const event = new CustomEvent('organizationSearch', {
+        detail: { searchTerm: searchTerm }
+      });
+      window.dispatchEvent(event);
+      
+      // Faire défiler vers la section "Tous les Acteurs Clés"
+      setTimeout(() => {
+        const acteursSection = document.querySelector('#acteurs-cles-section');
+        if (acteursSection) {
+          acteursSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 100);
+    }
+    
+    // Événement de saisie dans le champ de recherche
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.trim();
+      
+      clearTimeout(searchTimeout);
+      
+      if (searchTerm.length === 0) {
+        suggestions.classList.add('hidden');
+        performSearch('');
+        return;
+      }
+      
+      if (searchTerm.length < 2) {
+        suggestions.classList.add('hidden');
+        return;
+      }
+      
+      searchTimeout = setTimeout(() => {
+        const filteredOrgs = organizations.filter(org => 
+          org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          org.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          org.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (org.expertise && org.expertise.some(exp => 
+            exp.toLowerCase().includes(searchTerm.toLowerCase())
+          ))
+        );
+        
+        createSuggestions(filteredOrgs);
+        suggestions.classList.remove('hidden');
+        performSearch(searchTerm);
+      }, 300);
+    });
+    
+    // Événement de soumission du formulaire
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        suggestions.classList.add('hidden');
+        performSearch(this.value);
+      }
+    });
+    
+    // Masquer les suggestions quand on clique ailleurs
+    document.addEventListener('click', function(e) {
+      if (!searchInput.contains(e.target) && !suggestions.contains(e.target)) {
+        suggestions.classList.add('hidden');
+      }
+    });
+    
+    // Afficher les suggestions quand on focus sur le champ
+    searchInput.addEventListener('focus', function() {
+      if (this.value.length >= 2) {
+        suggestions.classList.remove('hidden');
+      }
+    });
+  });
+</script>
+</section>
