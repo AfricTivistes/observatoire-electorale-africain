@@ -37,6 +37,7 @@ const navItems: NavItem[] = [
   },
   { label: "Ressources", href: "/resources" },
   { label: "À Propos", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 interface Props {
@@ -46,28 +47,17 @@ interface Props {
 
 const { isHomePage = false, pageType = "default" } = Astro.props;
 
-// Determine header styles based on page type
-let headerStyles = "";
-if (isHomePage) {
-  headerStyles = "bg-white/80 backdrop-blur-sm";
-} else if (pageType === "about") {
-  headerStyles = "bg-farafina-primary/90 backdrop-blur-sm";
-} else if (pageType === "detail") {
-  headerStyles = "bg-white shadow-md";
-} else {
-  headerStyles = "bg-white/95 backdrop-blur-sm border-b border-gray-100";
-}
+// Style uniforme pour toutes les pages
+const headerStyles = "bg-white/80 backdrop-blur-sm";
 
-// Determine text color based on page type
-const textColor = pageType === "about" ? "text-white hover:text-farafina-secondary" : "text-farafina-dark hover:text-farafina-primary";
+// Couleur de texte uniforme
+const textColor = "text-farafina-dark hover:text-farafina-primary";
 
-// Determine button style based on page type
-const buttonStyle = pageType === "about" 
-  ? "bg-white text-farafina-primary hover:bg-white/90" 
-  : "bg-farafina-primary text-white hover:bg-farafina-primary/90";
+// Style de bouton uniforme
+const buttonStyle = "bg-farafina-primary text-white hover:bg-farafina-primary/90";
 
-// Déterminer la variante du logo en fonction du type de page
-const logoVariant = pageType === "about" ? "light" : "default";
+// Variante du logo uniforme
+const logoVariant = "default";
 ---
 
 <header class={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${headerStyles} py-3`} id="main-header">
