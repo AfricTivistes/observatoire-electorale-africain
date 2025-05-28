@@ -75,7 +75,7 @@ const organizationData = {
 
           <div class="prose max-w-none">
             <p class="text-gray-700 leading-relaxed">
-              Organisation {organizationData.type} basée à {organizationData.ville || 'localisation non spécifiée'}, 
+              {organizationData.type} basée à {organizationData.ville || 'localisation non spécifiée'}, 
               couvrant {organizationData.nombrePaysCouverts || '1'} pays dans les zones: {organizationData.zonesCouverts || 'Non spécifié'}.
               {organizationData.mobilisationObservateurs && (
                 ` Cette organisation est également impliquée dans la mobilisation d'observateurs.`
@@ -206,7 +206,7 @@ const organizationData = {
     <!-- Bouton retour -->
     <div class="mt-12 text-center">
       <a 
-        href="/organizations/organisations" 
+        href="/organizations" 
         class="inline-flex items-center px-6 py-3 bg-gray-100 text-farafina-dark rounded-lg hover:bg-gray-200 transition-colors"
       >
         ← Retour aux organisations

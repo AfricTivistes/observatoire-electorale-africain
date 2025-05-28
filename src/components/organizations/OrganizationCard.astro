@@ -56,7 +56,10 @@ const { organization, variant = 'default' } = Astro.props;
           )}
         </div>
         <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-farafina-dark text-lg leading-tight mb-1">{organization.name}</h3>
+        <a
+        href={`/organizations/${organization.id}`}>
+        <h3 class="font-semibold text-farafina-dark text-lg leading-tight mb-1">{organization.name}</h3>
+        </a>
           <div class="flex items-center text-sm text-gray-600 mb-1">
             <FaGlobeAfrica className="mr-1 text-farafina-secondary flex-shrink-0" />
             <span class="truncate">{organization.country}</span>
