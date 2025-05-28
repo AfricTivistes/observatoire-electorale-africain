@@ -53,7 +53,12 @@ const CountryNews: React.FC<CountryNewsProps> = ({
           return;
         }
 
-        setNewsItems(data.items);
+        setNewsItems(
+          data.items.sort(
+            (a, b) =>
+              new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+          ),
+        );
       } catch (err) {
         console.error("Erreur lors du chargement des actualités:", err);
         setError("Erreur lors du chargement des actualités.");
@@ -110,37 +115,32 @@ const CountryNews: React.FC<CountryNewsProps> = ({
 
   return (
     <div className="space-y-4">
-      {visibleNews
-        .sort(
-          (a, b) =>
-            new Date(a.pubDate).getTime() - new Date(b.pubDate).getTime(),
-        )
-        .map((item, index) => (
-          <div
-            key={index}
-            className="border-b border-gray-100 pb-4 last:border-0 last:pb-0"
-          >
-            <h3 className="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-start gap-2"
-              >
-                <span className="flex-1">{item.title}</span>
-                <FaExternalLinkAlt className="text-xs text-gray-400 mt-1 flex-shrink-0" />
-              </a>
-            </h3>
-            <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
-              🗓️ {formatDate(item.pubDate)}
+      {visibleNews.map((item, index) => (
+        <div
+          key={index}
+          className="border-b border-gray-100 pb-4 last:border-0 last:pb-0"
+        >
+          <h3 className="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
+            <a
+              href={item.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-start gap-2"
+            >
+              <span className="flex-1">{item.title}</span>
+              <FaExternalLinkAlt className="text-xs text-gray-400 mt-1 flex-shrink-0" />
+            </a>
+          </h3>
+          <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
+            🗓️ {formatDate(item.pubDate)}
+          </p>
+          {item.description && (
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {cleanHtml(item.description).substring(0, 150)}...
             </p>
-            {item.description && (
-              <p className="text-sm text-gray-600 line-clamp-2">
-                {cleanHtml(item.description).substring(0, 150)}...
-              </p>
-            )}
-          </div>
-        ))}
+          )}
+        </div>
+      ))}
 
       {(hasMore || canShowLess) && (
         <div className="flex gap-2">
