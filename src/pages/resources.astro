@@ -176,40 +176,70 @@ const formatDate = (year: number) => {
       <h2 class="text-2xl font-bold text-farafina-dark mb-6">Ressources en Vedette</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {featuredResources.map(resource => (
-          <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start mb-3">
-              <h3 class="font-semibold text-farafina-dark text-sm leading-tight">{resource.title}</h3>
-              <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full ml-2 flex-shrink-0">
-                {resource.type}
-              </span>
-            </div>
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">{resource.description}</p>
-            <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
-              <span>{formatDate(resource.year)}</span>
-              <div class="flex items-center gap-1">
-              <a href={`/countries/${resource.code.toLowerCase()}`}>
-                {resource.Pays_id && (
-                  <img
-              src={`https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp`}
-              alt={`Drapeau ${resource.countryName}`}
-              class="w-6 h-6 object-cover rounded shadow-md mr-6"
-            />
-                )}
-                </a>
-
+          <div class="border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all transform hover:translate-y-[-2px]">
+            {/* Image de fond ou placeholder */}
+            <div class="h-32 bg-gradient-to-br from-farafina-primary/10 to-farafina-secondary/10 relative">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+                  <FaFileAlt className="text-farafina-primary text-xl" />
+                </div>
+              </div>
+              <div class="absolute top-3 right-3">
+                <span class="px-2 py-1 bg-white/90 text-farafina-primary text-xs rounded-full font-medium">
+                  {resource.type}
+                </span>
               </div>
             </div>
-            {resource.fichier && (
-              <a 
-                href={resource.fichier} 
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center px-3 py-1 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm"
-              >
-                <FaDownload className="mr-1" />
-                Télécharger
-              </a>
-            )}
+            
+            <div class="p-5">
+              {/* Titre cliquable */}
+              {resource.fichier ? (
+                <a 
+                  href={resource.fichier} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block hover:text-farafina-primary transition-colors"
+                >
+                  <h3 class="font-semibold text-farafina-dark text-base leading-tight mb-3 line-clamp-2">
+                    {resource.title}
+                  </h3>
+                </a>
+              ) : (
+                <h3 class="font-semibold text-farafina-dark text-base leading-tight mb-3 line-clamp-2">
+                  {resource.title}
+                </h3>
+              )}
+              
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">{resource.description}</p>
+              
+              <div class="flex justify-between items-center text-xs text-gray-500 mb-4">
+                <span class="font-medium">{formatDate(resource.year)}</span>
+                <div class="flex items-center gap-2">
+                  {resource.Pays_id && (
+                    <a href={`/countries/${resource.code.toLowerCase()}`} class="flex items-center gap-1 hover:text-farafina-primary transition-colors">
+                      <img
+                        src={`https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp`}
+                        alt={`Drapeau ${resource.countryName}`}
+                        class="w-5 h-5 object-cover rounded shadow-sm"
+                      />
+                      <span class="text-xs">{resource.countryName}</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+              
+              {resource.fichier && (
+                <a 
+                  href={resource.fichier} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center px-4 py-2 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm font-medium"
+                >
+                  <FaDownload className="mr-2" />
+                  Télécharger
+                </a>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -339,44 +369,78 @@ const formatDate = (year: number) => {
 
           <div id="resources-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {processedResources.slice(0, itemsPerPage).map(resource => (
-              <div class="resource-item border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow" 
+              <div class="resource-item border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:transform hover:translate-y-[-2px]" 
                    data-type={resource.type} 
                    data-year={resource.year} 
                    data-country={resource.countryName}
                    data-title={resource.title.toLowerCase()}>
-                <div class="flex justify-between items-start mb-3">
-                  <h3 class="font-semibold text-farafina-dark text-sm leading-tight">{resource.title}</h3>
-                  <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full ml-2 flex-shrink-0">
-                    {resource.type}
-                  </span>
+                
+                {/* En-tête avec icône et type */}
+                <div class="bg-gradient-to-r from-farafina-primary/5 to-farafina-secondary/5 p-4 border-b border-gray-50">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <div class="w-8 h-8 rounded-full bg-farafina-primary/10 flex items-center justify-center">
+                        <FaFileAlt className="text-farafina-primary text-sm" />
+                      </div>
+                      <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full font-medium">
+                        {resource.type}
+                      </span>
+                    </div>
+                    <span class="text-xs text-gray-500 font-medium">{formatDate(resource.year)}</span>
+                  </div>
                 </div>
-                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{resource.description}</p>
-                <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
-                  <span>{formatDate(resource.year)}</span>
-                  <div class="flex items-center gap-1">
-              <a href={`/countries/${resource.code.toLowerCase()}`}>
-                {resource.Pays_id && (
-                  <img
-              src={`https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp`}
-              alt={`Drapeau ${resource.countryName}`}
-              class="w-6 h-6 object-cover rounded shadow-md mr-6"
-            />
-                )}
-                </a>
-
-              </div>
+                
+                <div class="p-5">
+                  {/* Titre cliquable */}
+                  {resource.fichier ? (
+                    <a 
+                      href={resource.fichier} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block hover:text-farafina-primary transition-colors mb-3"
+                    >
+                      <h3 class="font-semibold text-farafina-dark text-base leading-tight line-clamp-2">
+                        {resource.title}
+                      </h3>
+                    </a>
+                  ) : (
+                    <h3 class="font-semibold text-farafina-dark text-base leading-tight mb-3 line-clamp-2">
+                      {resource.title}
+                    </h3>
+                  )}
+                  
+                  <p class="text-gray-600 text-sm mb-4 line-clamp-2">{resource.description}</p>
+                  
+                  {/* Pays avec drapeau */}
+                  <div class="flex justify-between items-center mb-4">
+                    {resource.Pays_id && (
+                      <a 
+                        href={`/countries/${resource.code.toLowerCase()}`} 
+                        class="flex items-center gap-2 hover:text-farafina-primary transition-colors"
+                      >
+                        <img
+                          src={`https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp`}
+                          alt={`Drapeau ${resource.countryName}`}
+                          class="w-6 h-6 object-cover rounded shadow-sm"
+                        />
+                        <span class="text-sm font-medium text-gray-700">{resource.countryName}</span>
+                      </a>
+                    )}
+                  </div>
+                  
+                  {/* Bouton de téléchargement */}
+                  {resource.fichier && (
+                    <a 
+                      href={resource.fichier} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="w-full inline-flex items-center justify-center px-4 py-2 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm font-medium"
+                    >
+                      <FaDownload className="mr-2" />
+                      Télécharger
+                    </a>
+                  )}
                 </div>
-                {resource.fichier && (
-                  <a 
-                    href={resource.fichier} 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center px-3 py-1 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm"
-                  >
-                    <FaDownload className="mr-1" />
-                    Télécharger
-                  </a>
-                )}
               </div>
             ))}
           </div>
@@ -414,27 +478,57 @@ const formatDate = (year: number) => {
       const pageResources = resources.slice(startIndex, endIndex);
 
       resourcesContainer.innerHTML = pageResources.map(resource => `
-        <div class="resource-item border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
-          <div class="flex justify-between items-start mb-3">
-            <h3 class="font-semibold text-farafina-dark text-sm leading-tight">${resource.title}</h3>
-            <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full ml-2 flex-shrink-0">
-              ${resource.type}
-            </span>
-          </div>
-          <p class="text-gray-600 text-sm mb-3 line-clamp-2">${resource.description}</p>
-          <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
-            <span>${resource.year || 'Non spécifié'}</span>
-            <div class="flex items-center gap-1">
-              ${resource.Pays_id ? `<img src="https://flagcdn.com/w20/${resource.Pays_id.toLowerCase()}.png" alt="Drapeau ${resource.countryName}" class="w-4 h-3 object-cover rounded-sm" />` : ''}
-              <span>${resource.countryName}</span>
+        <div class="resource-item border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:transform hover:translate-y-[-2px]">
+          <!-- En-tête avec icône et type -->
+          <div class="bg-gradient-to-r from-farafina-primary/5 to-farafina-secondary/5 p-4 border-b border-gray-50">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-farafina-primary/10 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-farafina-primary" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full font-medium">
+                  ${resource.type}
+                </span>
+              </div>
+              <span class="text-xs text-gray-500 font-medium">${resource.year || 'Non spécifié'}</span>
             </div>
           </div>
-          ${resource.fichier ? `
-            <a href="${resource.fichier}" target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center px-3 py-1 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm">
-              Télécharger
-            </a>
-          ` : ''}
+          
+          <div class="p-5">
+            <!-- Titre cliquable -->
+            ${resource.fichier ? `
+              <a href="${resource.fichier}" target="_blank" rel="noopener noreferrer" class="block hover:text-farafina-primary transition-colors mb-3">
+                <h3 class="font-semibold text-farafina-dark text-base leading-tight line-clamp-2">${resource.title}</h3>
+              </a>
+            ` : `
+              <h3 class="font-semibold text-farafina-dark text-base leading-tight mb-3 line-clamp-2">${resource.title}</h3>
+            `}
+            
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">${resource.description}</p>
+            
+            <!-- Pays avec drapeau -->
+            <div class="flex justify-between items-center mb-4">
+              ${resource.code ? `
+                <a href="/countries/${resource.code.toLowerCase()}" class="flex items-center gap-2 hover:text-farafina-primary transition-colors">
+                  <img src="https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp" alt="Drapeau ${resource.countryName}" class="w-6 h-6 object-cover rounded shadow-sm" />
+                  <span class="text-sm font-medium text-gray-700">${resource.countryName}</span>
+                </a>
+              ` : ''}
+            </div>
+            
+            <!-- Bouton de téléchargement -->
+            ${resource.fichier ? `
+              <a href="${resource.fichier}" target="_blank" rel="noopener noreferrer"
+                 class="w-full inline-flex items-center justify-center px-4 py-2 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm font-medium">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                Télécharger
+              </a>
+            ` : ''}
+          </div>
         </div>
       `).join('');
 
