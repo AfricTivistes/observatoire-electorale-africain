@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+      <path fill="#2C3E50" d="M100 20L20 100l80 80 80-80z"/>
+      <path fill="#3498DB" d="M100 40L40 100l60 60 60-60z"/>
+      <text 
+        x="100" 
+        y="120" 
+        text-anchor="middle" 
+        font-size="40" 
+        font-weight="bold" 
+        fill="white"
+      >
+        AE
+      </text>
+    </svg> 

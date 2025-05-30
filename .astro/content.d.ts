@@ -151,7 +151,7 @@ declare module 'astro:content' {
   id: string;
   body?: string;
   collection: "defisElections";
-  data: InferEntrySchema<"defisElections">;
+  data: any;
   rendered?: RenderedContent;
   filePath?: string;
 }>;
@@ -159,7 +159,7 @@ declare module 'astro:content' {
   id: string;
   body?: string;
   collection: "elections";
-  data: InferEntrySchema<"elections">;
+  data: any;
   rendered?: RenderedContent;
   filePath?: string;
 }>;
@@ -167,7 +167,7 @@ declare module 'astro:content' {
   id: string;
   body?: string;
   collection: "organisations";
-  data: InferEntrySchema<"organisations">;
+  data: any;
   rendered?: RenderedContent;
   filePath?: string;
 }>;
@@ -175,7 +175,7 @@ declare module 'astro:content' {
   id: string;
   body?: string;
   collection: "organismesElectoraux";
-  data: InferEntrySchema<"organismesElectoraux">;
+  data: any;
   rendered?: RenderedContent;
   filePath?: string;
 }>;
@@ -183,7 +183,7 @@ declare module 'astro:content' {
   id: string;
   body?: string;
   collection: "pays";
-  data: InferEntrySchema<"pays">;
+  data: any;
   rendered?: RenderedContent;
   filePath?: string;
 }>;
@@ -191,7 +191,7 @@ declare module 'astro:content' {
   id: string;
   body?: string;
   collection: "ressources";
-  data: InferEntrySchema<"ressources">;
+  data: any;
   rendered?: RenderedContent;
   filePath?: string;
 }>;
@@ -199,7 +199,7 @@ declare module 'astro:content' {
   id: string;
   body?: string;
   collection: "resultatsElections";
-  data: InferEntrySchema<"resultatsElections">;
+  data: any;
   rendered?: RenderedContent;
   filePath?: string;
 }>;
@@ -208,5 +208,5 @@ declare module 'astro:content' {
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;
 
-	export type ContentConfig = typeof import("../src/content/config.js");
+	export type ContentConfig = never;
 }

@@ -5,22 +5,26 @@ const features = [
   {
     icon: FaGlobeAfrica,
     title: "Cartographie Électorale",
-    description: "Visualisez les élections passées, présentes et futures à travers le continent africain."
+    description: "Accéder, consulter et explorer des millions de données sur les élections et processus électoraux en Afrique.",
+    link: "/countries"
   },
   {
     icon: FaChartBar,
     title: "Analyse des Données",
-    description: "Accédez à des analyses détaillées des tendances électorales et des statistiques démographiques."
+    description: "Accédez à des analyses détaillées des résultats et défis électoraux ainsi que des statistiques démographiques.",
+    link: "/elections/results"
   },
   {
     icon: FaUsers,
     title: "Réseau d'Observateurs",
-    description: "Connectez-vous avec des organisations d'observation électorale à travers l'Afrique."
+    description: "Consulter la base de données des organisations d'observation électorale à travers l'Afrique.",
+    link: "/organizations"
   },
   {
     icon: FaFileAlt,
-    title: "Ressources Juridiques",
-    description: "Consultez les cadres juridiques électoraux et les meilleures pratiques internationales."
+    title: "Legislation et Ressources",
+    description: "Consulter les cadres juridiques électoraux et les différents rapports des missions d'observation électorale.",
+    link: "/resources"
   }
 ];
 ---
@@ -28,21 +32,22 @@ const features = [
 <section class="py-20 bg-gray-50">
   <div class="container mx-auto px-4">
     <div class="text-center max-w-3xl mx-auto mb-16">
-      <h2 class="text-3xl font-bold text-farafina-dark mb-4">Un guiche unique sur les élections en Afrique</h2>
+      <h2 class="text-3xl font-bold text-farafina-dark mb-4">Un guichet unique sur les élections en Afrique</h2>
       <p class="text-gray-600 text-lg">
-        Encourager soutenir et promouvoir la transparence et lintégrité des processus électoraux en Afrique
-      </p>
+        Encourager, soutenir et promouvoir la transparence et l'intégrité des processus électoraux en Afrique.      </p>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-justify">
       {features.map(feature => (
-        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-100">
-          <div class="w-14 h-14 rounded-lg bg-farafina-primary/10 flex items-center justify-center mb-4">
-            <feature.icon className="text-farafina-primary text-2xl" />
+        <a href={feature.link} class="block group">
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100 group-hover:bg-farafina-primary/5 group-hover:scale-105 group-hover:-translate-y-1">
+            <div class="w-14 h-14 rounded-lg bg-farafina-primary/10 flex items-center justify-center mb-4 group-hover:bg-farafina-primary/20 transition-colors duration-300">
+              <feature.icon className="text-farafina-primary text-2xl group-hover:text-farafina-primary/80" />
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-farafina-dark group-hover:text-farafina-primary transition-colors duration-300">{feature.title}</h3>
+            <p class="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">{feature.description}</p>
           </div>
-          <h3 class="text-xl font-semibold mb-3 text-farafina-dark">{feature.title}</h3>
-          <p class="text-gray-600">{feature.description}</p>
-        </div>
+        </a>
       ))}
     </div>
   </div>
