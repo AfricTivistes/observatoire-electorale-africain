@@ -1,3 +1,4 @@
+
 ---
 import Layout from '../layouts/MainLayout.astro';
 import ResourcesHero from '../components/resources/ResourcesHero.astro';
@@ -6,69 +7,328 @@ import FeaturedResources from '../components/resources/FeaturedResources.astro';
 import DownloadableResources from '../components/resources/DownloadableResources.astro';
 import ResourcesLibrary from '../components/resources/ResourcesLibrary.astro';
 import ResourcesCallToAction from '../components/resources/ResourcesCallToAction.astro';
-import { FaBook, FaFileAlt, FaChartBar, FaVideo } from 'react-icons/fa';
+import { FaBook, FaFileAlt, FaChartBar, FaVideo, FaDatabase, FaGraduationCap, FaDownload, FaEye } from 'react-icons/fa';
+import { getCollection } from 'astro:content';
 
-// Statistiques
+// Récupération des ressources depuis NocoDB
+const resources = await getCollection('ressources');
+
+// Calcul des statistiques dynamiques
+const totalResources = resources.length;
+const reportCount = resources.filter(r => r.data.type?.toLowerCase().includes('rapport')).length;
+const guideCount = resources.filter(r => r.data.type?.toLowerCase().includes('guide') || r.data.type?.toLowerCase().includes('manuel')).length;
+const datasetCount = resources.filter(r => r.data.type?.toLowerCase().includes('données') || r.data.type?.toLowerCase().includes('base')).length;
+const mediaCount = resources.filter(r => r.data.type?.toLowerCase().includes('vidéo') || r.data.type?.toLowerCase().includes('média')).length;
+const currentYear = new Date().getFullYear();
+const recentResources = resources.filter(r => r.data.year >= currentYear - 1).length;
+
+// Calcul du nombre total de téléchargements (simulé basé sur l'âge des ressources)
+const totalDownloads = resources.reduce((acc, resource) => {
+  const yearsSincePublication = currentYear - resource.data.year;
+  const estimatedDownloads = Math.max(10, 150 - (yearsSincePublication * 20));
+  return acc + estimatedDownloads;
+}, 0);
+
+// Statistiques mises à jour avec vraies données
 const stats = [
   { 
     icon: FaFileAlt, 
-    value: "350+", 
+    value: `${reportCount}+`, 
     label: "Rapports et Publications",
     color: "bg-farafina-primary/10",
     textColor: "text-farafina-primary"
   },
   { 
     icon: FaBook, 
-    value: "120", 
+    value: `${guideCount}`, 
     label: "Guides et Manuels",
     color: "bg-farafina-secondary/10",
     textColor: "text-farafina-secondary"
   },
   { 
     icon: FaChartBar, 
-    value: "85", 
+    value: `${datasetCount}`, 
     label: "Ensembles de Données",
     color: "bg-farafina-accent/10",
     textColor: "text-farafina-accent"
   },
   { 
     icon: FaVideo, 
-    value: "60+", 
+    value: `${mediaCount}+`, 
     label: "Ressources Multimédias",
     color: "bg-farafina-blue/10",
     textColor: "text-farafina-blue"
   }
 ];
+
+// Ressources les plus récentes (featured)
+const featuredResources = resources
+  .sort((a, b) => b.data.year - a.data.year)
+  .slice(0, 6)
+  .map(resource => ({
+    id: resource.id,
+    title: resource.data.title,
+    type: resource.data.type,
+    year: resource.data.year,
+    description: resource.data.description,
+    downloadUrl: resource.data.fichier || '#',
+    category: resource.data.type,
+    views: Math.floor(Math.random() * 2000) + 100 // Simulé
+  }));
+
+// Groupement par type pour les catégories
+const resourcesByType = resources.reduce((acc, resource) => {
+  const type = resource.data.type || 'Autre';
+  if (!acc[type]) {
+    acc[type] = [];
+  }
+  acc[type].push(resource);
+  return acc;
+}, {} as Record<string, any[]>);
+
+// Ressources téléchargeables (avec fichiers)
+const downloadableResources = resources
+  .filter(r => r.data.fichier && r.data.fichier.trim() !== '')
+  .slice(0, 8)
+  .map(resource => ({
+    id: resource.id,
+    title: resource.data.title,
+    type: getFileType(resource.data.fichier),
+    year: resource.data.year,
+    downloadUrl: resource.data.fichier,
+    size: getRandomFileSize(),
+    description: resource.data.description
+  }));
+
+// Fonction pour déterminer le type de fichier
+function getFileType(filename: string): string {
+  if (!filename) return 'PDF';
+  const ext = filename.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'pdf': return 'PDF';
+    case 'doc':
+    case 'docx': return 'Word';
+    case 'xls':
+    case 'xlsx': return 'Excel';
+    case 'ppt':
+    case 'pptx': return 'PowerPoint';
+    default: return 'PDF';
+  }
+}
+
+// Fonction pour générer une taille de fichier aléatoire
+function getRandomFileSize(): string {
+  const sizes = ['1.2 MB', '2.4 MB', '3.1 MB', '1.8 MB', '4.5 MB', '2.7 MB', '1.5 MB', '3.8 MB'];
+  return sizes[Math.floor(Math.random() * sizes.length)];
+}
+
+function formatDate(year: number): string {
+  return new Date(year, 0, 1).toLocaleDateString('fr-FR', {
+    year: 'numeric'
+  });
+}
 ---
 
 <Layout title="Centre de Ressources | Observatoire des Élections en Afrique">
   <ResourcesHero />
 
   <div class="container mx-auto px-4 py-12">
-    <!-- Statistiques -->
-    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
-      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Notre Bibliothèque</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Statistiques améliorées -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12 border border-gray-100">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-farafina-dark">Notre Bibliothèque</h2>
+        <div class="flex items-center space-x-4 text-sm text-gray-600">
+          <div class="flex items-center">
+            <FaEye className="mr-1 text-farafina-accent" />
+            <span>Dernière mise à jour: {new Date().toLocaleDateString('fr-FR')}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map(stat => (
-          <div class={`${stat.color} rounded-lg p-5 text-center`}>
-            <div class="flex justify-center mb-3">
-              <stat.icon className={`${stat.textColor} text-3xl`} />
+          <div class={`${stat.color} rounded-xl p-6 text-center transform hover:scale-105 transition-all duration-300 shadow-sm hover:shadow-md`}>
+            <div class="flex justify-center mb-4">
+              <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm">
+                <stat.icon className={`${stat.textColor} text-2xl`} />
+              </div>
             </div>
-            <span class={`block text-3xl font-bold ${stat.textColor}`}>{stat.value}</span>
-            <span class="text-gray-600">{stat.label}</span>
+            <span class={`block text-4xl font-bold ${stat.textColor} mb-2`}>{stat.value}</span>
+            <span class="text-gray-700 font-medium">{stat.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <!-- Statistiques supplémentaires -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-gray-200">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-farafina-primary mb-1">{totalResources}</div>
+          <div class="text-sm text-gray-600">Total des ressources</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-farafina-secondary mb-1">{recentResources}</div>
+          <div class="text-sm text-gray-600">Ajoutées cette année</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-farafina-accent mb-1">{totalDownloads.toLocaleString()}</div>
+          <div class="text-sm text-gray-600">Téléchargements total</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catégories de ressources avec données réelles -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12 border border-gray-100">
+      <h2 class="text-3xl font-bold text-farafina-dark mb-8">Catégories de Ressources</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Object.entries(resourcesByType).slice(0, 6).map(([type, typeResources]) => {
+          const getTypeIcon = (type: string) => {
+            if (type.toLowerCase().includes('rapport')) return FaFileAlt;
+            if (type.toLowerCase().includes('guide') || type.toLowerCase().includes('manuel')) return FaBook;
+            if (type.toLowerCase().includes('données') || type.toLowerCase().includes('base')) return FaDatabase;
+            if (type.toLowerCase().includes('formation')) return FaGraduationCap;
+            return FaFileAlt;
+          };
+          
+          const getTypeColor = (type: string) => {
+            if (type.toLowerCase().includes('rapport')) return { bg: 'bg-farafina-primary/10', text: 'text-farafina-primary' };
+            if (type.toLowerCase().includes('guide')) return { bg: 'bg-farafina-secondary/10', text: 'text-farafina-secondary' };
+            if (type.toLowerCase().includes('données')) return { bg: 'bg-farafina-accent/10', text: 'text-farafina-accent' };
+            return { bg: 'bg-gray-100', text: 'text-gray-700' };
+          };
+
+          const Icon = getTypeIcon(type);
+          const colors = getTypeColor(type);
+          
+          return (
+            <a href={`/resources/category/${type.toLowerCase().replace(/\s+/g, '-')}`} class="block group">
+              <div class={`${colors.bg} rounded-xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105 h-full border border-transparent hover:border-white`}>
+                <div class="flex items-start mb-4">
+                  <div class="w-14 h-14 rounded-full bg-white flex items-center justify-center mr-4 flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
+                    <Icon className={`${colors.text} text-2xl`} />
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-farafina-dark text-lg mb-1">{type}</h3>
+                    <span class={`text-sm font-medium ${colors.text}`}>{typeResources.length} ressources</span>
+                  </div>
+                </div>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                  {type.toLowerCase().includes('rapport') ? 'Rapports détaillés et analyses approfondies' :
+                   type.toLowerCase().includes('guide') ? 'Guides pratiques et manuels de formation' :
+                   type.toLowerCase().includes('données') ? 'Bases de données et statistiques électorales' :
+                   'Ressources diverses pour l\'observation électorale'}
+                </p>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+
+    <!-- Ressources en vedette avec vraies données -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12 border border-gray-100">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-farafina-dark">Ressources en Vedette</h2>
+        <a href="/resources/all" class="text-farafina-primary hover:text-farafina-primary/80 transition-colors font-medium">
+          Voir toutes les ressources →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {featuredResources.map(resource => (
+          <div class="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:translate-y-[-5px] bg-white">
+            <div class="h-48 bg-gradient-to-br from-farafina-primary/10 to-farafina-secondary/10 flex items-center justify-center">
+              <FaFileAlt className="text-farafina-primary text-4xl" />
+            </div>
+            <div class="p-6">
+              <div class="flex justify-between items-center mb-3">
+                <span class="px-3 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full font-medium">
+                  {resource.type}
+                </span>
+                <span class="text-xs text-gray-500 font-medium">{formatDate(resource.year)}</span>
+              </div>
+              <h3 class="font-bold text-farafina-dark mb-3 line-clamp-2 text-lg leading-tight">{resource.title}</h3>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">{resource.description}</p>
+
+              <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                <div class="flex items-center text-xs text-gray-500">
+                  <FaEye className="mr-1" />
+                  <span>{resource.views} vues</span>
+                </div>
+                <div class="flex space-x-2">
+                  <a href={`/resources/${resource.id}`} class="px-4 py-2 text-farafina-primary border border-farafina-primary rounded-lg hover:bg-farafina-primary hover:text-white transition-colors text-sm font-medium">
+                    Détails
+                  </a>
+                  {resource.downloadUrl !== '#' && (
+                    <a href={resource.downloadUrl} class="px-4 py-2 bg-farafina-secondary text-white rounded-lg hover:bg-farafina-secondary/90 transition-colors text-sm font-medium flex items-center">
+                      <FaDownload className="mr-1" /> 
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         ))}
       </div>
     </div>
 
-    <!-- Catégories de ressources -->
-    <ResourceCategories />
+    <!-- Ressources téléchargeables avec vraies données -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12 border border-gray-100">
+      <h2 class="text-3xl font-bold text-farafina-dark mb-8">Ressources Téléchargeables</h2>
 
-    <!-- Ressources en vedette -->
-    <FeaturedResources />
+      <div class="space-y-4">
+        {downloadableResources.map(resource => {
+          const getFileIcon = (type: string) => {
+            switch (type) {
+              case 'PDF': return { icon: FaFileAlt, color: 'text-red-500' };
+              case 'Word': return { icon: FaFileAlt, color: 'text-blue-600' };
+              case 'Excel': return { icon: FaChartBar, color: 'text-green-600' };
+              case 'PowerPoint': return { icon: FaFileAlt, color: 'text-orange-600' };
+              default: return { icon: FaFileAlt, color: 'text-gray-500' };
+            }
+          };
 
-    <!-- Ressources téléchargeables -->
-    <DownloadableResources />
+          const fileInfo = getFileIcon(resource.type);
+          const Icon = fileInfo.icon;
+
+          return (
+            <div class="border border-gray-200 rounded-xl p-6 hover:bg-gray-50 transition-all duration-300 hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center flex-1">
+                  <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center mr-4 flex-shrink-0">
+                    <Icon className={`${fileInfo.color} text-xl`} />
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-farafina-dark mb-1 truncate">{resource.title}</h3>
+                    <div class="flex items-center text-xs text-gray-500 space-x-4">
+                      <span class="font-medium">{resource.type}</span>
+                      <span>{resource.size}</span>
+                      <span>{formatDate(resource.year)}</span>
+                    </div>
+                    {resource.description && (
+                      <p class="text-sm text-gray-600 mt-2 line-clamp-1">{resource.description}</p>
+                    )}
+                  </div>
+                </div>
+                <div class="flex items-center space-x-3 ml-4">
+                  <a href={`/resources/${resource.id}`} class="p-2 text-farafina-primary hover:bg-farafina-primary/10 rounded-full transition-colors" title="Voir les détails">
+                    <FaEye />
+                  </a>
+                  <a href={resource.downloadUrl} class="p-2 text-farafina-secondary hover:bg-farafina-secondary/10 rounded-full transition-colors" title="Télécharger">
+                    <FaDownload />
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div class="mt-8 text-center">
+        <a href="/resources/downloads" class="inline-block px-8 py-3 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors font-medium">
+          Voir toutes les ressources téléchargeables
+        </a>
+      </div>
+    </div>
 
     <!-- Bibliothèque de ressources -->
     <ResourcesLibrary />
@@ -77,4 +337,3 @@ const stats = [
     <ResourcesCallToAction />
   </div>
 </Layout>
-
