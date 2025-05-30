@@ -5,7 +5,7 @@ import ResourceCategories from '../components/resources/ResourceCategories.astro
 import FeaturedResources from '../components/resources/FeaturedResources.astro';
 import DownloadableResources from '../components/resources/DownloadableResources.astro';
 import ResourcesCallToAction from '../components/resources/ResourcesCallToAction.astro';
-import { FaBook, FaFileAlt, FaChartBar, FaVideo, FaFilter, FaSearch, FaDownload, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaBook, FaFileAlt, FaChartBar, FaVideo, FaFilter, FaSearch, FaDownload, FaExternalLinkAlt, FaGraduationCap, FaDatabase, FaClipboardList, FaBookOpen } from 'react-icons/fa';
 import { getCollection } from 'astro:content';
 
 // Récupérer toutes les ressources
@@ -66,11 +66,36 @@ const stats = [
   }
 ];
 
-// Catégories de ressources avec descriptions
+// Fonction pour obtenir l'icône correspondant au type
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case "Rapport d'observation":
+      return FaFileAlt;
+    case "Guide méthodologique":
+      return FaBookOpen;
+    case "Données électorales":
+      return FaChartBar;
+    case "Formation":
+      return FaGraduationCap;
+    case "Publication":
+      return FaBook;
+    case "Études":
+      return FaClipboardList;
+    case "Manuel":
+      return FaBook;
+    case "Base de données":
+      return FaDatabase;
+    default:
+      return FaFileAlt;
+  }
+};
+
+// Catégories de ressources avec descriptions et icônes
 const resourceCategories = resourceTypes.map(type => ({
   type,
   count: processedResources.filter(r => r.type === type).length,
-  description: typeDescriptions[type] || "Ressources diverses liées aux élections en Afrique"
+  description: typeDescriptions[type] || "Ressources diverses liées aux élections en Afrique",
+  icon: getTypeIcon(type)
 })).sort((a, b) => b.count - a.count);
 
 // Obtenir les données uniques pour les filtres
@@ -119,15 +144,22 @@ const formatDate = (year: number) => {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {resourceCategories.map(category => (
           <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer group">
-            <div class="flex justify-between items-start mb-3">
-              <h3 class="font-semibold text-farafina-dark group-hover:text-farafina-primary transition-colors">
-                {category.type}
-              </h3>
-              <span class="px-2 py-1 bg-farafina-accent/10 text-farafina-accent text-sm rounded-full">
-                {category.count}
-              </span>
+            <div class="flex items-start mb-3">
+              <div class="w-12 h-12 rounded-full bg-farafina-primary/10 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-farafina-primary/20 transition-colors">
+                <category.icon className="text-farafina-primary text-xl" />
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <h3 class="font-semibold text-farafina-dark group-hover:text-farafina-primary transition-colors">
+                    {category.type}
+                  </h3>
+                  <span class="px-2 py-1 bg-farafina-accent/10 text-farafina-accent text-sm rounded-full ml-2">
+                    {category.count}
+                  </span>
+                </div>
+                <p class="text-gray-600 text-sm mt-2">{category.description}</p>
+              </div>
             </div>
-            <p class="text-gray-600 text-sm">{category.description}</p>
           </div>
         ))}
       </div>
