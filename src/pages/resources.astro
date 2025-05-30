@@ -21,46 +21,54 @@ const processedResources = allResources.map(resource => ({
   countryName: countryMap.get(resource.data.Pays_id) || 'Non spécifié'
 }));
 
-// Obtenir les types uniques avec leurs descriptions
-const resourceTypes = [...new Set(processedResources.map(r => r.type).filter(Boolean))];
+// Types de ressources prédéfinis
+const resourceTypes = [
+  "Données démographiques",
+  "Cadre régional/sous-régional",
+  "Rapport observation",
+  "Résultats",
+  "Constitution",
+  "Loi Électorale",
+  "Guides"
+];
+
 const typeDescriptions = {
-  "Rapport d'observation": "Rapports détaillés sur l'observation des processus électoraux",
-  "Guide méthodologique": "Guides et manuels pour l'observation électorale",
-  "Données électorales": "Bases de données et statistiques électorales",
-  "Formation": "Matériels de formation et ressources pédagogiques",
-  "Publication": "Publications scientifiques et analyses",
-  "Études": "Études approfondies sur les systèmes électoraux",
-  "Manuel": "Manuels techniques et guides pratiques",
-  "Base de données": "Collections de données structurées"
+  "Données démographiques": "Statistiques de population, électeurs et données démographiques des pays",
+  "Cadre régional/sous-régional": "Documents et accords régionaux sur les élections",
+  "Rapport observation": "Rapports détaillés sur l'observation des processus électoraux",
+  "Résultats": "Résultats officiels et analyses des élections",
+  "Constitution": "Textes constitutionnels et amendements relatifs aux élections",
+  "Loi Électorale": "Lois et codes électoraux nationaux",
+  "Guides": "Guides méthodologiques et manuels d'observation électorale"
 };
 
 // Statistiques basées sur les vraies données
 const stats = [
   { 
     icon: FaFileAlt, 
-    value: processedResources.filter(r => r.type === "Rapport d'observation").length.toString(), 
+    value: processedResources.filter(r => r.type === "Rapport observation").length.toString(), 
     label: "Rapports d'observation",
     color: "bg-farafina-primary/10",
     textColor: "text-farafina-primary"
   },
   { 
     icon: FaBook, 
-    value: processedResources.filter(r => r.type === "Guide méthodologique" || r.type === "Manuel").length.toString(), 
-    label: "Guides et Manuels",
+    value: processedResources.filter(r => r.type === "Constitution" || r.type === "Loi Électorale").length.toString(), 
+    label: "Cadre juridique",
     color: "bg-farafina-secondary/10",
     textColor: "text-farafina-secondary"
   },
   { 
     icon: FaChartBar, 
-    value: processedResources.filter(r => r.type === "Données électorales" || r.type === "Base de données").length.toString(), 
-    label: "Données électorales",
+    value: processedResources.filter(r => r.type === "Données démographiques" || r.type === "Résultats").length.toString(), 
+    label: "Données et résultats",
     color: "bg-farafina-accent/10",
     textColor: "text-farafina-accent"
   },
   { 
-    icon: FaVideo, 
-    value: processedResources.filter(r => r.type === "Formation").length.toString(), 
-    label: "Formations",
+    icon: FaClipboardList, 
+    value: processedResources.filter(r => r.type === "Guides").length.toString(), 
+    label: "Guides",
     color: "bg-farafina-blue/10",
     textColor: "text-farafina-blue"
   }
@@ -69,22 +77,20 @@ const stats = [
 // Fonction pour obtenir l'icône correspondant au type
 const getTypeIcon = (type: string) => {
   switch (type) {
-    case "Rapport d'observation":
-      return FaFileAlt;
-    case "Guide méthodologique":
-      return FaBookOpen;
-    case "Données électorales":
+    case "Données démographiques":
       return FaChartBar;
-    case "Formation":
+    case "Cadre régional/sous-régional":
       return FaGraduationCap;
-    case "Publication":
-      return FaBook;
-    case "Études":
-      return FaClipboardList;
-    case "Manuel":
-      return FaBook;
-    case "Base de données":
+    case "Rapport observation":
+      return FaFileAlt;
+    case "Résultats":
       return FaDatabase;
+    case "Constitution":
+      return FaBook;
+    case "Loi Électorale":
+      return FaBookOpen;
+    case "Guides":
+      return FaClipboardList;
     default:
       return FaFileAlt;
   }
