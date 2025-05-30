@@ -114,10 +114,6 @@ const uniqueTypes = resourceTypes;
 const uniqueYears = [...new Set(processedResources.map(r => r.year).filter(Boolean))].sort((a, b) => b - a);
 const uniqueCountries = [...new Set(processedResources.map(r => r.countryName).filter(Boolean))].sort();
 
-// Pagination
-const itemsPerPage = 12;
-const totalPages = Math.ceil(processedResources.length / itemsPerPage);
-
 // Formatage de date
 const formatDate = (year: number) => {
   return year ? year.toString() : 'Non spécifié';
@@ -294,7 +290,7 @@ const formatDate = (year: number) => {
           </div>
 
           <div id="resources-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {processedResources.slice(0, itemsPerPage).map(resource => (
+            {processedResources.map(resource => (
               <div class="resource-item border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:transform hover:translate-y-[-2px]" 
                    data-type={resource.type} 
                    data-year={resource.year} 
@@ -371,10 +367,7 @@ const formatDate = (year: number) => {
             ))}
           </div>
 
-          <!-- Pagination -->
-          <div id="pagination" class="mt-8 flex justify-center">
-            <!-- La pagination sera générée par JavaScript -->
-          </div>
+          
         </div>
       </div>
     </div>
@@ -384,13 +377,11 @@ const formatDate = (year: number) => {
   </div>
 </Layout>
 
-<script define:vars={{ allResources: processedResources, itemsPerPage }}>
+<script define:vars={{ allResources: processedResources }}>
   document.addEventListener('DOMContentLoaded', () => {
-    let currentPage = 1;
     let filteredResources = [...allResources];
 
     const resourcesContainer = document.getElementById('resources-container');
-    const paginationContainer = document.getElementById('pagination');
     const displayedCountEl = document.getElementById('displayed-count');
     const searchInput = document.getElementById('search-input');
     const sortSelect = document.getElementById('sort-select');
@@ -398,12 +389,9 @@ const formatDate = (year: number) => {
     const resetFiltersBtn = document.getElementById('reset-filters');
 
     // Fonction pour afficher les ressources
-    function displayResources(resources, page = 1) {
-      const startIndex = (page - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const pageResources = resources.slice(startIndex, endIndex);
+    function displayResources(resources) {
 
-      resourcesContainer.innerHTML = pageResources.map(resource => `
+      resourcesContainer.innerHTML = resources.map(resource => `
         <div class="resource-item border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:transform hover:translate-y-[-2px]">
           <!-- En-tête avec icône et type -->
           <div class="bg-gradient-to-r from-farafina-primary/5 to-farafina-secondary/5 p-4 border-b border-gray-50">
@@ -459,47 +447,7 @@ const formatDate = (year: number) => {
       `).join('');
 
       displayedCountEl.textContent = resources.length;
-      generatePagination(resources.length, page);
     }
-
-    // Fonction pour générer la pagination
-    function generatePagination(totalItems, currentPage) {
-      const totalPages = Math.ceil(totalItems / itemsPerPage);
-      if (totalPages <= 1) {
-        paginationContainer.innerHTML = '';
-        return;
-      }
-
-      let paginationHTML = '<nav class="inline-flex rounded-md shadow">';
-
-      // Bouton précédent
-      if (currentPage > 1) {
-        paginationHTML += `<button onclick="changePage(${currentPage - 1})" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</button>`;
-      }
-
-      // Pages
-      for (let i = 1; i <= totalPages; i++) {
-        if (i === currentPage) {
-          paginationHTML += `<button class="py-2 px-4 bg-farafina-primary text-white border border-farafina-primary">${i}</button>`;
-        } else {
-          paginationHTML += `<button onclick="changePage(${i})" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">${i}</button>`;
-        }
-      }
-
-      // Bouton suivant
-      if (currentPage < totalPages) {
-        paginationHTML += `<button onclick="changePage(${currentPage + 1})" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">Suivant</button>`;
-      }
-
-      paginationHTML += '</nav>';
-      paginationContainer.innerHTML = paginationHTML;
-    }
-
-    // Fonction pour changer de page
-    window.changePage = function(page) {
-      currentPage = page;
-      displayResources(filteredResources, page);
-    };
 
     // Fonction pour appliquer les filtres
     function applyFilters() {
@@ -518,8 +466,7 @@ const formatDate = (year: number) => {
         return matchesSearch && matchesType && matchesYear && matchesCountry;
       });
 
-      currentPage = 1;
-      displayResources(filteredResources, 1);
+      displayResources(filteredResources);
     }
 
     // Fonction pour trier
@@ -541,8 +488,7 @@ const formatDate = (year: number) => {
           break;
       }
 
-      currentPage = 1;
-      displayResources(filteredResources, 1);
+      displayResources(filteredResources);
     }
 
     // Event listeners
@@ -555,11 +501,10 @@ const formatDate = (year: number) => {
       document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
       sortSelect.value = 'recent';
       filteredResources = [...allResources];
-      currentPage = 1;
-      displayResources(filteredResources, 1);
+      displayResources(filteredResources);
     });
 
     // Initialisation
-    displayResources(filteredResources, 1);
+    displayResources(filteredResources);
   });
 </script>
