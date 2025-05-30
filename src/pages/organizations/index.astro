@@ -26,7 +26,7 @@ const organizationsData = organisations.map(org => ({
   expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(d => d.trim()).filter(d => d) : [],
   logo: null, // Pas de logo dans les données NocoDB
   website: org.data.siteweb || '',
-  description: `Organisation ${org.data.typeOrganisation} basée à ${org.data.ville || 'localisation non spécifiée'}, couvrant ${org.data.nombreDePaysCouverts || '1'} pays dans les zones: ${org.data.zonesCouverts || 'Non spécifié'}.`,
+  description: `${org.data.typeOrganisation} basée à ${org.data.ville || 'localisation non spécifiée'}, couvrant ${org.data.nombreDePaysCouverts || '1'} pays dans les zones: ${org.data.zonesCouverts || 'Non spécifié'}.`,
   contacts: {
     email: org.data.email || '',
     phone: org.data.telephone || '',
@@ -308,7 +308,7 @@ const regions = [
         </div>
         <div class="hidden md:block relative">
           <img 
-            src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+            src="https://images.unsplash.com/photo-1651372381086-9861c9c81db5?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
             alt="Collaboration entre organisations" 
             class="w-full h-full object-cover"
           />

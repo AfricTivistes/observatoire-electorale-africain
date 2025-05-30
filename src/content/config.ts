@@ -142,6 +142,7 @@ const ressources = defineCollection({
     return records.map((record) => ({
       id: record["Id"].toString(),
       title: record.titre || "",
+      code: record["code"] || "",
       type: record["type_donnée"] || "",
       year: record["année"] != null ? Number(record["année"]) : 0,
       description: record["description"] || "",
@@ -152,6 +153,7 @@ const ressources = defineCollection({
   schema: z.object({
     id: z.string(),
     title: z.string(),
+    code: z.string(),
     type: z.string(),
     year: z.number(),
     description: z.string(),
