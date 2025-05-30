@@ -5,7 +5,7 @@ import ResourceCategories from '../components/resources/ResourceCategories.astro
 import FeaturedResources from '../components/resources/FeaturedResources.astro';
 import DownloadableResources from '../components/resources/DownloadableResources.astro';
 import ResourcesCallToAction from '../components/resources/ResourcesCallToAction.astro';
-import { FaBook, FaFileAlt, FaChartBar, FaVideo, FaFilter, FaSearch, FaDownload, FaExternalLinkAlt, FaGraduationCap, FaDatabase, FaClipboardList, FaBookOpen } from 'react-icons/fa';
+import { FaBook, FaFileAlt, FaChartBar, FaVideo, FaFilter, FaSearch, FaDownload, FaExternalLinkAlt, FaGraduationCap, FaDatabase, FaClipboardList, FaBookOpen, FaGlobeAfrica } from 'react-icons/fa';
 import { getCollection } from 'astro:content';
 
 // Récupérer toutes les ressources
@@ -43,32 +43,37 @@ const typeDescriptions = {
 };
 
 // Statistiques basées sur les vraies données
+const totalResources = processedResources.length;
+const uniqueCountriesCount = [...new Set(processedResources.map(r => r.Pays_id).filter(Boolean))].length;
+const resourcesWithFiles = processedResources.filter(r => r.fichier && r.fichier.trim() !== '').length;
+const recentResources = processedResources.filter(r => r.year && r.year >= 2020).length;
+
 const stats = [
   { 
     icon: FaFileAlt, 
-    value: processedResources.filter(r => r.type === "Rapport observation").length.toString(), 
-    label: "Rapports d'observation",
+    value: totalResources.toString(), 
+    label: "Ressources collectées",
     color: "bg-farafina-primary/10",
     textColor: "text-farafina-primary"
   },
   { 
-    icon: FaBook, 
-    value: processedResources.filter(r => r.type === "Constitution" || r.type === "Loi Électorale").length.toString(), 
-    label: "Cadre juridique",
+    icon: FaGlobeAfrica, 
+    value: uniqueCountriesCount.toString(), 
+    label: "Pays couverts",
     color: "bg-farafina-secondary/10",
     textColor: "text-farafina-secondary"
   },
   { 
-    icon: FaChartBar, 
-    value: processedResources.filter(r => r.type === "Données démographiques" || r.type === "Résultats").length.toString(), 
-    label: "Données et résultats",
+    icon: FaDownload, 
+    value: resourcesWithFiles.toString(), 
+    label: "Fichiers téléchargeables",
     color: "bg-farafina-accent/10",
     textColor: "text-farafina-accent"
   },
   { 
-    icon: FaClipboardList, 
-    value: processedResources.filter(r => r.type === "Guides").length.toString(), 
-    label: "Guides",
+    icon: FaChartBar, 
+    value: recentResources.toString(), 
+    label: "Ressources récentes (2020+)",
     color: "bg-farafina-blue/10",
     textColor: "text-farafina-blue"
   }
