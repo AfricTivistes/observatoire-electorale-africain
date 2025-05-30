@@ -4,41 +4,124 @@ import ResourcesHero from '../components/resources/ResourcesHero.astro';
 import ResourceCategories from '../components/resources/ResourceCategories.astro';
 import FeaturedResources from '../components/resources/FeaturedResources.astro';
 import DownloadableResources from '../components/resources/DownloadableResources.astro';
-import ResourcesLibrary from '../components/resources/ResourcesLibrary.astro';
 import ResourcesCallToAction from '../components/resources/ResourcesCallToAction.astro';
-import { FaBook, FaFileAlt, FaChartBar, FaVideo } from 'react-icons/fa';
+import { FaBook, FaFileAlt, FaChartBar, FaVideo, FaFilter, FaSearch, FaDownload, FaExternalLinkAlt, FaGraduationCap, FaDatabase, FaClipboardList, FaBookOpen, FaGlobeAfrica } from 'react-icons/fa';
+import { getCollection } from 'astro:content';
 
-// Statistiques
+// Récupérer toutes les ressources
+const allResources = await getCollection('ressources');
+
+// Récupérer tous les pays pour les noms
+const allCountries = await getCollection('pays');
+const countryMap = new Map(allCountries.map(country => [country.data.id, country.data.name]));
+
+// Traiter les ressources avec les noms des pays
+const processedResources = allResources.map(resource => ({
+  ...resource.data,
+  countryName: countryMap.get(resource.data.Pays_id) || 'Non spécifié'
+}));
+
+// Types de ressources prédéfinis
+const resourceTypes = [
+  "Données démographiques",
+  "Cadre régional/sous-régional",
+  "Rapport observation",
+  "Résultats",
+  "Constitution",
+  "Loi Électorale",
+  "Guides"
+];
+
+const typeDescriptions = {
+  "Données démographiques": "Statistiques de population, électeurs et données démographiques des pays",
+  "Cadre régional/sous-régional": "Documents et accords régionaux sur les élections",
+  "Rapport observation": "Rapports détaillés sur l'observation des processus électoraux",
+  "Résultats": "Résultats officiels et analyses des élections",
+  "Constitution": "Textes constitutionnels et amendements relatifs aux élections",
+  "Loi Électorale": "Lois et codes électoraux nationaux",
+  "Guides": "Guides méthodologiques et manuels d'observation électorale"
+};
+
+// Statistiques basées sur les vraies données
+const totalResources = processedResources.length;
+const uniqueCountriesCount = [...new Set(processedResources.map(r => r.Pays_id).filter(Boolean))].length;
+const resourcesWithFiles = processedResources.filter(r => r.fichier && r.fichier.trim() !== '').length;
+const recentResources = processedResources.filter(r => r.year && r.year >= 2020).length;
+
 const stats = [
   { 
     icon: FaFileAlt, 
-    value: "350+", 
-    label: "Rapports et Publications",
+    value: totalResources.toString(), 
+    label: "Ressources collectées",
     color: "bg-farafina-primary/10",
     textColor: "text-farafina-primary"
   },
   { 
-    icon: FaBook, 
-    value: "120", 
-    label: "Guides et Manuels",
+    icon: FaGlobeAfrica, 
+    value: uniqueCountriesCount.toString(), 
+    label: "Pays couverts",
     color: "bg-farafina-secondary/10",
     textColor: "text-farafina-secondary"
   },
   { 
-    icon: FaChartBar, 
-    value: "85", 
-    label: "Ensembles de Données",
+    icon: FaDownload, 
+    value: resourcesWithFiles.toString(), 
+    label: "Fichiers téléchargeables",
     color: "bg-farafina-accent/10",
     textColor: "text-farafina-accent"
   },
   { 
-    icon: FaVideo, 
-    value: "60+", 
-    label: "Ressources Multimédias",
+    icon: FaChartBar, 
+    value: recentResources.toString(), 
+    label: "Ressources récentes (2020+)",
     color: "bg-farafina-blue/10",
     textColor: "text-farafina-blue"
   }
 ];
+
+// Fonction pour obtenir l'icône correspondant au type
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case "Données démographiques":
+      return FaChartBar;
+    case "Cadre régional/sous-régional":
+      return FaGraduationCap;
+    case "Rapport observation":
+      return FaFileAlt;
+    case "Résultats":
+      return FaDatabase;
+    case "Constitution":
+      return FaBook;
+    case "Loi Électorale":
+      return FaBookOpen;
+    case "Guides":
+      return FaClipboardList;
+    default:
+      return FaFileAlt;
+  }
+};
+
+// Catégories de ressources avec descriptions et icônes
+const resourceCategories = resourceTypes.map(type => ({
+  type,
+  count: processedResources.filter(r => r.type === type).length,
+  description: typeDescriptions[type] || "Ressources diverses liées aux élections en Afrique",
+  icon: getTypeIcon(type)
+})).sort((a, b) => b.count - a.count);
+
+// Obtenir les données uniques pour les filtres
+const uniqueTypes = resourceTypes;
+const uniqueYears = [...new Set(processedResources.map(r => r.year).filter(Boolean))].sort((a, b) => b - a);
+const uniqueCountries = [...new Set(processedResources.map(r => r.countryName).filter(Boolean))].sort();
+
+// Pagination
+const itemsPerPage = 12;
+const totalPages = Math.ceil(processedResources.length / itemsPerPage);
+
+// Formatage de date
+const formatDate = (year: number) => {
+  return year ? year.toString() : 'Non spécifié';
+};
 ---
 
 <Layout title="Centre de Ressources | Observatoire des Élections en Afrique">
@@ -62,19 +145,421 @@ const stats = [
     </div>
 
     <!-- Catégories de ressources -->
-    <ResourceCategories />
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Catégories de Ressources</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {resourceCategories.map(category => (
+          <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer group">
+            <div class="flex items-start mb-3">
+              <div class="w-12 h-12 rounded-full bg-farafina-primary/10 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-farafina-primary/20 transition-colors">
+                <category.icon className="text-farafina-primary text-xl" />
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <h3 class="font-semibold text-farafina-dark group-hover:text-farafina-primary transition-colors">
+                    {category.type}
+                  </h3>
+                  <span class="px-2 py-1 bg-farafina-accent/10 text-farafina-accent text-sm rounded-full ml-2">
+                    {category.count}
+                  </span>
+                </div>
+                <p class="text-gray-600 text-sm mt-2">{category.description}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
 
-    <!-- Ressources en vedette -->
-    <FeaturedResources />
+    <!-- Bibliothèque de ressources complète -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Bibliothèque Complète</h2>
 
-    <!-- Ressources téléchargeables -->
-    <DownloadableResources />
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Filtres -->
+        <div class="lg:col-span-1">
+          <div class="bg-gray-50 rounded-lg p-6 sticky top-24" id="resource-filters">
+            <div class="flex items-center mb-6">
+              <FaFilter className="text-farafina-primary mr-2" />
+              <h3 class="text-lg font-semibold text-farafina-dark">Filtres</h3>
+            </div>
 
-    <!-- Bibliothèque de ressources -->
-    <ResourcesLibrary />
+            <!-- Barre de recherche -->
+            <div class="mb-6">
+              <div class="relative">
+                <input
+                  type="text"
+                  placeholder="Rechercher..."
+                  id="search-input"
+                  class="w-full py-2 pl-10 pr-4 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
+                />
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
+            </div>
+
+            <!-- Type de ressource -->
+            <div class="mb-6">
+              <h4 class="font-medium text-farafina-dark mb-3">Type de ressource</h4>
+              <div class="space-y-2 max-h-48 overflow-y-auto">
+                {uniqueTypes.map(type => (
+                  <label class="flex items-center">
+                    <input 
+                      type="checkbox" 
+                      value={type}
+                      class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary resource-type-filter" 
+                    />
+                    <span class="ml-2 text-gray-700 text-sm">{type}</span>
+                    <span class="ml-auto text-xs text-gray-500">
+                      ({processedResources.filter(r => r.type === type).length})
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <!-- Année -->
+            <div class="mb-6">
+              <h4 class="font-medium text-farafina-dark mb-3">Année</h4>
+              <div class="space-y-2 max-h-32 overflow-y-auto">
+                {uniqueYears.slice(0, 10).map(year => (
+                  <label class="flex items-center">
+                    <input 
+                      type="checkbox" 
+                      value={year}
+                      class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary year-filter" 
+                    />
+                    <span class="ml-2 text-gray-700 text-sm">{year}</span>
+                    <span class="ml-auto text-xs text-gray-500">
+                      ({processedResources.filter(r => r.year === year).length})
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <!-- Pays -->
+            <div class="mb-6">
+              <h4 class="font-medium text-farafina-dark mb-3">Pays</h4>
+              <div class="space-y-2 max-h-32 overflow-y-auto">
+                {uniqueCountries.slice(0, 10).map(country => (
+                  <label class="flex items-center">
+                    <input 
+                      type="checkbox" 
+                      value={country}
+                      class="form-checkbox rounded text-farafina-primary focus:ring-farafina-primary country-filter" 
+                    />
+                    <span class="ml-2 text-gray-700 text-sm">{country}</span>
+                    <span class="ml-auto text-xs text-gray-500">
+                      ({processedResources.filter(r => r.countryName === country).length})
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="pt-4 border-t border-gray-200 flex flex-col space-y-3">
+              <button 
+                id="apply-filters"
+                class="w-full py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors"
+              >
+                Appliquer les filtres
+              </button>
+              <button 
+                id="reset-filters"
+                class="w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Réinitialiser
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Liste des ressources -->
+        <div class="lg:col-span-3">
+          <div class="flex justify-between items-center mb-6">
+            <div class="text-sm text-gray-600">
+              Affichage de <span id="displayed-count" class="font-medium">{processedResources.length}</span> 
+              ressources sur <span class="font-medium">{processedResources.length}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-sm text-gray-600 mr-2">Trier par:</span>
+              <select id="sort-select" class="text-sm border-gray-200 rounded-md focus:ring-farafina-primary focus:border-farafina-primary">
+                <option value="recent">Plus récentes</option>
+                <option value="oldest">Plus anciennes</option>
+                <option value="az">A-Z</option>
+                <option value="za">Z-A</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="resources-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {processedResources.slice(0, itemsPerPage).map(resource => (
+              <div class="resource-item border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:transform hover:translate-y-[-2px]" 
+                   data-type={resource.type} 
+                   data-year={resource.year} 
+                   data-country={resource.countryName}
+                   data-title={resource.title.toLowerCase()}>
+                
+                {/* En-tête avec icône et type */}
+                <div class="bg-gradient-to-r from-farafina-primary/5 to-farafina-secondary/5 p-4 border-b border-gray-50">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <div class="w-8 h-8 rounded-full bg-farafina-primary/10 flex items-center justify-center">
+                        <FaFileAlt className="text-farafina-primary text-sm" />
+                      </div>
+                      <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full font-medium">
+                        {resource.type}
+                      </span>
+                    </div>
+                    <span class="text-xs text-gray-500 font-medium">{formatDate(resource.year)}</span>
+                  </div>
+                </div>
+                
+                <div class="p-5">
+                  {/* Titre cliquable */}
+                  {resource.fichier ? (
+                    <a 
+                      href={resource.fichier} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block hover:text-farafina-primary transition-colors mb-3"
+                    >
+                      <h3 class="font-semibold text-farafina-dark text-base leading-tight line-clamp-2">
+                        {resource.title}
+                      </h3>
+                    </a>
+                  ) : (
+                    <h3 class="font-semibold text-farafina-dark text-base leading-tight mb-3 line-clamp-2">
+                      {resource.title}
+                    </h3>
+                  )}
+                  
+                  <p class="text-gray-600 text-sm mb-4 line-clamp-2">{resource.description}</p>
+                  
+                  {/* Pays avec drapeau */}
+                  <div class="flex justify-between items-center mb-4">
+                    {resource.Pays_id && (
+                      <a 
+                        href={`/countries/${resource.code.toLowerCase()}`} 
+                        class="flex items-center gap-2 hover:text-farafina-primary transition-colors"
+                      >
+                        <img
+                          src={`https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp`}
+                          alt={`Drapeau ${resource.countryName}`}
+                          class="w-6 h-6 object-cover rounded shadow-sm"
+                        />
+                        <span class="text-sm font-medium text-gray-700">{resource.countryName}</span>
+                      </a>
+                    )}
+                  </div>
+                  
+                  {/* Bouton de téléchargement */}
+                  {resource.fichier && (
+                    <a 
+                      href={resource.fichier} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="w-full inline-flex items-center justify-center px-4 py-2 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm font-medium"
+                    >
+                      <FaDownload className="mr-2" />
+                      Télécharger
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <!-- Pagination -->
+          <div id="pagination" class="mt-8 flex justify-center">
+            <!-- La pagination sera générée par JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Appel à l'action -->
     <ResourcesCallToAction />
   </div>
 </Layout>
 
+<script define:vars={{ allResources: processedResources, itemsPerPage }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    let currentPage = 1;
+    let filteredResources = [...allResources];
+
+    const resourcesContainer = document.getElementById('resources-container');
+    const paginationContainer = document.getElementById('pagination');
+    const displayedCountEl = document.getElementById('displayed-count');
+    const searchInput = document.getElementById('search-input');
+    const sortSelect = document.getElementById('sort-select');
+    const applyFiltersBtn = document.getElementById('apply-filters');
+    const resetFiltersBtn = document.getElementById('reset-filters');
+
+    // Fonction pour afficher les ressources
+    function displayResources(resources, page = 1) {
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageResources = resources.slice(startIndex, endIndex);
+
+      resourcesContainer.innerHTML = pageResources.map(resource => `
+        <div class="resource-item border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:transform hover:translate-y-[-2px]">
+          <!-- En-tête avec icône et type -->
+          <div class="bg-gradient-to-r from-farafina-primary/5 to-farafina-secondary/5 p-4 border-b border-gray-50">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-farafina-primary/10 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-farafina-primary" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full font-medium">
+                  ${resource.type}
+                </span>
+              </div>
+              <span class="text-xs text-gray-500 font-medium">${resource.year || 'Non spécifié'}</span>
+            </div>
+          </div>
+          
+          <div class="p-5">
+            <!-- Titre cliquable -->
+            ${resource.fichier ? `
+              <a href="${resource.fichier}" target="_blank" rel="noopener noreferrer" class="block hover:text-farafina-primary transition-colors mb-3">
+                <h3 class="font-semibold text-farafina-dark text-base leading-tight line-clamp-2">${resource.title}</h3>
+              </a>
+            ` : `
+              <h3 class="font-semibold text-farafina-dark text-base leading-tight mb-3 line-clamp-2">${resource.title}</h3>
+            `}
+            
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">${resource.description}</p>
+            
+            <!-- Pays avec drapeau -->
+            <div class="flex justify-between items-center mb-4">
+              ${resource.code ? `
+                <a href="/countries/${resource.code.toLowerCase()}" class="flex items-center gap-2 hover:text-farafina-primary transition-colors">
+                  <img src="https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp" alt="Drapeau ${resource.countryName}" class="w-6 h-6 object-cover rounded shadow-sm" />
+                  <span class="text-sm font-medium text-gray-700">${resource.countryName}</span>
+                </a>
+              ` : ''}
+            </div>
+            
+            <!-- Bouton de téléchargement -->
+            ${resource.fichier ? `
+              <a href="${resource.fichier}" target="_blank" rel="noopener noreferrer"
+                 class="w-full inline-flex items-center justify-center px-4 py-2 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm font-medium">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                Télécharger
+              </a>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      displayedCountEl.textContent = resources.length;
+      generatePagination(resources.length, page);
+    }
+
+    // Fonction pour générer la pagination
+    function generatePagination(totalItems, currentPage) {
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+      }
+
+      let paginationHTML = '<nav class="inline-flex rounded-md shadow">';
+
+      // Bouton précédent
+      if (currentPage > 1) {
+        paginationHTML += `<button onclick="changePage(${currentPage - 1})" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</button>`;
+      }
+
+      // Pages
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === currentPage) {
+          paginationHTML += `<button class="py-2 px-4 bg-farafina-primary text-white border border-farafina-primary">${i}</button>`;
+        } else {
+          paginationHTML += `<button onclick="changePage(${i})" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-50">${i}</button>`;
+        }
+      }
+
+      // Bouton suivant
+      if (currentPage < totalPages) {
+        paginationHTML += `<button onclick="changePage(${currentPage + 1})" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">Suivant</button>`;
+      }
+
+      paginationHTML += '</nav>';
+      paginationContainer.innerHTML = paginationHTML;
+    }
+
+    // Fonction pour changer de page
+    window.changePage = function(page) {
+      currentPage = page;
+      displayResources(filteredResources, page);
+    };
+
+    // Fonction pour appliquer les filtres
+    function applyFilters() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const selectedTypes = Array.from(document.querySelectorAll('.resource-type-filter:checked')).map(cb => cb.value);
+      const selectedYears = Array.from(document.querySelectorAll('.year-filter:checked')).map(cb => parseInt(cb.value));
+      const selectedCountries = Array.from(document.querySelectorAll('.country-filter:checked')).map(cb => cb.value);
+
+      filteredResources = allResources.filter(resource => {
+        const matchesSearch = !searchTerm || resource.title.toLowerCase().includes(searchTerm) || 
+                             resource.description.toLowerCase().includes(searchTerm);
+        const matchesType = selectedTypes.length === 0 || selectedTypes.includes(resource.type);
+        const matchesYear = selectedYears.length === 0 || selectedYears.includes(resource.year);
+        const matchesCountry = selectedCountries.length === 0 || selectedCountries.includes(resource.countryName);
+
+        return matchesSearch && matchesType && matchesYear && matchesCountry;
+      });
+
+      currentPage = 1;
+      displayResources(filteredResources, 1);
+    }
+
+    // Fonction pour trier
+    function sortResources() {
+      const sortValue = sortSelect.value;
+
+      switch (sortValue) {
+        case 'recent':
+          filteredResources.sort((a, b) => (b.year || 0) - (a.year || 0));
+          break;
+        case 'oldest':
+          filteredResources.sort((a, b) => (a.year || 0) - (b.year || 0));
+          break;
+        case 'az':
+          filteredResources.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case 'za':
+          filteredResources.sort((a, b) => b.title.localeCompare(a.title));
+          break;
+      }
+
+      currentPage = 1;
+      displayResources(filteredResources, 1);
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', applyFilters);
+    sortSelect.addEventListener('change', sortResources);
+    applyFiltersBtn.addEventListener('click', applyFilters);
+
+    resetFiltersBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      sortSelect.value = 'recent';
+      filteredResources = [...allResources];
+      currentPage = 1;
+      displayResources(filteredResources, 1);
+    });
+
+    // Initialisation
+    displayResources(filteredResources, 1);
+  });
+</script>
