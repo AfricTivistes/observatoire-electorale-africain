@@ -1,4 +1,3 @@
-
 ---
 import Layout from '../layouts/MainLayout.astro';
 import ResourcesHero from '../components/resources/ResourcesHero.astro';
@@ -149,7 +148,16 @@ const formatDate = (year: number) => {
             <p class="text-gray-600 text-sm mb-3 line-clamp-2">{resource.description}</p>
             <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
               <span>{formatDate(resource.year)}</span>
-              <span>{resource.countryName}</span>
+              <div class="flex items-center gap-1">
+                {resource.Pays_id && (
+                  <img 
+                    src={`https://flagcdn.com/w20/${resource.Pays_id.toLowerCase()}.png`}
+                    alt={`Drapeau ${resource.countryName}`}
+                    class="w-4 h-3 object-cover rounded-sm"
+                  />
+                )}
+                <span>{resource.countryName}</span>
+              </div>
             </div>
             {resource.fichier && (
               <a 
@@ -305,7 +313,16 @@ const formatDate = (year: number) => {
                 <p class="text-gray-600 text-sm mb-3 line-clamp-2">{resource.description}</p>
                 <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
                   <span>{formatDate(resource.year)}</span>
-                  <span>{resource.countryName}</span>
+                  <div class="flex items-center gap-1">
+                    {resource.Pays_id && (
+                      <img 
+                        src={`https://flagcdn.com/w20/${resource.Pays_id.toLowerCase()}.png`}
+                        alt={`Drapeau ${resource.countryName}`}
+                        class="w-4 h-3 object-cover rounded-sm"
+                      />
+                    )}
+                    <span>{resource.countryName}</span>
+                  </div>
                 </div>
                 {resource.fichier && (
                   <a 
@@ -339,7 +356,7 @@ const formatDate = (year: number) => {
   document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 1;
     let filteredResources = [...allResources];
-    
+
     const resourcesContainer = document.getElementById('resources-container');
     const paginationContainer = document.getElementById('pagination');
     const displayedCountEl = document.getElementById('displayed-count');
@@ -365,7 +382,10 @@ const formatDate = (year: number) => {
           <p class="text-gray-600 text-sm mb-3 line-clamp-2">${resource.description}</p>
           <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
             <span>${resource.year || 'Non spécifié'}</span>
-            <span>${resource.countryName}</span>
+            <div class="flex items-center gap-1">
+              ${resource.Pays_id ? `<img src="https://flagcdn.com/w20/${resource.Pays_id.toLowerCase()}.png" alt="Drapeau ${resource.countryName}" class="w-4 h-3 object-cover rounded-sm" />` : ''}
+              <span>${resource.countryName}</span>
+            </div>
           </div>
           ${resource.fichier ? `
             <a href="${resource.fichier}" target="_blank" rel="noopener noreferrer"
@@ -389,7 +409,7 @@ const formatDate = (year: number) => {
       }
 
       let paginationHTML = '<nav class="inline-flex rounded-md shadow">';
-      
+
       // Bouton précédent
       if (currentPage > 1) {
         paginationHTML += `<button onclick="changePage(${currentPage - 1})" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">Précédent</button>`;
@@ -443,7 +463,7 @@ const formatDate = (year: number) => {
     // Fonction pour trier
     function sortResources() {
       const sortValue = sortSelect.value;
-      
+
       switch (sortValue) {
         case 'recent':
           filteredResources.sort((a, b) => (b.year || 0) - (a.year || 0));
@@ -467,7 +487,7 @@ const formatDate = (year: number) => {
     searchInput.addEventListener('input', applyFilters);
     sortSelect.addEventListener('change', sortResources);
     applyFiltersBtn.addEventListener('click', applyFilters);
-    
+
     resetFiltersBtn.addEventListener('click', () => {
       searchInput.value = '';
       document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
