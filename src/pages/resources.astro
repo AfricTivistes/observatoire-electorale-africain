@@ -149,14 +149,16 @@ const formatDate = (year: number) => {
             <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
               <span>{formatDate(resource.year)}</span>
               <div class="flex items-center gap-1">
+              <a href={`/countries/${resource.code.toLowerCase()}`}>
                 {resource.Pays_id && (
-                  <img 
-                    src={`https://flagcdn.com/w20/${resource.Pays_id.toLowerCase()}.png`}
-                    alt={`Drapeau ${resource.countryName}`}
-                    class="w-4 h-3 object-cover rounded-sm"
-                  />
+                  <img
+              src={`https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp`}
+              alt={`Drapeau ${resource.countryName}`}
+              class="w-6 h-6 object-cover rounded shadow-md mr-6"
+            />
                 )}
-                <span>{resource.countryName}</span>
+                </a>
+
               </div>
             </div>
             {resource.fichier && (
@@ -314,15 +316,17 @@ const formatDate = (year: number) => {
                 <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
                   <span>{formatDate(resource.year)}</span>
                   <div class="flex items-center gap-1">
-                    {resource.Pays_id && (
-                      <img 
-                        src={`https://flagcdn.com/w20/${resource.Pays_id.toLowerCase()}.png`}
-                        alt={`Drapeau ${resource.countryName}`}
-                        class="w-4 h-3 object-cover rounded-sm"
-                      />
-                    )}
-                    <span>{resource.countryName}</span>
-                  </div>
+              <a href={`/countries/${resource.code.toLowerCase()}`}>
+                {resource.Pays_id && (
+                  <img
+              src={`https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp`}
+              alt={`Drapeau ${resource.countryName}`}
+              class="w-6 h-6 object-cover rounded shadow-md mr-6"
+            />
+                )}
+                </a>
+
+              </div>
                 </div>
                 {resource.fichier && (
                   <a 
