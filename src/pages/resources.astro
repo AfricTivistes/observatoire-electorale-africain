@@ -22,40 +22,60 @@ const processedResources = allResources.map(resource => ({
   countryName: countryMap.get(resource.data.Pays_id) || 'Non spécifié'
 }));
 
+// Obtenir les types uniques avec leurs descriptions
+const resourceTypes = [...new Set(processedResources.map(r => r.type).filter(Boolean))];
+const typeDescriptions = {
+  "Rapport d'observation": "Rapports détaillés sur l'observation des processus électoraux",
+  "Guide méthodologique": "Guides et manuels pour l'observation électorale",
+  "Données électorales": "Bases de données et statistiques électorales",
+  "Formation": "Matériels de formation et ressources pédagogiques",
+  "Publication": "Publications scientifiques et analyses",
+  "Études": "Études approfondies sur les systèmes électoraux",
+  "Manuel": "Manuels techniques et guides pratiques",
+  "Base de données": "Collections de données structurées"
+};
+
 // Statistiques basées sur les vraies données
 const stats = [
   { 
     icon: FaFileAlt, 
-    value: processedResources.filter(r => r.type.toLowerCase().includes('rapport')).length.toString() + "+", 
-    label: "Rapports et Publications",
+    value: processedResources.filter(r => r.type === "Rapport d'observation").length.toString(), 
+    label: "Rapports d'observation",
     color: "bg-farafina-primary/10",
     textColor: "text-farafina-primary"
   },
   { 
     icon: FaBook, 
-    value: processedResources.filter(r => r.type.toLowerCase().includes('guide') || r.type.toLowerCase().includes('manuel')).length.toString(), 
+    value: processedResources.filter(r => r.type === "Guide méthodologique" || r.type === "Manuel").length.toString(), 
     label: "Guides et Manuels",
     color: "bg-farafina-secondary/10",
     textColor: "text-farafina-secondary"
   },
   { 
     icon: FaChartBar, 
-    value: processedResources.filter(r => r.type.toLowerCase().includes('données') || r.type.toLowerCase().includes('statistique')).length.toString(), 
-    label: "Ensembles de Données",
+    value: processedResources.filter(r => r.type === "Données électorales" || r.type === "Base de données").length.toString(), 
+    label: "Données électorales",
     color: "bg-farafina-accent/10",
     textColor: "text-farafina-accent"
   },
   { 
     icon: FaVideo, 
-    value: processedResources.filter(r => r.type.toLowerCase().includes('média') || r.type.toLowerCase().includes('vidéo')).length.toString() + "+", 
-    label: "Ressources Multimédias",
+    value: processedResources.filter(r => r.type === "Formation").length.toString(), 
+    label: "Formations",
     color: "bg-farafina-blue/10",
     textColor: "text-farafina-blue"
   }
 ];
 
-// Obtenir les types uniques pour les filtres
-const uniqueTypes = [...new Set(processedResources.map(r => r.type).filter(Boolean))];
+// Catégories de ressources avec descriptions
+const resourceCategories = resourceTypes.map(type => ({
+  type,
+  count: processedResources.filter(r => r.type === type).length,
+  description: typeDescriptions[type] || "Ressources diverses liées aux élections en Afrique"
+})).sort((a, b) => b.count - a.count);
+
+// Obtenir les données uniques pour les filtres
+const uniqueTypes = resourceTypes;
 const uniqueYears = [...new Set(processedResources.map(r => r.year).filter(Boolean))].sort((a, b) => b - a);
 const uniqueCountries = [...new Set(processedResources.map(r => r.countryName).filter(Boolean))].sort();
 
@@ -95,7 +115,24 @@ const formatDate = (year: number) => {
     </div>
 
     <!-- Catégories de ressources -->
-    <ResourceCategories />
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Catégories de Ressources</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {resourceCategories.map(category => (
+          <div class="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer group">
+            <div class="flex justify-between items-start mb-3">
+              <h3 class="font-semibold text-farafina-dark group-hover:text-farafina-primary transition-colors">
+                {category.type}
+              </h3>
+              <span class="px-2 py-1 bg-farafina-accent/10 text-farafina-accent text-sm rounded-full">
+                {category.count}
+              </span>
+            </div>
+            <p class="text-gray-600 text-sm">{category.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
 
     <!-- Ressources en vedette -->
     <div class="bg-white rounded-xl shadow-md p-6 mb-12">
@@ -252,39 +289,35 @@ const formatDate = (year: number) => {
             </div>
           </div>
 
-          <div id="resources-container" class="space-y-6">
+          <div id="resources-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {processedResources.slice(0, itemsPerPage).map(resource => (
               <div class="resource-item border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow" 
                    data-type={resource.type} 
                    data-year={resource.year} 
                    data-country={resource.countryName}
                    data-title={resource.title.toLowerCase()}>
-                <div class="flex justify-between items-start mb-2">
-                  <h3 class="font-semibold text-farafina-dark">{resource.title}</h3>
+                <div class="flex justify-between items-start mb-3">
+                  <h3 class="font-semibold text-farafina-dark text-sm leading-tight">{resource.title}</h3>
                   <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full ml-2 flex-shrink-0">
                     {resource.type}
                   </span>
                 </div>
-                <p class="text-gray-600 text-sm mb-4">{resource.description}</p>
-                <div class="flex flex-wrap justify-between items-center">
-                  <div class="flex items-center text-xs text-gray-500 space-x-4">
-                    <span>{formatDate(resource.year)}</span>
-                    <span>{resource.countryName}</span>
-                  </div>
-                  <div class="flex space-x-2 mt-2 sm:mt-0">
-                    {resource.fichier && (
-                      <a 
-                        href={resource.fichier} 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center px-3 py-1 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm"
-                      >
-                        <FaDownload className="mr-1" />
-                        Télécharger
-                      </a>
-                    )}
-                  </div>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{resource.description}</p>
+                <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
+                  <span>{formatDate(resource.year)}</span>
+                  <span>{resource.countryName}</span>
                 </div>
+                {resource.fichier && (
+                  <a 
+                    href={resource.fichier} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center px-3 py-1 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm"
+                  >
+                    <FaDownload className="mr-1" />
+                    Télécharger
+                  </a>
+                )}
               </div>
             ))}
           </div>
@@ -323,27 +356,23 @@ const formatDate = (year: number) => {
 
       resourcesContainer.innerHTML = pageResources.map(resource => `
         <div class="resource-item border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow">
-          <div class="flex justify-between items-start mb-2">
-            <h3 class="font-semibold text-farafina-dark">${resource.title}</h3>
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-semibold text-farafina-dark text-sm leading-tight">${resource.title}</h3>
             <span class="px-2 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full ml-2 flex-shrink-0">
               ${resource.type}
             </span>
           </div>
-          <p class="text-gray-600 text-sm mb-4">${resource.description}</p>
-          <div class="flex flex-wrap justify-between items-center">
-            <div class="flex items-center text-xs text-gray-500 space-x-4">
-              <span>${resource.year || 'Non spécifié'}</span>
-              <span>${resource.countryName}</span>
-            </div>
-            <div class="flex space-x-2 mt-2 sm:mt-0">
-              ${resource.fichier ? `
-                <a href="${resource.fichier}" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center px-3 py-1 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm">
-                  Télécharger
-                </a>
-              ` : ''}
-            </div>
+          <p class="text-gray-600 text-sm mb-3 line-clamp-2">${resource.description}</p>
+          <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
+            <span>${resource.year || 'Non spécifié'}</span>
+            <span>${resource.countryName}</span>
           </div>
+          ${resource.fichier ? `
+            <a href="${resource.fichier}" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center px-3 py-1 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm">
+              Télécharger
+            </a>
+          ` : ''}
         </div>
       `).join('');
 
