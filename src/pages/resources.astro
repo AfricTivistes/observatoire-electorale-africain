@@ -113,11 +113,6 @@ const uniqueCountries = [...new Set(processedResources.map(r => r.countryName).f
 const itemsPerPage = 12;
 const totalPages = Math.ceil(processedResources.length / itemsPerPage);
 
-// Ressources en vedette (les plus récentes)
-const featuredResources = processedResources
-  .sort((a, b) => b.year - a.year)
-  .slice(0, 6);
-
 // Formatage de date
 const formatDate = (year: number) => {
   return year ? year.toString() : 'Non spécifié';
@@ -165,80 +160,6 @@ const formatDate = (year: number) => {
                 </div>
                 <p class="text-gray-600 text-sm mt-2">{category.description}</p>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    <!-- Ressources en vedette -->
-    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
-      <h2 class="text-2xl font-bold text-farafina-dark mb-6">Ressources en Vedette</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {featuredResources.map(resource => (
-          <div class="border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all transform hover:translate-y-[-2px]">
-            {/* Image de fond ou placeholder */}
-            <div class="h-32 bg-gradient-to-br from-farafina-primary/10 to-farafina-secondary/10 relative">
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-                  <FaFileAlt className="text-farafina-primary text-xl" />
-                </div>
-              </div>
-              <div class="absolute top-3 right-3">
-                <span class="px-2 py-1 bg-white/90 text-farafina-primary text-xs rounded-full font-medium">
-                  {resource.type}
-                </span>
-              </div>
-            </div>
-            
-            <div class="p-5">
-              {/* Titre cliquable */}
-              {resource.fichier ? (
-                <a 
-                  href={resource.fichier} 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="block hover:text-farafina-primary transition-colors"
-                >
-                  <h3 class="font-semibold text-farafina-dark text-base leading-tight mb-3 line-clamp-2">
-                    {resource.title}
-                  </h3>
-                </a>
-              ) : (
-                <h3 class="font-semibold text-farafina-dark text-base leading-tight mb-3 line-clamp-2">
-                  {resource.title}
-                </h3>
-              )}
-              
-              <p class="text-gray-600 text-sm mb-4 line-clamp-2">{resource.description}</p>
-              
-              <div class="flex justify-between items-center text-xs text-gray-500 mb-4">
-                <span class="font-medium">{formatDate(resource.year)}</span>
-                <div class="flex items-center gap-2">
-                  {resource.Pays_id && (
-                    <a href={`/countries/${resource.code.toLowerCase()}`} class="flex items-center gap-1 hover:text-farafina-primary transition-colors">
-                      <img
-                        src={`https://flagcdn.com/w160/${resource.code.toLowerCase()}.webp`}
-                        alt={`Drapeau ${resource.countryName}`}
-                        class="w-5 h-5 object-cover rounded shadow-sm"
-                      />
-                      <span class="text-xs">{resource.countryName}</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-              
-              {resource.fichier && (
-                <a 
-                  href={resource.fichier} 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="w-full inline-flex items-center justify-center px-4 py-2 bg-farafina-secondary text-white rounded-md hover:bg-farafina-secondary/90 transition-colors text-sm font-medium"
-                >
-                  <FaDownload className="mr-2" />
-                  Télécharger
-                </a>
-              )}
             </div>
           </div>
         ))}
