@@ -7,10 +7,15 @@ const organisations = await getCollection('organisations');
 
 // Prendre les 3 premières organisations pour l'affichage
 const featuredOrganizations = organisations.slice(0, 3).map(org => ({
-  id: org.data.id,
+  id: org.id,
   name: org.data.nom,
   country: org.data.pays || "Non spécifié",
-  expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(exp => exp.trim()) : ["Observation Électorale"],
+  type: org.data.typeOrganisation || "Organisation",
+  ville: org.data.ville || "Non spécifié",
+  anneeCreation: org.data.anneeDeCreation || null,
+  nombrePaysCouverts: org.data.nombreDePaysCouverts || "1",
+  zonesCouverts: org.data.zonesCouverts || "",
+  expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(exp => exp.trim()).slice(0, 3) : ["Observation Électorale"],
   logo: "/images/placeholder.svg",
 }));
 ---
@@ -48,23 +53,51 @@ const featuredOrganizations = organisations.slice(0, 3).map(org => ({
                   <FaUsers className="text-farafina-primary text-xl" />
                 )}
               </div>
-              <div>
-                <h3 class="font-semibold text-farafina-dark">{org.name}</h3>
-                <p class="text-sm text-gray-600">{org.country}</p>
+              <div class="flex-1">
+                <a href={`/organizations/${org.id}`} class="block">
+                  <h3 class="font-semibold text-farafina-dark hover:text-farafina-primary transition-colors cursor-pointer">
+                    {org.name}
+                  </h3>
+                </a>
+                <p class="text-sm text-gray-600">{org.ville}, {org.country}</p>
               </div>
             </div>
 
-            <div class="mb-6">
-              <h4 class="text-sm text-gray-600 mb-2">Domaines d'expertise</h4>
-              <div class="flex flex-wrap gap-2">
-                {org.expertise.map(exp => (
-                  <span
-                    class="px-3 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full"
-                  >
-                    {exp}
-                  </span>
-                ))}
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-600">Type d'organisation</span>
+                <span class="font-medium text-farafina-dark">{org.type}</span>
               </div>
+              
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-600">Pays couverts</span>
+                <span class="font-medium text-farafina-primary">{org.nombrePaysCouverts}</span>
+              </div>
+
+              {org.anneeCreation && (
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600">Année de création</span>
+                  <span class="font-medium text-farafina-dark">{org.anneeCreation}</span>
+                </div>
+              )}
+
+              {org.zonesCouverts && (
+                <div class="text-sm">
+                  <span class="text-gray-600 block mb-1">Zones d'intervention</span>
+                  <div class="flex flex-wrap gap-1">
+                    {org.zonesCouverts.split(',').slice(0, 2).map(zone => (
+                      <span class="px-2 py-1 bg-farafina-secondary/10 text-farafina-secondary text-xs rounded">
+                        {zone.trim()}
+                      </span>
+                    ))}
+                    {org.zonesCouverts.split(',').length > 2 && (
+                      <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                        +{org.zonesCouverts.split(',').length - 2}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <a
