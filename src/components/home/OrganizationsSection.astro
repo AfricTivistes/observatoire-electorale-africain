@@ -1,29 +1,18 @@
 ---
 import { FaUsers, FaArrowRight } from "react-icons/fa";
+import { getCollection } from "astro:content";
 
-const organizations = [
-  {
-    id: "obs-dz-001",
-    name: "Observatoire National des Élections (ONEC)",
-    country: "Algérie",
-    expertise: ["Observation Électorale", "Transparence", "Formation Civique"],
-    logo: "/images/placeholder.svg",
-  },
-  {
-    id: "obs-ma-001",
-    name: "Centre Marocain pour l'Observation Électorale",
-    country: "Maroc",
-    expertise: ["Monitoring Électoral", "Analyse Politique", "Éducation Civique"],
-    logo: "/images/placeholder.svg",
-  },
-  {
-    id: "obs-ke-001",
-    name: "Kenya Election Watch",
-    country: "Kenya",
-    expertise: ["Observation Électorale", "Droits Civiques", "Médias"],
-    logo: "/images/placeholder.svg",
-  },
-];
+// Récupérer les données des organisations depuis la collection
+const organisations = await getCollection('organisations');
+
+// Prendre les 3 premières organisations pour l'affichage
+const featuredOrganizations = organisations.slice(0, 3).map(org => ({
+  id: org.data.id,
+  name: org.data.nom,
+  country: org.data.pays || "Non spécifié",
+  expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(exp => exp.trim()) : ["Observation Électorale"],
+  logo: "/images/placeholder.svg",
+}));
 ---
 
 <section class="py-20 bg-gray-50">
@@ -46,7 +35,7 @@ const organizations = [
     </div>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {organizations.map(org => (
+      {featuredOrganizations.map(org => (
         <div
           class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-5px] overflow-hidden border border-gray-100"
         >
@@ -90,4 +79,3 @@ const organizations = [
     </div>
   </div>
 </section>
-
