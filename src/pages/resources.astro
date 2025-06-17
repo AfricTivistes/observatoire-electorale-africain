@@ -205,7 +205,10 @@ const formatDate = (year: number) => {
             <!-- En-tête du pays -->
             <div class="bg-gradient-to-r from-farafina-primary/5 to-farafina-secondary/5 p-6 border-b border-gray-100">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
+                <button 
+                  class="toggle-resources flex items-center gap-4 hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors flex-1 text-left"
+                  data-target={`resources-${country.countryName.replace(/\s+/g, '-').toLowerCase()}`}
+                >
                   {country.countryCode && (
                     <img
                       src={`https://flagcdn.com/w160/${country.countryCode.toLowerCase()}.webp`}
@@ -214,16 +217,16 @@ const formatDate = (year: number) => {
                     />
                   )}
                   <div>
-                    <h3 class="text-xl font-bold text-farafina-dark">{country.countryName}</h3>
+                    <h3 class="text-xl font-bold text-farafina-dark hover:text-farafina-primary transition-colors">{country.countryName}</h3>
                     <p class="text-gray-600">{country.resources.length} ressource{country.resources.length > 1 ? 's' : ''} disponible{country.resources.length > 1 ? 's' : ''}</p>
                   </div>
-                </div>
-                <button 
-                  class="toggle-resources px-4 py-2 bg-farafina-primary text-white rounded-lg hover:bg-farafina-primary/90 transition-colors text-sm"
-                  data-target={`resources-${country.countryName.replace(/\s+/g, '-').toLowerCase()}`}
-                >
-                  Voir les ressources
                 </button>
+                <a 
+                  href={`/countries/${country.countryCode.toLowerCase()}`}
+                  class="px-4 py-2 border border-farafina-primary text-farafina-primary rounded-lg hover:bg-farafina-primary/10 transition-colors text-sm flex-shrink-0"
+                >
+                  Voir le pays
+                </a>
               </div>
             </div>
 
