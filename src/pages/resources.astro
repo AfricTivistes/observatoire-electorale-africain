@@ -291,44 +291,68 @@ const formatDate = (year: number) => {
 </Layout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  // Fonction pour initialiser les événements
+  function initializeResourcesPage() {
     // Fonctionnalité de recherche de pays
     const searchInput = document.getElementById('country-search');
     const countryCards = document.querySelectorAll('.country-card');
 
-    searchInput?.addEventListener('input', (e) => {
-      const searchTerm = e.target.value.toLowerCase();
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
 
-      countryCards.forEach(card => {
-        const countryName = card.dataset.country || '';
-        if (countryName.includes(searchTerm)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
+        countryCards.forEach(card => {
+          const countryName = card.dataset.country || '';
+          if (countryName.includes(searchTerm)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
       });
-    });
+    }
 
     // Fonctionnalité pour afficher/masquer les ressources
     const toggleButtons = document.querySelectorAll('.toggle-resources');
 
     toggleButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const targetId = button.dataset.target;
-        const resourcesList = document.getElementById(targetId);
-
-        if (resourcesList) {
-          const isHidden = resourcesList.classList.contains('hidden');
-
-          if (isHidden) {
-            resourcesList.classList.remove('hidden');
-            button.textContent = 'Masquer les ressources';
-          } else {
-            resourcesList.classList.add('hidden');
-            button.textContent = 'Voir les ressources';
-          }
-        }
-      });
+      // Supprimer les anciens événements pour éviter les doublons
+      button.removeEventListener('click', handleToggleClick);
+      button.addEventListener('click', handleToggleClick);
     });
-  });
+  }
+
+  // Fonction pour gérer le clic sur les boutons toggle
+  function handleToggleClick(event) {
+    const button = event.target;
+    const targetId = button.dataset.target;
+    const resourcesList = document.getElementById(targetId);
+
+    if (resourcesList) {
+      const isHidden = resourcesList.classList.contains('hidden');
+
+      if (isHidden) {
+        resourcesList.classList.remove('hidden');
+        button.textContent = 'Masquer les ressources';
+        button.classList.add('bg-farafina-secondary');
+        button.classList.remove('bg-farafina-primary');
+      } else {
+        resourcesList.classList.add('hidden');
+        button.textContent = 'Voir les ressources';
+        button.classList.add('bg-farafina-primary');
+        button.classList.remove('bg-farafina-secondary');
+      }
+    }
+  }
+
+  // Initialiser au chargement du DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeResourcesPage);
+  } else {
+    // Le DOM est déjà chargé
+    initializeResourcesPage();
+  }
+
+  // Réinitialiser après les navigations côté client (si applicable)
+  document.addEventListener('astro:page-load', initializeResourcesPage);
 </script>
