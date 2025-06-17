@@ -5,9 +5,13 @@ import { getCollection } from "astro:content";
 // Récupérer les données des organisations depuis la collection
 const organisations = await getCollection('organisations');
 
-// Mélanger et prendre 4 organisations aléatoirement
-const shuffledOrganisations = organisations.sort(() => Math.random() - 0.5);
-const featuredOrganizations = shuffledOrganisations.slice(0, 4).map(org => ({
+// Prendre la première organisation fixe et 3 autres aléatoirement
+const firstOrg = organisations[0];
+const remainingOrgs = organisations.slice(1);
+const shuffledRemaining = remainingOrgs.sort(() => Math.random() - 0.5);
+const selectedOrgs = [firstOrg, ...shuffledRemaining.slice(0, 3)];
+
+const featuredOrganizations = selectedOrgs.map(org => ({
   id: org.id,
   name: org.data.nom,
   country: org.data.pays || "Non spécifié",
