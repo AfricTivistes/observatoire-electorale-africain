@@ -5,8 +5,9 @@ import { getCollection } from "astro:content";
 // Récupérer les données des organisations depuis la collection
 const organisations = await getCollection('organisations');
 
-// Prendre les 3 premières organisations pour l'affichage
-const featuredOrganizations = organisations.slice(0, 3).map(org => ({
+// Mélanger et prendre 4 organisations aléatoirement
+const shuffledOrganisations = organisations.sort(() => Math.random() - 0.5);
+const featuredOrganizations = shuffledOrganisations.slice(0, 4).map(org => ({
   id: org.id,
   name: org.data.nom,
   country: org.data.pays || "Non spécifié",
@@ -39,7 +40,7 @@ const featuredOrganizations = organisations.slice(0, 3).map(org => ({
       </a>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
       {featuredOrganizations.map(org => (
         <div
           class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-5px] overflow-hidden border border-gray-100"
