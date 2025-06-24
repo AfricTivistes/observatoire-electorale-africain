@@ -7,6 +7,7 @@ import {
   defisData,
   organismesElectorauxData,
   organisationsData,
+  ressourcesData,
 } from "./fields";
 
 // Fonction utilitaire pour générer un slug à partir d’une chaîne
@@ -133,12 +134,13 @@ const pays = defineCollection({
 const ressources = defineCollection({
   loader: async () => {
     const tableId = "m1s9f82k61alcst";
+    const fields = ressourcesData;
     const params = {
       where: "(type_donnée,notnull)",
       limit: "1000",
       sort: "année",
     };
-    const records = await listTableRecords(tableId, params);
+    const records = await listTableRecords(tableId, fields, params);
     return records.map((record) => ({
       id: record["Id"].toString(),
       title: record.titre || "",
