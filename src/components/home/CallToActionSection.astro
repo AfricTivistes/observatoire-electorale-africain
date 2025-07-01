@@ -25,60 +25,103 @@ const actions = [
 ];
 ---
 
-<section class="py-20 bg-gradient-to-r from-farafina-primary to-farafina-secondary relative overflow-hidden">
-  <!-- Background Elements -->
+<section class="py-12 bg-gradient-to-br from-farafina-primary via-farafina-primary/95 to-farafina-secondary relative overflow-hidden">
+  <!-- Enhanced Background Elements -->
   <div class="absolute inset-0 z-0 overflow-hidden">
-    <div class="absolute right-0 top-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-    <div class="absolute left-0 bottom-0 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="absolute right-0 top-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute left-0 bottom-0 w-[400px] h-[400px] bg-white/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-white/5 rounded-full blur-2xl"></div>
   </div>
 
   <div class="container mx-auto px-4 relative z-10">
-    <div class="grid lg:grid-cols-2 gap-12 items-center">
-      <div>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
-          Participez à la Promotion de la Démocratie en Afrique
-        </h2>
-        <p class="text-white/90 text-lg mb-8">
-          Rejoignez notre réseau d'observateurs, partagez vos données et contribuez à renforcer la transparence
-          électorale à travers le continent.
-        </p>
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="space-y-8">
+        <!-- Enhanced Header -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-white/90 text-sm font-medium backdrop-blur-sm">
+            <span class="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
+            Engagement Citoyen
+          </div>
+          <h2 class="text-4xl md:text-5xl font-bold text-white leading-tight">
+            Participez à la <span class="text-yellow-300">Promotion</span> de la Démocratie en Afrique
+          </h2>
+          <p class="text-white/90 text-xl leading-relaxed">
+            Rejoignez notre réseau d'observateurs, partagez vos données et contribuez à renforcer la transparence
+            électorale à travers le continent africain.
+          </p>
+        </div>
 
-        <div class="grid grid-cols-2 gap-6 mb-8">
-          {actions.map(action => (
-            <div class="flex items-start">
-              <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-4 mt-1">
-                <action.icon className="text-white" />
-              </div>
-              <div>
-                <h3 class="font-semibold text-white mb-1">{action.title}</h3>
-                <p class="text-white/80 text-sm">{action.description}</p>
+        <!-- Enhanced Actions Grid -->
+        <div class="grid grid-cols-2 gap-6">
+          {actions.map((action, index) => (
+            <div class="group bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-all duration-300 border border-white/20 hover:border-white/40">
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                  <action.icon className="text-white text-xl" />
+                </div>
+                <div class="flex-1">
+                  <h3 class="font-bold text-white mb-2 text-lg">{action.title}</h3>
+                  <p class="text-white/80 text-sm leading-relaxed">{action.description}</p>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        <div class="flex flex-wrap gap-4">
+        <!-- Enhanced CTA Buttons -->
+        <div class="flex flex-wrap gap-4 pt-4">
           <a
             href="/participate"
-            class="px-6 py-3 bg-white text-farafina-primary font-medium rounded-lg hover:bg-white/90 transition-colors"
+            class="group px-8 py-4 bg-white text-farafina-primary font-bold rounded-xl hover:bg-yellow-300 hover:text-farafina-primary transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
-            Rejoindre le Réseau
+            <span class="flex items-center">
+              Rejoindre le Réseau
+              <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+              </svg>
+            </span>
           </a>
           <a
             href="/contact"
-            class="px-6 py-3 bg-transparent border border-white text-white font-medium rounded-lg hover:bg-white/10 transition-colors"
+            class="group px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-farafina-primary transition-all duration-300 transform hover:scale-105"
           >
-            Nous Contacter
+            <span class="flex items-center">
+              Nous Contacter
+              <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+            </span>
           </a>
         </div>
       </div>
 
+      <!-- Enhanced Image Section -->
       <div class="relative hidden lg:block">
-        <img
-          src="images/placeholder.svg"
-          alt="Participation citoyenne"
-          class="max-w-full h-auto rounded-lg shadow-xl"
-        />
+        <div class="relative">
+          <!-- Image Container with Enhanced Styling -->
+          <div class="relative overflow-hidden rounded-2xl shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500">
+            <img
+              src="/images/AHEAD-Africa-Election-Observation-Calendar-South-Africa-1.webp"
+              alt="Calendrier d'observation électorale en Afrique"
+              class="w-full h-[500px] object-cover hover:scale-110 transition-transform duration-700"
+            />
+            <!-- Overlay Gradient -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+          </div>
+          
+          <!-- Floating Elements -->
+          <div class="absolute -top-4 -right-4 w-20 h-20 bg-yellow-300 rounded-full flex items-center justify-center shadow-lg">
+            <svg class="w-10 h-10 text-farafina-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          
+          <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
   </div>
