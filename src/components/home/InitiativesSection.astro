@@ -58,52 +58,108 @@ const initiatives = [
       </p>
     </div>
 
-    <!-- Initiatives Grid -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {initiatives.map(initiative => (
-        <a 
-          href={initiative.url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-farafina-primary/20"
-        >
-          <!-- Logo Container -->
-          <div class="h-72 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-farafina-primary/5 group-hover:to-farafina-secondary/5 transition-colors overflow-hidden">
-            <img 
-              src={initiative.logo} 
-              alt={`Logo ${initiative.name}`}
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+    <!-- Carousel Container -->
+    <div class="relative overflow-hidden">
+      <!-- Carousel Track -->
+      <div class="flex animate-scroll" style="animation-duration: 30s; animation-iteration-count: infinite;">
+        {initiatives.map(initiative => (
+          <div class="flex-shrink-0 w-80 mx-4">
+            <a 
+              href={initiative.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-farafina-primary/20 block h-96"
+            >
+              <!-- Logo Container -->
+              <div class="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-farafina-primary/5 group-hover:to-farafina-secondary/5 transition-colors overflow-hidden">
+                <img 
+                  src={initiative.logo} 
+                  alt={`Logo ${initiative.name}`}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <!-- Content -->
+              <div class="p-6 flex flex-col h-48">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="inline-block px-3 py-1 text-xs font-medium text-farafina-primary bg-farafina-primary/10 rounded-full">
+                    {initiative.category}
+                  </span>
+                  <svg class="w-5 h-5 text-gray-400 group-hover:text-farafina-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-farafina-dark mb-2 group-hover:text-farafina-primary transition-colors line-clamp-2">
+                  {initiative.name}
+                </h3>
+                
+                <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">
+                  {initiative.description}
+                </p>
+                
+                <div class="mt-auto flex items-center text-farafina-primary text-sm font-medium group-hover:text-farafina-secondary transition-colors">
+                  <span>Découvrir l'initiative</span>
+                  <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </div>
+              </div>
+            </a>
           </div>
-          
-          <!-- Content -->
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-3">
-              <span class="inline-block px-3 py-1 text-xs font-medium text-farafina-primary bg-farafina-primary/10 rounded-full">
-                {initiative.category}
-              </span>
-              <svg class="w-5 h-5 text-gray-400 group-hover:text-farafina-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-              </svg>
-            </div>
-            
-            <h3 class="text-lg font-semibold text-farafina-dark mb-2 group-hover:text-farafina-primary transition-colors">
-              {initiative.name}
-            </h3>
-            
-            <p class="text-gray-600 text-sm leading-relaxed">
-              {initiative.description}
-            </p>
-            
-            <div class="mt-4 flex items-center text-farafina-primary text-sm font-medium group-hover:text-farafina-secondary transition-colors">
-              <span>Découvrir l'initiative</span>
-              <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </div>
+        ))}
+        {/* Duplicate items for seamless loop */}
+        {initiatives.map(initiative => (
+          <div class="flex-shrink-0 w-80 mx-4">
+            <a 
+              href={initiative.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-farafina-primary/20 block h-96"
+            >
+              <!-- Logo Container -->
+              <div class="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-farafina-primary/5 group-hover:to-farafina-secondary/5 transition-colors overflow-hidden">
+                <img 
+                  src={initiative.logo} 
+                  alt={`Logo ${initiative.name}`}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <!-- Content -->
+              <div class="p-6 flex flex-col h-48">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="inline-block px-3 py-1 text-xs font-medium text-farafina-primary bg-farafina-primary/10 rounded-full">
+                    {initiative.category}
+                  </span>
+                  <svg class="w-5 h-5 text-gray-400 group-hover:text-farafina-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-farafina-dark mb-2 group-hover:text-farafina-primary transition-colors line-clamp-2">
+                  {initiative.name}
+                </h3>
+                
+                <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">
+                  {initiative.description}
+                </p>
+                
+                <div class="mt-auto flex items-center text-farafina-primary text-sm font-medium group-hover:text-farafina-secondary transition-colors">
+                  <span>Découvrir l'initiative</span>
+                  <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </div>
+              </div>
+            </a>
           </div>
-        </a>
-      ))}
+        ))}
+      </div>
+
+      <!-- Gradient Overlays for smooth edges -->
+      <div class="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
+      <div class="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
     </div>
 
     <!-- Call to Action -->
@@ -130,4 +186,33 @@ const initiatives = [
       </div>
     </div>
   </div>
-</section> 
+</section>
+
+<style>
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style> 
