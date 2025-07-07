@@ -96,12 +96,12 @@ const getSocialIcon = (icon: string) => {
       <div>
         <!-- <Logo variant="light" /> -->
         <div class="h-8 w-full flex items-center mb-4">
-          <a href="https://ahead.africa/fr/">
+          <a href="https://ahead.africa/fr/" target="_blank" rel="noopener noreferrer">
             <img src="/images/ahead_logo.png" alt="African Election Observers Network" class="max-h-full max-w-full object-contain" style="height: 50px;" />
           </a>
         </div>
         <div class="h-12 w-full flex items-center mb-4">
-          <a href="https://european-union.europa.eu/index_fr">
+          <a href="https://european-union.europa.eu/index_fr" target="_blank" rel="noopener noreferrer">
             <img src="/images/partenaires/eu-logo.png" alt="African Election Observers Network" class="max-h-full max-w-full object-contain" style="height: 50px;" />
           </a>
         </div>
@@ -110,7 +110,7 @@ const getSocialIcon = (icon: string) => {
         </p>
         <div class="flex space-x-4 mt-6">
           {socialLinks.map((social) => (
-            <a href={social.href} class="text-gray-400 hover:text-farafina-primary transition-colors" aria-label={social.name}>
+            <a href={social.href} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-farafina-primary transition-colors" aria-label={social.name}>
               <Fragment set:html={getSocialIcon(social.icon)} />
             </a>
           ))}
