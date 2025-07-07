@@ -4,7 +4,6 @@ import {
   FaVoteYea, 
   FaCalendarAlt 
 } from 'react-icons/fa';
-import FloatingActionButton from '../common/FloatingActionButton';
 
 const electionTypeOptions = [
   'Présidentielle',
@@ -62,13 +61,6 @@ const ElectionFilter: React.FC<ElectionFilterProps> = ({ onFilterChange }) => {
 
   return (
     <>
-      {/* Replace the old mobile filter toggle with new FAB */}
-      <FloatingActionButton 
-        onClick={() => setIsOpen(!isOpen)}
-        isActive={isOpen}
-        badgeCount={getActiveFiltersCount()}
-      />
-
       <div 
         className={`
           fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300 ease-in-out

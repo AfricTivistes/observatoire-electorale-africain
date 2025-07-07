@@ -72,21 +72,6 @@ const CountrySidebar: React.FC<CountrySidebarProps> = ({
 
   return (
     <>
-      {/* Mobile filter toggle */}
-      <button
-        className="lg:hidden fixed bottom-4 right-4 z-50 bg-africa-primary text-white rounded-full p-4 shadow-lg hover:bg-africa-secondary transition-colors"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
-        aria-label="Toggle filters"
-      >
-        <FaFilter className="w-6 h-6" />
-        {getActiveFiltersCount() > 0 && (
-          <span className="absolute -top-2 -right-2 bg-africa-accent text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
-            {getActiveFiltersCount()}
-          </span>
-        )}
-      </button>
-
       <div className={`
         fixed lg:relative inset-0 z-40
         transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
