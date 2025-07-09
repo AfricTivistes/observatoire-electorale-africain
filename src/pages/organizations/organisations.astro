@@ -17,7 +17,7 @@ const organizationsData = organisations.map(org => ({
   country: org.data.pays || 'Non spécifié',
   type: org.data.typeOrganisation || 'Organisation',
   expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(d => d.trim()) : [],
-  logo: null,
+  logo: undefined,
   website: org.data.siteweb || '',
   description: `Organisation ${org.data.typeOrganisation} basée à ${org.data.ville || 'localisation non spécifiée'}, couvrant ${org.data.nombreDePaysCouverts || '1'} pays dans les zones: ${org.data.zonesCouverts || 'Non spécifié'}.`,
   contacts: {

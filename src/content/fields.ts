@@ -95,3 +95,14 @@ export const organisationsData = [
   "email",
   "nom_pays (from Pays)",
 ];
+
+export const ressourcesData = [
+  "Id",
+  "titre",
+  "code",
+  "type_donnée",
+  "année",
+  "description",
+  "Pays_id",
+  "fichier",
+];

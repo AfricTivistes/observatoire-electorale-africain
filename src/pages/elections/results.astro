@@ -102,12 +102,13 @@ function formatNumber(num: number) {
               <div class="flex space-x-2">
                 <button class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Télécharger les résultats">
                   <a 
-                    href={resultat?.data.source_résultats || '#'} 
+                    href={resultat?.data?.source_résultats || '#'} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     aria-label="Télécharger les résultats"
                   >
                   <FaDownload className="text-white" />
+                  </a>
                 </button>
                 <a href={`/countries/${election.data.code_pays.toLowerCase()}`} class="p-2 bg-white/20 rounded hover:bg-white/30 transition-colors" title="Drapeau du pays">
                   <img src={`https://flagcdn.com/w160/${election.data.code_pays.toLowerCase()}.webp`} alt="Drapeau de ${election.data.nomPays}" class="w-6 h-6 inline" />
@@ -131,68 +132,88 @@ function formatNumber(num: number) {
                 <div class="bg-gray-50 rounded-lg p-3">
                   <span class="block text-sm text-gray-500">Participation</span>
                   <span class="font-medium">
-                    {resultat ? (resultat.data.participation / resultat.data.electeur * 100).toFixed(2) + '%' : 'N/A'}
+                    {resultat && resultat.data ? (resultat.data.participation / resultat.data.electeur * 100).toFixed(2) + '%' : 'N/A'}
                   </span>
                 </div>
               </div>
-              {/* Timeline horizontal */}
-              <div className="mt-6">
-                <div class="bg-gray-50 rounded-lg p-6">
-                  <span class="block text-sm text-gray-500 mb-4">Chronologie des Statuts</span>
-                  {resultat?.data.typeStatut && (
-                    <div class="relative">
-                      <div class="absolute h-0.5 bg-gray-200 left-0 right-0 top-4"></div>
-                      <div class="relative flex justify-between items-start">
-                        {resultat.data.typeStatut
-                          .map((type, index) => ({
-                            type,
-                            date: resultat.data.dateStatut?.[index],
-                            formattedDate: resultat.data.dateStatut?.[index] ? 
-                              new Date(resultat.data.dateStatut[index]).toLocaleDateString('fr-FR') : 
-                              'Non spécifié'
-                          }))
-                          .filter(item => item.type && item.date)
-                          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                          .map((item, index, array) => (
-                            <div class="relative flex flex-col items-center flex-1" key={index}>
-                              <div class={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 ${
-                                item.type === 'contesté' ? 'bg-yellow-100 border-yellow-500' :
-                                item.type === 'validé' ? 'bg-green-100 border-green-500' :
-                                item.type === 'annulé' ? 'bg-red-100 border-red-500' :
-                                item.type === 'provisoire' ? 'bg-blue-100 border-blue-500' :
-                                'bg-gray-100 border-gray-500'
-                              }`}>
-                                <FaCheckCircle className={`text-sm ${
-                                  item.type === 'contesté' ? 'text-yellow-500' :
-                                  item.type === 'validé' ? 'text-green-500' :
-                                  item.type === 'annulé' ? 'text-red-500' :
-                                  item.type === 'provisoire' ? 'text-blue-500' :
-                                  'text-gray-500'
-                                }`} />
-                              </div>
-                              <div class="mt-2 text-center">
-                                <span class={`font-medium block ${
-                                  item.type === 'contesté' ? 'text-yellow-700' :
-                                  item.type === 'validé' ? 'text-green-700' :
-                                  item.type === 'annulé' ? 'text-red-700' :
-                                  item.type === 'provisoire' ? 'text-blue-700' :
-                                  'text-gray-700'
-                                }`}>
-                                  {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                                </span>
-                                <span class="text-sm text-gray-500 block mt-1">{item.formattedDate}</span>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
+
+              {/* Message si pas de résultats */}
+              {!resultat && (
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
+                      <FaCheckCircle className="text-yellow-600 text-sm" />
                     </div>
-                  )}
+                    <div>
+                      <h4 class="font-medium text-yellow-800">Résultats en attente</h4>
+                      <p class="text-yellow-700 text-sm">Les résultats de cette élection ne sont pas encore disponibles.</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
+              {/* Timeline horizontal */}
+              {resultat && (
+                <div class="mt-6">
+                  <div class="bg-gray-50 rounded-lg p-6">
+                    <span class="block text-sm text-gray-500 mb-4">Chronologie des Statuts</span>
+                    {resultat.data.typeStatut && resultat.data.typeStatut.length > 0 ? (
+                      <div class="relative">
+                        <div class="absolute h-0.5 bg-gray-200 left-0 right-0 top-4"></div>
+                        <div class="relative flex justify-between items-start">
+                          {resultat.data.typeStatut
+                            .map((type, index) => ({
+                              type,
+                              date: resultat.data.dateStatut?.[index],
+                              formattedDate: resultat.data.dateStatut?.[index] ? 
+                                new Date(resultat.data.dateStatut[index]).toLocaleDateString('fr-FR') : 
+                                'Non spécifié'
+                            }))
+                            .filter(item => item.type && item.date)
+                            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                            .map((item, index, array) => (
+                              <div class="relative flex flex-col items-center flex-1" key={index}>
+                                <div class={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 ${
+                                  item.type === 'contesté' ? 'bg-yellow-100 border-yellow-500' :
+                                  item.type === 'validé' ? 'bg-green-100 border-green-500' :
+                                  item.type === 'annulé' ? 'bg-red-100 border-red-500' :
+                                  item.type === 'provisoire' ? 'bg-blue-100 border-blue-500' :
+                                  'bg-gray-100 border-gray-500'
+                                }`}>
+                                  <FaCheckCircle className={`text-sm ${
+                                    item.type === 'contesté' ? 'text-yellow-500' :
+                                    item.type === 'validé' ? 'text-green-500' :
+                                    item.type === 'annulé' ? 'text-red-500' :
+                                    item.type === 'provisoire' ? 'text-blue-500' :
+                                    'text-gray-500'
+                                  }`} />
+                                </div>
+                                <div class="mt-2 text-center">
+                                  <span class={`font-medium block ${
+                                    item.type === 'contesté' ? 'text-yellow-700' :
+                                    item.type === 'validé' ? 'text-green-700' :
+                                    item.type === 'annulé' ? 'text-red-700' :
+                                    item.type === 'provisoire' ? 'text-blue-700' :
+                                    'text-gray-700'
+                                  }`}>
+                                    {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                                  </span>
+                                  <span class="text-sm text-gray-500 block mt-1">{item.formattedDate}</span>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p class="text-gray-500 text-sm">Aucune information de statut disponible</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
-                <!-- Résultats -->
-                <div class="space-y-4">
+              {/* Résultats */}
+              {resultat && (
+                <div class="space-y-4 mt-6">
                   <h4 class="font-semibold text-farafina-dark mb-4">Résultats de l'élection</h4>
                   <div class="bg-gray-50 p-4 rounded-lg">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -222,6 +243,7 @@ function formatNumber(num: number) {
                     </div>
                   )}
                 </div>
+              )}
    
 
               <!-- Résultats des candidats -->

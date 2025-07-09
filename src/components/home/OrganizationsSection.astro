@@ -1,40 +1,47 @@
 ---
-import { FaUsers, FaArrowRight } from "react-icons/fa";
+import { FaUsers, FaArrowRight, FaGlobe, FaLandmark, FaNetworkWired, FaUniversity, FaBuilding } from "react-icons/fa";
+import { getCollection } from "astro:content";
 
-const organizations = [
-  {
-    id: "obs-dz-001",
-    name: "Observatoire National des Élections (ONEC)",
-    country: "Algérie",
-    expertise: ["Observation Électorale", "Transparence", "Formation Civique"],
-    logo: "/images/placeholder.svg",
-  },
-  {
-    id: "obs-ma-001",
-    name: "Centre Marocain pour l'Observation Électorale",
-    country: "Maroc",
-    expertise: ["Monitoring Électoral", "Analyse Politique", "Éducation Civique"],
-    logo: "/images/placeholder.svg",
-  },
-  {
-    id: "obs-ke-001",
-    name: "Kenya Election Watch",
-    country: "Kenya",
-    expertise: ["Observation Électorale", "Droits Civiques", "Médias"],
-    logo: "/images/placeholder.svg",
-  },
-];
+// Fonction pour obtenir l'icône selon le type d'organisation
+function getOrganizationIcon(type: string) {
+  const typeMap: { [key: string]: any } = {
+    'ONG': FaUsers,
+    'Organisation internationale': FaGlobe,
+    'Institution gouvernementale': FaLandmark,
+    'Réseau régional': FaNetworkWired,
+    'Centre de recherche': FaUniversity,
+    'default': FaBuilding
+  };
+
+  return typeMap[type] || typeMap['default'];
+}
+
+// Récupérer les données des organisations depuis la collection
+const organisations = await getCollection('organisations');
+
+// Prendre les 4 premières organisations
+const selectedOrgs = organisations.slice(0, 4);
+
+const featuredOrganizations = selectedOrgs.map(org => ({
+  id: org.id,
+  name: org.data.nom,
+  country: org.data.pays || "Non spécifié",
+  type: org.data.typeOrganisation || "Organisation",
+  ville: org.data.ville || "Non spécifié",
+  anneeCreation: org.data.anneeDeCreation || null,
+  nombrePaysCouverts: org.data.nombreDePaysCouverts || "1",
+  zonesCouverts: org.data.zonesCouverts || "",
+  expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(exp => exp.trim()).slice(0, 3) : ["Observation Électorale"],
+  IconComponent: getOrganizationIcon(org.data.typeOrganisation || "Organisation"),
+}));
 ---
 
 <section class="py-20 bg-gray-50">
   <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
       <div>
-        <div class="flex items-center text-farafina-primary font-medium mb-2">
-          <FaUsers className="mr-2" />
-          <span>Réseau d'Observateurs</span>
-        </div>
-        <h2 class="text-3xl font-bold text-farafina-dark">Réseaux d'organisation et observateurs électoraux</h2>
+        <h2 class="text-3xl font-bold text-farafina-dark">Acteurs clés des processus électoraux</h2>
+        <p class="text-gray-600 mt-2">Découvrez les organisations partenaires qui œuvrent pour la transparence électorale en Afrique</p>
       </div>
       <a
         href="/organizations"
@@ -45,37 +52,61 @@ const organizations = [
       </a>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {organizations.map(org => (
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {featuredOrganizations.map(org => (
         <div
           class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-5px] overflow-hidden border border-gray-100"
         >
           <div class="p-6">
             <div class="flex items-center mb-4">
               <div class="w-12 h-12 bg-farafina-primary/10 rounded-lg flex items-center justify-center mr-4">
-                {org.logo ? (
-                  <img src={org.logo || "/placeholder.svg"} alt={`Logo ${org.name}`} class="w-8 h-8" />
-                ) : (
-                  <FaUsers className="text-farafina-primary text-xl" />
-                )}
+                <org.IconComponent className="text-farafina-primary text-xl" />
               </div>
-              <div>
-                <h3 class="font-semibold text-farafina-dark">{org.name}</h3>
-                <p class="text-sm text-gray-600">{org.country}</p>
+              <div class="flex-1">
+                <a href={`/organizations/${org.id}`} class="block">
+                  <h3 class="font-semibold text-farafina-dark hover:text-farafina-primary transition-colors cursor-pointer">
+                    {org.name}
+                  </h3>
+                </a>
+                <p class="text-sm text-gray-600">{org.ville}, {org.country}</p>
               </div>
             </div>
 
-            <div class="mb-6">
-              <h4 class="text-sm text-gray-600 mb-2">Domaines d'expertise</h4>
-              <div class="flex flex-wrap gap-2">
-                {org.expertise.map(exp => (
-                  <span
-                    class="px-3 py-1 bg-farafina-primary/10 text-farafina-primary text-xs rounded-full"
-                  >
-                    {exp}
-                  </span>
-                ))}
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-600">Type d'organisation</span>
+                <span class="font-medium text-farafina-dark">{org.type}</span>
               </div>
+              
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-600">Pays couverts</span>
+                <span class="font-medium text-farafina-primary">{org.nombrePaysCouverts}</span>
+              </div>
+
+              {org.anneeCreation && (
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600">Année de création</span>
+                  <span class="font-medium text-farafina-dark">{org.anneeCreation}</span>
+                </div>
+              )}
+
+              {org.zonesCouverts && (
+                <div class="text-sm">
+                  <span class="text-gray-600 block mb-1">Zones d'intervention</span>
+                  <div class="flex flex-wrap gap-1">
+                    {org.zonesCouverts.split(',').slice(0, 2).map(zone => (
+                      <span class="px-2 py-1 bg-farafina-secondary/10 text-farafina-secondary text-xs rounded">
+                        {zone.trim()}
+                      </span>
+                    ))}
+                    {org.zonesCouverts.split(',').length > 2 && (
+                      <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                        +{org.zonesCouverts.split(',').length - 2}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <a
@@ -90,4 +121,3 @@ const organizations = [
     </div>
   </div>
 </section>
-

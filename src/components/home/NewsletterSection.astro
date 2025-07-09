@@ -1,68 +1,103 @@
 ---
-import { FaEnvelope } from "react-icons/fa";
+import { FaNewspaper, FaBell, FaChartLine, FaGlobeAfrica, FaFlag, FaDatabase, FaBuilding } from "react-icons/fa";
 ---
 
-<section class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-      <div class="grid md:grid-cols-5">
-        <div class="md:col-span-3 p-8 md:p-12">
-          <div class="flex items-center text-farafina-primary font-medium mb-2">
-            <FaEnvelope className="mr-2" />
-            <span>Restez Informé</span>
-          </div>
-          <h2 class="text-2xl md:text-3xl font-bold text-farafina-dark mb-4">
-            Abonnez-vous à Notre Newsletter
-          </h2>
-          <p class="text-gray-600 mb-6">
-            Recevez les dernières actualités sur les élections africaines, les analyses et les ressources
-            directement dans votre boîte mail.
-          </p>
+<section class="py-24 bg-gradient-to-br from-gray-50 via-white to-farafina-primary/5 relative overflow-hidden">
+  <!-- Background Elements -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-farafina-primary/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 bg-farafina-secondary/5 rounded-full blur-3xl"></div>
+  </div>
 
-          <form class="space-y-4">
-            <div>
-              <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-                Nom
-              </label>
-              <input
-                type="text"
-                id="name"
-                placeholder="Votre nom"
-                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                placeholder="votre@email.com"
-                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-farafina-primary focus:border-transparent"
-              />
-            </div>
-            <button
-              type="submit"
-              class="w-full py-3 bg-farafina-primary text-white font-medium rounded-lg hover:bg-farafina-primary/90 transition-colors"
-            >
-              S'abonner
-            </button>
-          </form>
-
-          <p class="text-xs text-gray-500 mt-4">
-            En vous abonnant, vous acceptez notre politique de confidentialité. Vous pouvez vous désabonner à tout
-            moment.
-          </p>
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header Section -->
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center px-4 py-2 bg-farafina-primary/10 rounded-full text-farafina-primary font-medium mb-6">
+          <FaNewspaper className="mr-2 text-lg" />
+          <span>Inscription Newsletter</span>
         </div>
+        <h2 class="text-4xl md:text-5xl font-bold text-farafina-dark mb-6 leading-tight">
+          Restez <span class="text-farafina-primary">Connecté</span>
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          Recevez les dernières actualités de AHEAD sur les élections africaines, les analyses et les ressources directement dans votre boîte mail.
+        </p>
+      </div>
 
-        <div class="md:col-span-2 bg-gradient-to-br from-farafina-primary to-farafina-secondary p-8 md:p-0 flex items-center justify-center">
-          <div class="text-center">
-            <div class="w-20 h-20 mx-auto bg-white/20 rounded-full flex items-center justify-center mb-4">
-              <FaEnvelope className="text-white text-3xl" />
+      <!-- Main Content Card -->
+      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+        <div class="grid lg:grid-cols-2">
+          <!-- Left Content -->
+          <div class="p-8 lg:p-12">
+            <!-- Features List -->
+            <div class="space-y-6 mb-8">
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-farafina-primary/10 flex items-center justify-center flex-shrink-0">
+                  <FaBell className="text-farafina-primary text-xl" />
+                </div>
+                <div>
+                  <h3 class="font-semibold text-farafina-dark mb-1">Notifications en Temps Réel</h3>
+                  <p class="text-gray-600 text-sm">Soyez informé des dernières élections et résultats</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-farafina-secondary/10 flex items-center justify-center flex-shrink-0">
+                  <FaChartLine className="text-farafina-secondary text-xl" />
+                </div>
+                <div>
+                  <h3 class="font-semibold text-farafina-dark mb-1">Analyses Approfondies</h3>
+                  <p class="text-gray-600 text-sm">Accédez à des rapports détaillés et analyses expertes</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-farafina-primary/10 flex items-center justify-center flex-shrink-0">
+                  <FaGlobeAfrica className="text-farafina-primary text-xl" />
+                </div>
+                <div>
+                  <h3 class="font-semibold text-farafina-dark mb-1">Couverture Panafricaine</h3>
+                  <p class="text-gray-600 text-sm">Suivez les élections dans tous les pays africains</p>
+                </div>
+              </div>
             </div>
-            <h3 class="text-xl font-semibold text-white mb-2">Restez Connecté</h3>
-            <p class="text-white/80 text-sm">Recevez nos mises à jour mensuelles et nos rapports spéciaux</p>
+
+            <!-- CTA Button -->
+            <a
+              href="https://landing.mailerlite.com/webforms/landing/s9v5l8"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group w-full py-4 bg-gradient-to-r from-farafina-primary to-farafina-secondary text-white font-bold rounded-xl hover:from-farafina-primary/90 hover:to-farafina-secondary/90 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center"
+            >
+              <FaNewspaper className="mr-3 text-xl" />
+              <span>S'abonner à la Newsletter</span>
+              <svg class="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+              </svg>
+            </a>
+
+            <p class="text-xs text-gray-500 mt-4 text-center">
+              En vous abonnant, vous acceptez notre politique de confidentialité. Vous pouvez vous désabonner à tout moment.
+            </p>
+          </div>
+
+          <!-- Right Visual Section -->
+          <div class="bg-gradient-to-br from-farafina-primary via-farafina-primary/95 to-farafina-secondary p-8 lg:p-12 flex items-center justify-center relative overflow-hidden">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10">
+              <div class="absolute top-4 right-4 w-32 h-32 border-2 border-white rounded-full"></div>
+              <div class="absolute bottom-8 left-8 w-24 h-24 border-2 border-white rounded-full"></div>
+              <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border-2 border-white rounded-full"></div>
+            </div>
+            
+            <div class="text-center relative z-10">
+              <div class="w-24 h-24 mx-auto bg-white/20 rounded-full flex items-center justify-center mb-6 backdrop-blur-sm">
+                <img src="/images/ahead_logo.png" alt="AHEAD Africa" class="h-16 w-16 object-contain" />
+              </div>
+              <h3 class="text-2xl font-bold text-white mb-4">La newsletter de AHEAD Africa</h3>
+              <p class="text-white/90 text-lg mb-6">Données et analyses sur la démocratie électorale en Afrique</p>
+            </div>
           </div>
         </div>
       </div>

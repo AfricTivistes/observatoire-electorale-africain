@@ -1,0 +1,266 @@
+---
+const initiatives = [
+  {
+    name: "MOOC Démocratie, Élection et Gouvernance",
+    description: "Formation en ligne gratuite sur la démocratie, les élections et la gouvernance en Afrique",
+    logo: "/images/Site/MoocDemocratie.png",
+    url: "https://mooc.africtivistes.org/",
+    category: "Formation"
+  },
+  {
+    name: "Innov4Democracy",
+    description: "Prix AfricTivistes pour l'Action Civique - Reconnaître les innovateurs au service de la démocratie",
+    logo: "/images/Site/INNOV4Democracyhackhaton.png",
+    url: "https://innovdemocracy.africtivistes.com/",
+    category: "Innovation"
+  },
+  {
+    name: "Election Civic Tech Fund",
+    description: "Fonds pour soutenir les initiatives de technologie civique dans le domaine électoral",
+    logo: "/images/Site/ElectionCivicTechFund.png",
+    url: "https://electioncivictechfund.africtivistes.com/fr",
+    category: "Financement"
+  },
+  {
+    name: "Consultation Citoyenne Panafricaine",
+    description: "Plateforme de consultation citoyenne pour renforcer la participation démocratique",
+    logo: "/images/Site/Consultationcitoyennepanafricaine.png",
+    url: "https://consultation.africtivistes.org/",
+    category: "Participation"
+  },
+  {
+    name: "Soobu",
+    description: "Cartographie des initiatives citoyennes électorales en Afrique",
+    logo: "/images/Site/soobu-fr.jpg",
+    url: "https://soobu.tech/fr/",
+    category: "Cartographie"
+  },
+  {
+    name: "Observatoire AfricTivistes",
+    description: "Observatoire de l'innovation des pratiques démocratiques en Afrique",
+    logo: "/images/Site/Observatoire.webp",
+    url: "https://academy.africtivistes.com/blog/observatoire-africtivistes-de-l-innovation-des-pratiques-democratiques-en-afrique-2",
+    category: "Recherche"
+  }
+];
+---
+
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-farafina-dark mb-4">
+        Découvrez nos initiatives sur la démocratie, les élections et la gouvernance
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        AfricTivistes développe plusieurs plateformes et programmes pour renforcer la démocratie, 
+        la transparence électorale et la participation citoyenne en Afrique.
+      </p>
+    </div>
+
+    <!-- Carousel Container -->
+    <div class="relative overflow-hidden">
+      <!-- Carousel Track -->
+      <div class="flex animate-infinite-scroll" style="animation-duration: 40s; animation-iteration-count: infinite;">
+        {/* First set of items */}
+        {initiatives.map(initiative => (
+          <div class="flex-shrink-0 w-80 mx-4">
+            <a 
+              href={initiative.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-farafina-primary/20 block h-96"
+            >
+              <!-- Logo Container -->
+              <div class="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-farafina-primary/5 group-hover:to-farafina-secondary/5 transition-colors overflow-hidden">
+                <img 
+                  src={initiative.logo} 
+                  alt={`Logo ${initiative.name}`}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <!-- Content -->
+              <div class="p-6 flex flex-col h-48">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="inline-block px-3 py-1 text-xs font-medium text-farafina-primary bg-farafina-primary/10 rounded-full">
+                    {initiative.category}
+                  </span>
+                  <svg class="w-5 h-5 text-gray-400 group-hover:text-farafina-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-farafina-dark mb-2 group-hover:text-farafina-primary transition-colors line-clamp-2">
+                  {initiative.name}
+                </h3>
+                
+                <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">
+                  {initiative.description}
+                </p>
+                
+                <div class="mt-auto flex items-center text-farafina-primary text-sm font-medium group-hover:text-farafina-secondary transition-colors">
+                  <span>Découvrir l'initiative</span>
+                  <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        ))}
+        {/* Second set of items for seamless loop */}
+        {initiatives.map(initiative => (
+          <div class="flex-shrink-0 w-80 mx-4">
+            <a 
+              href={initiative.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-farafina-primary/20 block h-96"
+            >
+              <!-- Logo Container -->
+              <div class="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-farafina-primary/5 group-hover:to-farafina-secondary/5 transition-colors overflow-hidden">
+                <img 
+                  src={initiative.logo} 
+                  alt={`Logo ${initiative.name}`}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <!-- Content -->
+              <div class="p-6 flex flex-col h-48">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="inline-block px-3 py-1 text-xs font-medium text-farafina-primary bg-farafina-primary/10 rounded-full">
+                    {initiative.category}
+                  </span>
+                  <svg class="w-5 h-5 text-gray-400 group-hover:text-farafina-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-farafina-dark mb-2 group-hover:text-farafina-primary transition-colors line-clamp-2">
+                  {initiative.name}
+                </h3>
+                
+                <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">
+                  {initiative.description}
+                </p>
+                
+                <div class="mt-auto flex items-center text-farafina-primary text-sm font-medium group-hover:text-farafina-secondary transition-colors">
+                  <span>Découvrir l'initiative</span>
+                  <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        ))}
+        {/* Third set of items for extra smooth loop */}
+        {initiatives.map(initiative => (
+          <div class="flex-shrink-0 w-80 mx-4">
+            <a 
+              href={initiative.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-farafina-primary/20 block h-96"
+            >
+              <!-- Logo Container -->
+              <div class="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-farafina-primary/5 group-hover:to-farafina-secondary/5 transition-colors overflow-hidden">
+                <img 
+                  src={initiative.logo} 
+                  alt={`Logo ${initiative.name}`}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <!-- Content -->
+              <div class="p-6 flex flex-col h-48">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="inline-block px-3 py-1 text-xs font-medium text-farafina-primary bg-farafina-primary/10 rounded-full">
+                    {initiative.category}
+                  </span>
+                  <svg class="w-5 h-5 text-gray-400 group-hover:text-farafina-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-farafina-dark mb-2 group-hover:text-farafina-primary transition-colors line-clamp-2">
+                  {initiative.name}
+                </h3>
+                
+                <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">
+                  {initiative.description}
+                </p>
+                
+                <div class="mt-auto flex items-center text-farafina-primary text-sm font-medium group-hover:text-farafina-secondary transition-colors">
+                  <span>Découvrir l'initiative</span>
+                  <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        ))}
+      </div>
+
+      <!-- Gradient Overlays for smooth edges -->
+      <div class="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
+      <div class="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-16">
+      <div class="bg-gradient-to-r from-farafina-primary/10 to-farafina-secondary/10 rounded-2xl p-8">
+        <h3 class="text-2xl font-bold text-farafina-dark mb-4">
+          Rejoignez AfricTivistes
+        </h3>
+        <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+          Découvrez comment nos initiatives contribuent à renforcer la démocratie et la transparence électorale 
+          à travers le continent africain.
+        </p>
+        <a 
+          href="https://africtivistes.org" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="inline-flex items-center px-6 py-3 bg-farafina-primary text-white font-medium rounded-lg hover:bg-farafina-primary/90 transition-colors"
+        >
+          <span>Visiter AfricTivistes</span>
+          <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes infinite-scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-100% / 3));
+    }
+  }
+  
+  .animate-infinite-scroll {
+    animation: infinite-scroll 40s linear infinite;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style> 

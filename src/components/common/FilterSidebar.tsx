@@ -53,21 +53,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
   return (
     <>
-      {/* Mobile toggle */}
-      <button
-        className="lg:hidden fixed bottom-4 right-4 bg-africa-primary text-white rounded-full p-4 shadow-lg z-50"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
-        aria-controls="filter-sidebar"
-      >
-        <Icon name={isOpen ? "close" : "filter"} className="w-6 h-6" />
-        {getActiveFiltersCount() > 0 && (
-          <span className="absolute -top-2 -right-2 bg-africa-accent text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
-            {getActiveFiltersCount()}
-          </span>
-        )}
-      </button>
-
       {/* Sidebar */}
       <div
         id="filter-sidebar"
