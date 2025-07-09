@@ -1,15 +1,26 @@
 ---
-import { FaUsers, FaArrowRight } from "react-icons/fa";
+import { FaUsers, FaArrowRight, FaGlobe, FaLandmark, FaNetworkWired, FaUniversity, FaBuilding } from "react-icons/fa";
 import { getCollection } from "astro:content";
+
+// Fonction pour obtenir l'icône selon le type d'organisation
+function getOrganizationIcon(type: string) {
+  const typeMap: { [key: string]: any } = {
+    'ONG': FaUsers,
+    'Organisation internationale': FaGlobe,
+    'Institution gouvernementale': FaLandmark,
+    'Réseau régional': FaNetworkWired,
+    'Centre de recherche': FaUniversity,
+    'default': FaBuilding
+  };
+
+  return typeMap[type] || typeMap['default'];
+}
 
 // Récupérer les données des organisations depuis la collection
 const organisations = await getCollection('organisations');
 
-// Prendre la première organisation fixe et 3 autres aléatoirement
-const firstOrg = organisations[0];
-const remainingOrgs = organisations.slice(1);
-const shuffledRemaining = remainingOrgs.sort(() => Math.random() - 0.5);
-const selectedOrgs = [firstOrg, ...shuffledRemaining.slice(0, 3)];
+// Prendre les 4 premières organisations
+const selectedOrgs = organisations.slice(0, 4);
 
 const featuredOrganizations = selectedOrgs.map(org => ({
   id: org.id,
@@ -21,7 +32,7 @@ const featuredOrganizations = selectedOrgs.map(org => ({
   nombrePaysCouverts: org.data.nombreDePaysCouverts || "1",
   zonesCouverts: org.data.zonesCouverts || "",
   expertise: org.data.domainesExpertise ? org.data.domainesExpertise.split(',').map(exp => exp.trim()).slice(0, 3) : ["Observation Électorale"],
-  logo: "/images/placeholder.svg",
+  IconComponent: getOrganizationIcon(org.data.typeOrganisation || "Organisation"),
 }));
 ---
 
@@ -30,6 +41,7 @@ const featuredOrganizations = selectedOrgs.map(org => ({
     <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
       <div>
         <h2 class="text-3xl font-bold text-farafina-dark">Acteurs clés des processus électoraux</h2>
+        <p class="text-gray-600 mt-2">Découvrez les organisations partenaires qui œuvrent pour la transparence électorale en Afrique</p>
       </div>
       <a
         href="/organizations"
@@ -48,11 +60,7 @@ const featuredOrganizations = selectedOrgs.map(org => ({
           <div class="p-6">
             <div class="flex items-center mb-4">
               <div class="w-12 h-12 bg-farafina-primary/10 rounded-lg flex items-center justify-center mr-4">
-                {org.logo ? (
-                  <img src={org.logo || "/placeholder.svg"} alt={`Logo ${org.name}`} class="w-8 h-8" />
-                ) : (
-                  <FaUsers className="text-farafina-primary text-xl" />
-                )}
+                <org.IconComponent className="text-farafina-primary text-xl" />
               </div>
               <div class="flex-1">
                 <a href={`/organizations/${org.id}`} class="block">
