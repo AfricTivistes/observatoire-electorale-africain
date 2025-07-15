@@ -38,6 +38,7 @@ const pays = defineCollection({
       id: record["Id"]?.toString() || "",
       code: record["code"] || "",
       name: record["nom_pays"] || "",
+      heure_modif: record["heure modif"] || "",
       langue: record["langues_officielles"] || "",
       population: parseInt(record["population"]) || 0,
       politicalSystem: record["système_politique"] || "",
@@ -88,6 +89,7 @@ const pays = defineCollection({
   schema: z.object({
     id: z.string(),
     code: z.string(),
+    heure_modif: z.string(),
     name: z.string(),
     langue: z.string(),
     population: z.number(),

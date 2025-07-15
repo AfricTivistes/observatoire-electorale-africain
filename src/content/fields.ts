@@ -27,6 +27,7 @@ export const paysData = [
   "Zone geographique",
   "Ressources",
   "Organisations",
+  "heure modif",
 ];
 
 export const electionsData = [

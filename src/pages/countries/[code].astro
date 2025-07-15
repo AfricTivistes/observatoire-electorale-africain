@@ -193,6 +193,7 @@ const upcomingElections = [
 const CountryInterface = {
   code: country.code,
   name: country.name,
+  heure_modif: country.heure_modif,
   population: country.population,
   lastElection: {
     type: electionEvents.find((e) => e.status === "Précédente")?.type || "N/A",
@@ -314,7 +315,12 @@ const recentArticles = [
 <Layout title={`${country.name} - Informations Électorales`} pageType="detail">
   <PageHeader
     title={country.name}
-    subtitle={`Système politique: ${country.politicalSystem}`}
+    subtitle={`Système politique : ${country.politicalSystem}`}
+    lastModified={`Dernière mise à jour : ${new Date(country.heure_modif).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })}`}
     breadcrumbs={[
       { label: "Accueil", href: "/" },
       { label: "Pays", href: "/countries" },

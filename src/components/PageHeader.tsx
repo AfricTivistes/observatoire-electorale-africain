@@ -11,9 +11,10 @@ interface PageHeaderProps {
   subtitle?: string
   breadcrumbs?: BreadcrumbItem[]
   children?: React.ReactNode
+  lastModified?: string
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, breadcrumbs, children }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, breadcrumbs, children, lastModified }) => {
   return (
     <div className="bg-white border-b border-gray-200 pt-28 pb-6 mb-8">
       <div className="container mx-auto px-4">
@@ -24,6 +25,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, breadcrumbs, c
           <div>
             <h1 className="text-3xl font-bold text-farafina-dark">{title}</h1>
             {subtitle && <p className="text-gray-600 mt-2">{subtitle}</p>}
+            {lastModified && <p className="text-gray-600 mt-2">{lastModified}</p>}
           </div>
         </div>
       </div>

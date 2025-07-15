@@ -10,6 +10,9 @@
         "code": {
           "type": "string"
         },
+        "heure_modif": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         },
@@ -208,6 +211,7 @@
       "required": [
         "id",
         "code",
+        "heure_modif",
         "name",
         "langue",
         "population",
