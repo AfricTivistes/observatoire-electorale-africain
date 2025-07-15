@@ -19,12 +19,12 @@ const AboutHero: React.FC = () => {
                 Notre Mission
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                À Propos de <span className="text-farafina-secondary">Farafina</span>
+                À Propos de <span className="text-farafina-secondary">FarafinaWatch</span>
               </h1>
             </div>
 
             <p className="text-lg text-white/90 max-w-xl">
-              Farafina est l'Observatoire des Élections en Afrique, une plateforme collaborative dédiée à la
+              FarafinaWatch est l'Observatoire des Élections en Afrique, une plateforme collaborative dédiée à la
               promotion de la transparence, l'intégrité et la participation démocratique à travers le continent
               africain.
             </p>
