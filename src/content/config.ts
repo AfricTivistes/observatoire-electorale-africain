@@ -35,9 +35,9 @@ const pays = defineCollection({
 
     const paysRecords = await listTableRecords(paysTableId, fields, params);
     return paysRecords.map((record) => ({
-      id: record["Id"].toString(),
-      code: record["code"],
-      name: record["nom_pays"],
+      id: record["Id"]?.toString() || "",
+      code: record["code"] || "",
+      name: record["nom_pays"] || "",
       langue: record["langues_officielles"] || "",
       population: parseInt(record["population"]) || 0,
       politicalSystem: record["système_politique"] || "",
