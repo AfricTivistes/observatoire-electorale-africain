@@ -29,7 +29,7 @@ const pays = defineCollection({
     const fields = paysData;
     const params = {
       limit: "55",
-      where: "(nom_pays,notnull)",
+      where: `(Statut,eq,Publier)~and(nom_pays,notnull)`,
       sort: "nom_pays",
     };
 

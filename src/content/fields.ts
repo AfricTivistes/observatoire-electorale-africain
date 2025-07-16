@@ -28,6 +28,7 @@ export const paysData = [
   "Ressources",
   "Organisations",
   "heure modif",
+  "Statut",
 ];
 
 export const electionsData = [
