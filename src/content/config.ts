@@ -10,7 +10,11 @@ import {
   ressourcesData,
 } from "./fields";
 
-// Fonction utilitaire pour générer un slug à partir d’une chaîne
+/* ---------------------------
+   Utilitaires généraux
+   --------------------------- */
+
+// Génère un slug simple
 function generateSlug(text: string): string {
   return text
     .toLowerCase()
@@ -19,71 +23,136 @@ function generateSlug(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-// Type slug avec Zod
 const slugSchema = z.string().regex(/^[a-z0-9-]+$/, "Slug invalide");
 
-// Collection 'pays'
+// Récupère toutes les pages d'une table en gérant la pagination (pageSize par défaut 100)
+async function fetchAllRecords(
+  tableId: string,
+  fields: any,
+  params: Record<string, any> = {},
+  pageSize = 100
+) {
+  let offset = 0;
+  let all: any[] = [];
+
+  // forcer limit et offset numériques, mais conserver d'autres params
+  const baseParams = { ...params };
+
+  while (true) {
+    const p = {
+      ...baseParams,
+      limit: pageSize,
+      offset,
+    };
+
+    const res = await listTableRecords(tableId, fields, p);
+
+    // gérer formes possibles de réponse : array ou { data: [...] }
+    const page = Array.isArray(res) ? res : res?.data ?? [];
+
+    if (!Array.isArray(page)) break;
+
+    all = all.concat(page);
+
+    if (page.length < pageSize) break;
+
+    offset += pageSize;
+  }
+
+  return all;
+}
+
+const toNumber = (v: any, fallback = 0) => {
+  if (v == null || v === "") return fallback;
+  const n = Number(String(v).replace(/\s+/g, "").replace(",", "."));
+  return Number.isFinite(n) ? n : fallback;
+};
+
+const toString = (v: any, fallback = "") =>
+  v == null ? fallback : String(v);
+
+/* ---------------------------
+   Collections
+   --------------------------- */
+
 const pays = defineCollection({
   loader: async () => {
     const paysTableId = "mskbiq35er4l19l";
     const fields = paysData;
+
     const params = {
-      limit: "55",
       where: `(Statut,eq,Publier)~and(nom_pays,notnull)`,
       sort: "nom_pays",
+      // pas de limit : on pagine via fetchAllRecords
     };
 
-    const paysRecords = await listTableRecords(paysTableId, fields, params);
-    return paysRecords.map((record) => ({
-      id: record["Id"]?.toString() || "",
-      code: record["code"] || "",
-      name: record["nom_pays"] || "",
-      heure_modif: record["heure modif"] || "",
-      langue: record["langues_officielles"] || "",
-      population: parseInt(record["population"]) || 0,
-      politicalSystem: record["système_politique"] || "",
-      modele: record["modèle_gestion_élections"] || "",
-      region: record["Zone geographique"] || "",
+    const records = await fetchAllRecords(paysTableId, fields, params, 100);
+
+    return records.map((r) => ({
+      id: toString(r["Id"], ""),
+      code: toString(r["code"], ""),
+      name: toString(r["nom_pays"], ""),
+      heure_modif: toString(r["heure modif"], ""),
+      langue: toString(r["langues_officielles"], ""),
+      population: toNumber(r["population"], 0),
+      politicalSystem: toString(r["système_politique"], ""),
+      modele: toString(r["modèle_gestion_élections"], ""),
+      region: toString(r["Zone geographique"], ""),
       vote: {
-        presidentialVote: record["Présidentiel - Régime de vote"] || "",
-        presidentialscrutinMode: record["Presidentiel - Mode de scrutin"] || "",
-        presidentialResults:
-          record[
-            "Organe de proclamation des resultats definitifs Présidentiel"
-          ] || "",
-        legislativeVote: record["Legislative - Régime de vote"] || "",
-        legislativeScrutinMode: record["Legislative - Mode de scrutin"] || "",
-        legislativeResults:
-          record["Organe proclamation resultats definitifs Législative"] || "",
-        validationBody: record["Organe de validation des candidatures"] || "",
-        legislativeValidationBody:
-          record["Organe validation candidatures législatives"] || "",
-        disputesManagementBody:
-          record["Organe de gestion des contentieux électoraux"] || "",
-        provisionalResultsBody:
-          record["Organe de proclamation des résultats provisoires"] || "",
+        presidentialVote: toString(r["Présidentiel - Régime de vote"], ""),
+        presidentialscrutinMode: toString(
+          r["Presidentiel - Mode de scrutin"],
+          ""
+        ),
+        presidentialResults: toString(
+          r["Organe de proclamation des resultats definitifs Présidentiel"],
+          ""
+        ),
+        legislativeVote: toString(r["Legislative - Régime de vote"], ""),
+        legislativeScrutinMode: toString(
+          r["Legislative - Mode de scrutin"],
+          ""
+        ),
+        legislativeResults: toString(
+          r["Organe proclamation resultats definitifs Législative"],
+          ""
+        ),
+        validationBody: toString(r["Organe de validation des candidatures"], ""),
+        legislativeValidationBody: toString(
+          r["Organe validation candidatures législatives"],
+          ""
+        ),
+        disputesManagementBody: toString(
+          r["Organe de gestion des contentieux électoraux"],
+          ""
+        ),
+        provisionalResultsBody: toString(
+          r["Organe de proclamation des résultats provisoires"],
+          ""
+        ),
       },
+      // Si tu as de vraies données, remplace cette partie
       lastElection: {
-        type: Math.random() < 0.5 ? "Présidentielle" : "Législative",
-        year: Math.floor(Math.random() * 1000) + 1025,
-        turnout: Math.random() * (60 - 30) + 30,
-        nextElectionYear: Math.floor(Math.random() * 1000) + 2025,
+        type: toString(r["dernier_type_élection"], "Inconnu"),
+        year: toNumber(r["dernier_année"], 0),
+        turnout: toNumber(r["taux_participation"], 0),
+        nextElectionYear: toNumber(r["prochaine_année"], 0),
       },
       demographics: {
         gender: {
-          male: parseFloat(record["hommes"]) || 0,
-          female: parseFloat(record["femmes"]) || 0,
+          male: toNumber(r["hommes"], 0),
+          female: toNumber(r["femmes"], 0),
         },
         genderRatio: {
-          male: parseFloat(record["électeurs_hommes"]) || 0,
-          female: parseFloat(record["électeurs_femmes"]) || 0,
+          male: toNumber(r["électeurs_hommes"], 0),
+          female: toNumber(r["électeurs_femmes"], 0),
         },
         voterRegistration: {
-          registered: parseInt(record["nombre_électeurs"]) || 0,
-          population: parseInt(record["population"]) || 0,
+          registered: toNumber(r["nombre_électeurs"], 0),
+          population: toNumber(r["population"], 0),
         },
       },
-      ressources: [],
+      ressources: [], // rempli ensuite si tu veux établir des relations
     }));
   },
   schema: z.object({
@@ -132,26 +201,31 @@ const pays = defineCollection({
   }),
 });
 
-// Collection 'ressources'
 const ressources = defineCollection({
   loader: async () => {
     const tableId = "m1s9f82k61alcst";
     const fields = ressourcesData;
+
     const params = {
       where: "(type_donnée,notnull)",
-      limit: "1000",
       sort: "année",
     };
-    const records = await listTableRecords(tableId, fields, params);
-    return records.map((record) => ({
-      id: record["Id"].toString(),
-      title: record.titre || "",
-      code: record["code"] || "",
-      type: record["type_donnée"] || "",
-      year: record["année"] != null ? Number(record["année"]) : 0,
-      description: record["description"] || "",
-      Pays_id: record.Pays_id ? record.Pays_id.toString() : "",
-      fichier: record["fichier"] || "",
+
+    const records = await fetchAllRecords(tableId, fields, params, 100);
+
+    return records.map((r) => ({
+      id: toString(r["Id"], ""),
+      title: toString(r["titre"], ""),
+      code: toString(r["code"], ""),
+      type: toString(r["type_donnée"], ""),
+      year: r["année"] != null ? toNumber(r["année"], 0) : 0,
+      description: toString(r["description"], ""),
+      Pays_id: r["Pays_id"] ? toString(r["Pays_id"], "") : "",
+      fichier: toString(r["fichier"], ""),
+      slug: (() => {
+        const t = toString(r["titre"], "");
+        return t ? generateSlug(t) : toString(r["code"], generateSlug(t));
+      })(),
     }));
   },
   schema: z.object({
@@ -163,29 +237,31 @@ const ressources = defineCollection({
     description: z.string(),
     Pays_id: z.string(),
     fichier: z.string(),
+    slug: slugSchema.optional(),
   }),
 });
 
-// Collection 'elections'
 const elections = defineCollection({
   loader: async () => {
     const tableId = "mufcewiwnu6czob";
     const fields = electionsData;
+
     const params = {
       where: "(type_élection,notnull)",
       sort: "date_élection",
-      limit: "1000",
     };
-    const records = await listTableRecords(tableId, fields, params);
-    return records.map((record) => ({
-      id: record["Id"].toString(),
-      statut: record["statut"] || "",
-      dateElection: record["date_élection"] || "",
-      typeElection: record["type_élection"] || "",
-      region: record["zone"] || "",
-      nomPays: record["nom_pays"] || "",
-      code_pays: record["code_pays"] || "",
-      Pays_id: record["Pays_id"] ? record["Pays_id"].toString() : "",
+
+    const records = await fetchAllRecords(tableId, fields, params, 100);
+
+    return records.map((r) => ({
+      id: toString(r["Id"], ""),
+      statut: toString(r["statut"], ""),
+      dateElection: toString(r["date_élection"], ""),
+      typeElection: toString(r["type_élection"], ""),
+      region: toString(r["zone"], ""),
+      nomPays: toString(r["nom_pays"], ""),
+      code_pays: toString(r["code_pays"], ""),
+      Pays_id: r["Pays_id"] ? toString(r["Pays_id"], "") : "",
       resultats: [],
     }));
   },
@@ -202,32 +278,28 @@ const elections = defineCollection({
   }),
 });
 
-// Collection 'resultatsElections'
 const resultatsElections = defineCollection({
   loader: async () => {
     const tableId = "mm158oifoa20mjd";
     const fields = resultatsElectionsData;
-    const params = {
-      where: "(résultats,notnull)",
-      limit: "1000",
-    };
-    const records = await listTableRecords(tableId, fields, params);
-    return records.map((record) => ({
-      id: record["Id"].toString(),
-      resultats: record["résultats"] || "",
-      nomPays: record["nom_pays"] || "",
-      typeStatut: Array.isArray(record["type_statut"])
-        ? record["type_statut"].map((s) => s || "")
-        : [""],
-      dateStatut: Array.isArray(record["date_statut"])
-        ? record["date_statut"].map((s) => s || "")
-        : [""],
-      participation: parseInt(record["participation"]) || 0,
-      electeur: parseInt(record["nombre_électeurs"]) || 0,
-      source_résultats: record["source_résultats"] || "",
-      Elections_id: record["Elections_id"]
-        ? record["Elections_id"].toString()
-        : "",
+    const params = { where: "(résultats,notnull)" };
+
+    const records = await fetchAllRecords(tableId, fields, params, 100);
+
+    return records.map((r) => ({
+      id: toString(r["Id"], ""),
+      resultats: toString(r["résultats"], ""),
+      nomPays: toString(r["nom_pays"], ""),
+      typeStatut: Array.isArray(r["type_statut"])
+        ? r["type_statut"].map((s: any) => toString(s, ""))
+        : [],
+      dateStatut: Array.isArray(r["date_statut"])
+        ? r["date_statut"].map((s: any) => toString(s, ""))
+        : [],
+      participation: toNumber(r["participation"], 0),
+      electeur: toNumber(r["nombre_électeurs"], 0),
+      source_résultats: toString(r["source_résultats"], ""),
+      Elections_id: r["Elections_id"] ? toString(r["Elections_id"], "") : "",
     }));
   },
   schema: z.object({
@@ -243,26 +315,25 @@ const resultatsElections = defineCollection({
   }),
 });
 
-// Collection 'defisElections'
 const defisElections = defineCollection({
   loader: async () => {
     const tableId = "mv1dqchljj7zoic";
     const fields = defisData;
-    const params = {
-      where: "(libellé defis,notnull)",
-    };
-    const records = await listTableRecords(tableId, fields, params);
-    return records.map((record) => ({
-      id: record["Id"].toString(),
-      libelleDefis: record["libellé defis"] || "",
-      typeDefi: record["type_défi"] || "",
-      code_pays: record["code_pays"] || "",
-      nomPays: record["nom_pays"] || "",
-      zone: record["zone"] || "",
-      sourceDefi: record["source_defi"] || "",
-      ResultatsElections: record["Résultats elections"] || "",
-      resultats: record["Résultats Élections_id"]
-        ? record["Résultats Élections_id"].toString()
+    const params = { where: "(libellé defis,notnull)" };
+
+    const records = await fetchAllRecords(tableId, fields, params, 100);
+
+    return records.map((r) => ({
+      id: toString(r["Id"], ""),
+      libelleDefis: toString(r["libellé defis"], ""),
+      typeDefi: toString(r["type_défi"], ""),
+      code_pays: toString(r["code_pays"], ""),
+      nomPays: toString(r["nom_pays"], ""),
+      zone: toString(r["zone"], ""),
+      sourceDefi: toString(r["source_defi"], ""),
+      ResultatsElections: toString(r["Résultats elections"], ""),
+      resultats: r["Résultats Élections_id"]
+        ? toString(r["Résultats Élections_id"], "")
         : "",
     }));
   },
@@ -279,24 +350,23 @@ const defisElections = defineCollection({
   }),
 });
 
-// Collection 'organismesElectoraux'
 const organismesElectoraux = defineCollection({
   loader: async () => {
     const tableId = "mdw3p2nr069jqzi";
     const fields = organismesElectorauxData;
-    const params = {
-      where: "(nom,notnull)",
-    };
-    const records = await listTableRecords(tableId, fields, params);
-    return records.map((record) => ({
-      id: record["Id"].toString(),
-      nom: record["nom"] || "",
-      ville: record["ville"] || "",
-      anneeDeCreation: record["annee de creation"] || 0,
-      siteweb: record["siteweb"] || "",
-      telephone: record["telephone"] || "",
-      email: record["email"] || "",
-      Pays_id: record["Pays_id"] ? record["Pays_id"].toString() : "",
+    const params = { where: "(nom,notnull)" };
+
+    const records = await fetchAllRecords(tableId, fields, params, 100);
+
+    return records.map((r) => ({
+      id: toString(r["Id"], ""),
+      nom: toString(r["nom"], ""),
+      ville: toString(r["ville"], ""),
+      anneeDeCreation: toNumber(r["annee de creation"], 0),
+      siteweb: toString(r["siteweb"], ""),
+      telephone: toString(r["telephone"], ""),
+      email: toString(r["email"], ""),
+      Pays_id: r["Pays_id"] ? toString(r["Pays_id"], "") : "",
     }));
   },
   schema: z.object({
@@ -315,30 +385,29 @@ const organisations = defineCollection({
   loader: async () => {
     const tableId = "momxlikiol1qiwn";
     const fields = organisationsData;
-    const params = {
-      where: "(Statut,eq,Vérifié)",
-      limit: "1000",
-    };
-    const records = await listTableRecords(tableId, fields, params);
-    return records.map((record) => ({
-      id: record["Id"].toString(),
-      nom: record["nom"] || "",
-      zone: Array.isArray(record["Zone"])
-        ? record["Zone"]
-        : record["Zone"] || "",
-      statut: record["Statut"] || "",
-      typeOrganisation: record["Type d’organisation -  institutions"] || "",
-      nombreDePaysCouverts: record["nombre de pays couverts"] || "",
-      ville: record["ville"] || "",
-      anneeDeCreation: record["annee de creation"] || 0,
-      zonesCouverts: record["zones couvertes"] || "",
-      domainesExpertise: record["domaines d'expertise"] || "",
-      mobilisationsObservateurs: record["mobilisation observateurs"] || "",
-      siteweb: record["siteweb"] || "",
-      telephone: record["telephone"] || "",
-      email: record["email"] || "",
-      pays: record["nom_pays (from Pays)"]
-        ? record["nom_pays (from Pays)"].toString()
+    const params = { where: "(Statut,eq,Vérifié)" };
+
+    const records = await fetchAllRecords(tableId, fields, params, 100);
+
+    return records.map((r) => ({
+      id: toString(r["Id"], ""),
+      nom: toString(r["nom"], ""),
+      zone: Array.isArray(r["Zone"])
+        ? r["Zone"].map((z: any) => toString(z, "")).filter(Boolean)
+        : toString(r["Zone"], ""),
+      statut: toString(r["Statut"], ""),
+      typeOrganisation: toString(r["Type d’organisation -  institutions"], ""),
+      nombreDePaysCouverts: toString(r["nombre de pays couverts"], ""),
+      ville: toString(r["ville"], ""),
+      anneeDeCreation: toNumber(r["annee de creation"], 0),
+      zonesCouverts: toString(r["zones couvertes"], ""),
+      domainesExpertise: toString(r["domaines d'expertise"], ""),
+      mobilisationsObservateurs: toString(r["mobilisation observateurs"], ""),
+      siteweb: toString(r["siteweb"], ""),
+      telephone: toString(r["telephone"], ""),
+      email: toString(r["email"], ""),
+      pays: r["nom_pays (from Pays)"]
+        ? toString(r["nom_pays (from Pays)"], "")
         : "",
     }));
   },
@@ -366,6 +435,9 @@ const organisations = defineCollection({
   }),
 });
 
+/* ---------------------------
+   Export des collections
+   --------------------------- */
 export const collections = {
   pays,
   ressources,

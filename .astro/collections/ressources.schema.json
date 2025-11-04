@@ -28,6 +28,13 @@
         "fichier": {
           "type": "string"
         },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "errorMessage": {
+            "pattern": "Slug invalide"
+          }
+        },
         "$schema": {
           "type": "string"
         }
