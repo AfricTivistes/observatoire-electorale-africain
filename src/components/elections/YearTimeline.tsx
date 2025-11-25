@@ -52,7 +52,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
 
       <div className="space-y-4">
         {electionsByMonth
-          .filter((monthData) => monthData.elections.length > 0)
+          .filter((monthData) => monthData.elections.some((election) => new Date(election.data.dateElection) > new Date()))
           .map((monthData, index) => (
             <div key={index} className="relative">
               <div className="flex items-start">

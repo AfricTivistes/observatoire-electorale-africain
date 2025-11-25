@@ -30,8 +30,7 @@ const avgTurnout = (totalVotes / totalRegistered) * 100;
 const upcomingElections = elections
   .filter(
     (election) =>
-      election.data.statut === "En préparation" ||
-      election.data.statut === "À venirr",
+      new Date(election.data.dateElection).getTime() > new Date().getTime(),
   )
   .map((election) => ({
     type: election.data.typeElection,
@@ -40,9 +39,12 @@ const upcomingElections = elections
     country: election.data.nomPays,
     daysRemaining: Math.ceil(
       (new Date(election.data.dateElection).getTime() - new Date().getTime()) /
-        (1000 * 60 * 60 * 24),
-    ),
-  }));
+        (1000 * 60 * 60 * 24)),
+    })
+  );
+
+
+
 
 const lastElections = elections
   .filter((election) => election.data.statut === "Précédente")
