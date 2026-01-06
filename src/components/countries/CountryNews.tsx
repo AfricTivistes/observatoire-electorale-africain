@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { FaNewspaper, FaExternalLinkAlt } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 interface NewsItem {
   title: string;
   link: string;
   pubDate: string;
   description: string;
+  content?: string;
 }
 
 interface CountryNewsProps {
@@ -72,14 +73,21 @@ const CountryNews: React.FC<CountryNewsProps> = ({
 
   const formatDate = (pubDate: string) => {
     return new Date(pubDate).toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
+      weekday: "short",
       year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const cleanHtml = (text: string) => {
-    return text.replace(/<[^>]*>?/gm, "");
+    return text.replace(/<[^>]*>?/gm, "").trim();
+  };
+
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
   const loadMore = () => {
@@ -115,32 +123,46 @@ const CountryNews: React.FC<CountryNewsProps> = ({
 
   return (
     <div className="space-y-4">
-      {visibleNews.map((item, index) => (
-        <div
-          key={index}
-          className="border-b border-gray-100 pb-4 last:border-0 last:pb-0"
-        >
-          <h3 className="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
+      {visibleNews.map((item, index) => {
+        const cleanContent = cleanHtml(item.content || item.description || "");
+        const shortTitle = truncateText(item.title, 100);
+        const shortDescription = truncateText(cleanContent, 300);
+
+        return (
+          <div
+            key={index}
+            className="border-b border-gray-100 pb-4 last:border-0 last:pb-0"
+          >
+            <h3 className="font-semibold text-farafina-dark hover:text-farafina-accent transition-colors">
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2"
+              >
+                <span className="flex-1">{shortTitle}</span>
+                <FaExternalLinkAlt className="text-xs text-gray-400 mt-1 flex-shrink-0" />
+              </a>
+            </h3>
+            <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
+              🗓️ {formatDate(item.pubDate)}
+            </p>
+            {cleanContent && (
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {shortDescription}
+              </p>
+            )}
             <a
               href={item.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-start gap-2"
+              className="text-sm text-farafina-accent hover:underline mt-2 inline-block"
             >
-              <span className="flex-1">{item.title}</span>
-              <FaExternalLinkAlt className="text-xs text-gray-400 mt-1 flex-shrink-0" />
+              Lire l'article complet
             </a>
-          </h3>
-          <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
-            🗓️ {formatDate(item.pubDate)}
-          </p>
-          {item.description && (
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {cleanHtml(item.description).substring(0, 150)}...
-            </p>
-          )}
-        </div>
-      ))}
+          </div>
+        );
+      })}
 
       {(hasMore || canShowLess) && (
         <div className="flex gap-2">
