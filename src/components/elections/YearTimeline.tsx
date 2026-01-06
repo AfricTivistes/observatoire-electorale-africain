@@ -63,9 +63,10 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
                 <div className="flex-grow">
                   <div className="space-y-3">
                     {monthData.elections.map((election, idx) => (
-                      <div
+                      <a
                         key={election.data.id || idx}
-                        className="bg-farafina-primary/5 rounded-lg p-4 border-l-4 border-farafina-primary"
+                        href={`/countries/${election.data.code_pays.toLowerCase()}`}
+                        className="block bg-farafina-primary/5 rounded-lg p-4 border-l-4 border-farafina-primary hover:bg-farafina-primary/10 transition-colors cursor-pointer"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
@@ -76,11 +77,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
                             />
                             <div>
                               <h3 className="text-xl font-semibold text-farafina-dark">
-                                <a
-                                  href={`/countries/${election.data.code_pays.toLowerCase()}`}
-                                >
-                                  {election.data.nomPays}
-                                </a>
+                                {election.data.nomPays}
                               </h3>
                               <p className="text-sm text-farafina-primary">
                                 {election.data.typeElection}
@@ -93,7 +90,7 @@ const YearTimeline: React.FC<YearTimelineProps> = ({ elections }) => {
                             ).toLocaleDateString("fr-FR")}
                           </div>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </div>

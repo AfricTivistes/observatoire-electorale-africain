@@ -45,6 +45,7 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
           <div
             className={`bg-white rounded-lg shadow-sm p-6 border-l-4 ${colorClass} hover:bg-gray-100 transition duration-300`}
           >
+            <a href={`/countries/${election.data.code_pays.toLowerCase()}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <img
@@ -84,6 +85,7 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
                 </p>
               </div>
             </div>
+            </a>
           </div>
         ))}
       </div>

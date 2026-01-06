@@ -14,19 +14,28 @@ import { getCollection } from 'astro:content';
 const elections = await getCollection('elections');
 
 
+// Année courante
+const currentYear = new Date().getFullYear();
+
 // Filtrer les élections à venir et en préparation
 const filteredElections = elections
-  .filter(election => 
-    election.data.statut === "À venir" || 
+  .filter(election =>
+    election.data.statut === "À venir" ||
     election.data.statut === "En préparation"
   )
-  .sort((a, b) => 
+  .sort((a, b) =>
     new Date(a.data.dateElection).getTime() - new Date(b.data.dateElection).getTime()
   );
 
-// Organiser les élections par statut
-const upcomingElections = filteredElections.filter(e => e.data.statut === "À venir");
-const preparingElections = filteredElections.filter(e => e.data.statut === "En préparation");
+// Élections de l'année courante
+const currentYearElections = filteredElections.filter(e =>
+  new Date(e.data.dateElection).getFullYear() === currentYear
+);
+
+// Élections au-delà de l'année courante
+const futureYearsElections = filteredElections.filter(e =>
+  new Date(e.data.dateElection).getFullYear() > currentYear
+);
 
 
 // Régions africaines pour le filtre
@@ -144,16 +153,18 @@ const regions = [
 
       <div class="lg:w-3/4">
 
-        <YearTimeline client:load elections={filteredElections} />
+        <YearTimeline client:load elections={currentYearElections} />
 
-        <ElectionSection 
-          client:load
-          title="Élections à venir"
-          status="À venir"
-          icon="calendar"
-          elections={upcomingElections}
-          colorClass="border-farafina-primary"
-        />
+        {futureYearsElections.length > 0 && (
+          <ElectionSection
+            client:load
+            title="Élections à venir"
+            status="À venir"
+            icon="calendar"
+            elections={futureYearsElections}
+            colorClass="border-farafina-accent"
+          />
+        )}
 
 
         <!-- Mois sans élections >
