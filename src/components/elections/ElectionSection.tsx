@@ -2,17 +2,16 @@ import React from "react";
 import { FaVoteYea, FaCalendarAlt } from "react-icons/fa";
 
 interface Election {
-  id: string;
-  date_élection: string;
-  type_élection: string;
-  nom_pays: string;
-  statut: string;
-  code_pays: string;
+  data: {
+    nomPays: string;
+    dateElection: string;
+    typeElection: string;
+    code_pays: string;
+  };
 }
 
 interface ElectionSectionProps {
   title: string;
-  status: string;
   icon: "calendar" | "vote";
   elections: Election[];
   colorClass: string;
@@ -20,11 +19,11 @@ interface ElectionSectionProps {
 
 const ElectionSection: React.FC<ElectionSectionProps> = ({
   title,
-  status,
   icon,
   elections,
   colorClass,
 }) => {
+  const today = new Date();
   const getIcon = () => {
     switch (icon) {
       case "calendar":
@@ -41,53 +40,51 @@ const ElectionSection: React.FC<ElectionSectionProps> = ({
         {title}
       </h2>
       <div className="space-y-4 grid grid-cols-2 gap-4">
-        {elections.map((election) => (
-          <div
-            className={`bg-white rounded-lg shadow-sm p-6 border-l-4 ${colorClass} hover:bg-gray-100 transition duration-300`}
-          >
-            <a href={`/countries/${election.data.code_pays.toLowerCase()}`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <img
-                  src={`https://flagcdn.com/w160/${election.data.code_pays.toLowerCase()}.webp`}
-                  alt={`Drapeau ${election.data.nomPays}`}
-                  className="w-8 h-6"
-                />
-                <div>
-                  <h3 className="text-xl font-semibold text-farafina-dark">
-                    <a
-                      href={`/countries/${election.data.code_pays.toLowerCase()}`}
-                    >
+        {elections.map((election) => {
+          const electionDate = new Date(election.data.dateElection);
+          const isUpcoming = electionDate >= today;
+
+          return (
+            <a
+              key={election.data.code_pays + electionDate.toISOString()}
+              href={`/countries/${election.data.code_pays.toLowerCase()}`}
+              className={`block bg-white rounded-lg shadow-sm p-6 border-l-4 ${colorClass} hover:bg-gray-100 transition duration-300`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={`https://flagcdn.com/w160/${election.data.code_pays.toLowerCase()}.webp`}
+                    alt={`Drapeau ${election.data.nomPays}`}
+                    className="w-8 h-6"
+                  />
+                  <div>
+                    <h3 className="text-xl font-semibold text-farafina-dark">
                       {election.data.nomPays}
-                    </a>
-                  </h3>
-                  <p
-                    className={`text-lg font-medium ${status === "À venir" ? "text-farafina-primary" : "text-farafina-blue"}`}
-                  >
-                    {election.data.typeElection}
-                  </p>
+                    </h3>
+                    <p
+                      className={`text-lg font-medium ${isUpcoming ? "text-farafina-primary" : "text-farafina-blue"}`}
+                    >
+                      {election.data.typeElection}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <p
-                  className={`text-lg font-medium ${status === "À venir" ? "text-farafina-primary" : "text-farafina-blue"}`}
-                >
-                  {status === "À venir"
-                    ? new Date(election.data.dateElection).getFullYear()
-                    : new Date(election.data.dateElection).toLocaleDateString(
-                        "fr-FR",
-                        {
+                <div className="text-right">
+                  <p
+                    className={`text-lg font-medium ${isUpcoming ? "text-farafina-primary" : "text-farafina-blue"}`}
+                  >
+                    {isUpcoming
+                      ? electionDate.getFullYear()
+                      : electionDate.toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "long",
                           year: "numeric",
-                        },
-                      )}
-                </p>
+                        })}
+                  </p>
+                </div>
               </div>
-            </div>
             </a>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

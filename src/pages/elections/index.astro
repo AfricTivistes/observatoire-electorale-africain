@@ -13,6 +13,9 @@ const elections = await getCollection('elections');
 const resultatsElections = await getCollection('resultatsElections');
 const defisElections = await getCollection('defisElections');
 
+// Date actuelle
+const today = new Date();
+
 // Fonction pour formater les dates
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -22,17 +25,14 @@ function formatDate(dateString: string) {
   });
 }
 
-// Filtrer les élections à venir
+// Filtrer les élections à venir (date >= aujourd'hui)
 const upcomingElections = elections
-  .filter(election => 
-    election.data.statut === "En préparation" || 
-    election.data.statut === "À venir"
-  )
+  .filter(election => new Date(election.data.dateElection) >= today)
   .sort((a, b) => new Date(a.data.dateElection).getTime() - new Date(b.data.dateElection).getTime());
 
-// Filtrer les élections récentes
+// Filtrer les élections passées (date < aujourd'hui)
 const recentElections = elections
-  .filter(election => election.data.statut === "Précédente")
+  .filter(election => new Date(election.data.dateElection) < today)
   .sort((a, b) => new Date(b.data.dateElection).getTime() - new Date(a.data.dateElection).getTime())
   .map(election => {
     const resultats = resultatsElections.find(r => r.data.Elections_id === election.data.id);
@@ -44,32 +44,32 @@ const recentElections = elections
     };
   });
 
-// Statistiques par région
+// Statistiques par région (basées sur les dates)
 const electionsByRegion = [
   {
     region: "Afrique du Nord",
-    upcoming: elections.filter(e => e.data.region === "Nord" && (e.data.statut === "En préparation" || e.data.statut === "À venir")).length,
-    recent: elections.filter(e => e.data.region === "Nord" && e.data.statut === "Précédente").length
+    upcoming: elections.filter(e => e.data.region === "Nord" && new Date(e.data.dateElection) >= today).length,
+    recent: elections.filter(e => e.data.region === "Nord" && new Date(e.data.dateElection) < today).length
   },
   {
     region: "Afrique de l'Ouest",
-    upcoming: elections.filter(e => e.data.region === "Ouest" && (e.data.statut === "En préparation" || e.data.statut === "À venir")).length,
-    recent: elections.filter(e => e.data.region === "Ouest" && e.data.statut === "Précédente").length
+    upcoming: elections.filter(e => e.data.region === "Ouest" && new Date(e.data.dateElection) >= today).length,
+    recent: elections.filter(e => e.data.region === "Ouest" && new Date(e.data.dateElection) < today).length
   },
   {
     region: "Afrique Centrale",
-    upcoming: elections.filter(e => e.data.region === "Centrale" && (e.data.statut === "En préparation" || e.data.statut === "À venir")).length,
-    recent: elections.filter(e => e.data.region === "Centrale" && e.data.statut === "Précédente").length
+    upcoming: elections.filter(e => e.data.region === "Centrale" && new Date(e.data.dateElection) >= today).length,
+    recent: elections.filter(e => e.data.region === "Centrale" && new Date(e.data.dateElection) < today).length
   },
   {
     region: "Afrique de l'Est",
-    upcoming: elections.filter(e => e.data.region === "Est" && (e.data.statut === "En préparation" || e.data.statut === "À venir")).length,
-    recent: elections.filter(e => e.data.region === "Est" && e.data.statut === "Précédente").length
+    upcoming: elections.filter(e => e.data.region === "Est" && new Date(e.data.dateElection) >= today).length,
+    recent: elections.filter(e => e.data.region === "Est" && new Date(e.data.dateElection) < today).length
   },
   {
     region: "Afrique Australe",
-    upcoming: elections.filter(e => e.data.region === "Australe" && (e.data.statut === "En préparation" || e.data.statut === "À venir")).length,
-    recent: elections.filter(e => e.data.region === "Australe" && e.data.statut === "Précédente").length
+    upcoming: elections.filter(e => e.data.region === "Australe" && new Date(e.data.dateElection) >= today).length,
+    recent: elections.filter(e => e.data.region === "Australe" && new Date(e.data.dateElection) < today).length
   }
 ];
 
@@ -219,7 +219,7 @@ function getStatusColorClass(status: string) {
                   </span>
                 </div>
                 <div class="text-sm text-gray-600 mb-1">{challenge.type}</div>
-                <p class="text-sm text-gray-700">{challenge.description}</p>
+                <p class="text-sm text-gray-700">{challenge.description.slice(0, 200)}{challenge.description.length > 200 ? '...' : ''}</p>
               </div>
             ))}
           </div>

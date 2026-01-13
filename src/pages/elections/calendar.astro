@@ -14,25 +14,23 @@ import { getCollection } from 'astro:content';
 const elections = await getCollection('elections');
 
 
-// Année courante
-const currentYear = new Date().getFullYear();
+// Date actuelle et année courante
+const today = new Date();
+const currentYear = today.getFullYear();
 
-// Filtrer les élections à venir et en préparation
+// Filtrer les élections à venir (date >= aujourd'hui)
 const filteredElections = elections
-  .filter(election =>
-    election.data.statut === "À venir" ||
-    election.data.statut === "En préparation"
-  )
+  .filter(election => new Date(election.data.dateElection) >= today)
   .sort((a, b) =>
     new Date(a.data.dateElection).getTime() - new Date(b.data.dateElection).getTime()
   );
 
-// Élections de l'année courante
+// Élections de l'année courante (date >= aujourd'hui ET année = année courante)
 const currentYearElections = filteredElections.filter(e =>
   new Date(e.data.dateElection).getFullYear() === currentYear
 );
 
-// Élections au-delà de l'année courante
+// Élections au-delà de l'année courante (année > année courante)
 const futureYearsElections = filteredElections.filter(e =>
   new Date(e.data.dateElection).getFullYear() > currentYear
 );
@@ -159,7 +157,6 @@ const regions = [
           <ElectionSection
             client:load
             title="Élections à venir"
-            status="À venir"
             icon="calendar"
             elections={futureYearsElections}
             colorClass="border-farafina-accent"
