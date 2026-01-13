@@ -1,0 +1,14 @@
+name: Trigger Netlify Build Every 24h
+
+on:
+  schedule:
+    - cron: "0 1 * * *"  # Toutes les 24h
+  workflow_dispatch:        # Permet de le déclencher manuellement si besoin
+
+jobs:
+  ping-netlify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify Build Hook
+        run: |
+          curl -X POST ${{ secrets.NETLIFY_BUILD_HOOK }}
