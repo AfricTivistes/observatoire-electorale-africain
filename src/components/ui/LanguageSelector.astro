@@ -1,0 +1,152 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class:list={["language-selector", className]}>
+  <select id="google-lang-select" class="lang-select">
+    <option value="" disabled selected>🌐 Langue</option>
+    <option value="en">🇬🇧 English</option>
+    <option value="fr">🇫🇷 Français</option>
+    <option value="ar">🇸🇦 العربية</option>
+    <option value="pt">🇧🇷 Português</option>
+    <option value="es">🇪🇸 Español</option>
+    <option value="de">🇩🇪 Deutsch</option>
+    <option value="it">🇮🇹 Italiano</option>
+    <option value="sw">🇰🇪 Kiswahili</option>
+    <option value="ha">🇳🇬 Hausa</option>
+  </select>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+<script is:inline>
+const googleTranslateConfig = {
+  lang: "fr",
+  langFirstVisit: 'en',
+};
+
+const supportedLanguages = ['en', 'fr', 'ar', 'pt', 'es', 'de', 'it', 'sw', 'ha'];
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
+function setCookie(name, value, days = 365) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+}
+
+function getBrowserLanguage() {
+  const browserLang = navigator.language || navigator.userLanguage;
+  const langCode = browserLang.split('-')[0].toLowerCase();
+  return supportedLanguages.includes(langCode) ? langCode : null;
+}
+
+function translatePage(lang) {
+  if (!lang || !window.google || !window.google.translate) return false;
+  
+  const element = document.querySelector('.goog-te-combo');
+  if (element) {
+    element.value = lang;
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+    return true;
+  }
+  return false;
+}
+
+function changeLanguage(lang) {
+  if (!lang) return;
+  
+  setCookie('googtrans', `/${googleTranslateConfig.lang}/${lang}`);
+  setCookie('googtrans', `/${googleTranslateConfig.lang}/${lang}`);
+  
+  if (!translatePage(lang)) {
+    window.location.reload();
+  }
+}
+
+function initGoogleTranslate() {
+  if (!window.google || !window.google.translate) {
+    const script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateInit';
+    script.async = true;
+    document.head.appendChild(script);
+    return;
+  }
+  
+  new google.translate.TranslateElement({
+    pageLanguage: googleTranslateConfig.lang,
+    multilanguagePage: true,
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay: false,
+  }, 'google_translate_element');
+  
+  applySavedLanguage();
+}
+
+function applySavedLanguage() {
+  let targetLang = null;
+  
+  const savedLang = getCookie('googtrans');
+  if (savedLang && savedLang.includes('/')) {
+    const parts = savedLang.split('/');
+    targetLang = parts[parts.length - 1];
+  }
+  
+  if (!targetLang || !supportedLanguages.includes(targetLang)) {
+    targetLang = getBrowserLanguage();
+  }
+  
+  if (!targetLang) {
+    targetLang = googleTranslateConfig.langFirstVisit;
+  }
+  
+  const select = document.getElementById('google-lang-select');
+  if (select && targetLang) {
+    select.value = targetLang;
+  }
+  
+  setTimeout(() => {
+    if (targetLang && targetLang !== googleTranslateConfig.lang) {
+      translatePage(targetLang);
+    }
+  }, 1000);
+}
+
+function googleTranslateInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: googleTranslateConfig.lang,
+    multilanguagePage: true,
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay: false,
+  }, 'google_translate_element');
+  
+  applySavedLanguage();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const select = document.getElementById('google-lang-select');
+  if (select) {
+    select.addEventListener('change', (e) => changeLanguage(e.target.value));
+  }
+  
+  const existingScript = document.querySelector('script[src*="translate_a/element.js"]');
+  if (!existingScript) {
+    const script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateInit';
+    script.async = true;
+    document.head.appendChild(script);
+  } else if (window.google && window.google.translate) {
+    applySavedLanguage();
+  }
+});
+
+window.googleTranslateInit = googleTranslateInit;
+window.changeLanguage = changeLanguage;
+</script>
