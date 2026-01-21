@@ -30,3 +30,7 @@ package-lock.json
 
 # attached assets folder
 attached_assets/
+
+#opencode
+AGENTS.md
+opencode.json

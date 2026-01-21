@@ -45,6 +45,10 @@ declare module 'astro:content' {
 		collection: C;
 		slug: E;
 	};
+	export type ReferenceLiveEntry<C extends keyof LiveContentConfig['collections']> = {
+		collection: C;
+		id: string;
+	};
 
 	/** @deprecated Use `getEntry` instead. */
 	export function getEntryBySlug<
@@ -72,6 +76,13 @@ declare module 'astro:content' {
 		collection: C,
 		filter?: (entry: CollectionEntry<C>) => unknown,
 	): Promise<CollectionEntry<C>[]>;
+
+	export function getLiveCollection<C extends keyof LiveContentConfig['collections']>(
+		collection: C,
+		filter?: LiveLoaderCollectionFilterType<C>,
+	): Promise<
+		import('astro').LiveDataCollectionResult<LiveLoaderDataType<C>, LiveLoaderErrorType<C>>
+	>;
 
 	export function getEntry<
 		C extends keyof ContentEntryMap,
@@ -109,6 +120,10 @@ declare module 'astro:content' {
 			? Promise<DataEntryMap[C][E]> | undefined
 			: Promise<DataEntryMap[C][E]>
 		: Promise<CollectionEntry<C> | undefined>;
+	export function getLiveEntry<C extends keyof LiveContentConfig['collections']>(
+		collection: C,
+		filter: string | LiveLoaderEntryFilterType<C>,
+	): Promise<import('astro').LiveDataEntryResult<LiveLoaderDataType<C>, LiveLoaderErrorType<C>>>;
 
 	/** Resolve an array of entry references from the same collection */
 	export function getEntries<C extends keyof ContentEntryMap>(
@@ -147,66 +162,38 @@ declare module 'astro:content' {
 	};
 
 	type DataEntryMap = {
-		"defisElections": Record<string, {
-  id: string;
-  body?: string;
-  collection: "defisElections";
-  data: InferEntrySchema<"defisElections">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-"elections": Record<string, {
-  id: string;
-  body?: string;
-  collection: "elections";
-  data: InferEntrySchema<"elections">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-"organisations": Record<string, {
-  id: string;
-  body?: string;
-  collection: "organisations";
-  data: InferEntrySchema<"organisations">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-"organismesElectoraux": Record<string, {
-  id: string;
-  body?: string;
-  collection: "organismesElectoraux";
-  data: InferEntrySchema<"organismesElectoraux">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-"pays": Record<string, {
-  id: string;
-  body?: string;
-  collection: "pays";
-  data: InferEntrySchema<"pays">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-"ressources": Record<string, {
-  id: string;
-  body?: string;
-  collection: "ressources";
-  data: InferEntrySchema<"ressources">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-"resultatsElections": Record<string, {
-  id: string;
-  body?: string;
-  collection: "resultatsElections";
-  data: InferEntrySchema<"resultatsElections">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
-
+		
 	};
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;
 
-	export type ContentConfig = typeof import("../src/content/config.js");
+	type ExtractLoaderTypes<T> = T extends import('astro/loaders').LiveLoader<
+		infer TData,
+		infer TEntryFilter,
+		infer TCollectionFilter,
+		infer TError
+	>
+		? { data: TData; entryFilter: TEntryFilter; collectionFilter: TCollectionFilter; error: TError }
+		: { data: never; entryFilter: never; collectionFilter: never; error: never };
+	type ExtractDataType<T> = ExtractLoaderTypes<T>['data'];
+	type ExtractEntryFilterType<T> = ExtractLoaderTypes<T>['entryFilter'];
+	type ExtractCollectionFilterType<T> = ExtractLoaderTypes<T>['collectionFilter'];
+	type ExtractErrorType<T> = ExtractLoaderTypes<T>['error'];
+
+	type LiveLoaderDataType<C extends keyof LiveContentConfig['collections']> =
+		LiveContentConfig['collections'][C]['schema'] extends undefined
+			? ExtractDataType<LiveContentConfig['collections'][C]['loader']>
+			: import('astro/zod').infer<
+					Exclude<LiveContentConfig['collections'][C]['schema'], undefined>
+				>;
+	type LiveLoaderEntryFilterType<C extends keyof LiveContentConfig['collections']> =
+		ExtractEntryFilterType<LiveContentConfig['collections'][C]['loader']>;
+	type LiveLoaderCollectionFilterType<C extends keyof LiveContentConfig['collections']> =
+		ExtractCollectionFilterType<LiveContentConfig['collections'][C]['loader']>;
+	type LiveLoaderErrorType<C extends keyof LiveContentConfig['collections']> = ExtractErrorType<
+		LiveContentConfig['collections'][C]['loader']
+	>;
+
+	export type ContentConfig = never;
+	export type LiveContentConfig = never;
 }
