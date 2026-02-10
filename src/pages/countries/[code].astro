@@ -45,15 +45,15 @@ const defis = await getCollection("defisElections");
 const organismesElectoraux = await getCollection("organismesElectoraux");
 const organisations = await getCollection("organisations");
 
-const legalFramework3 = ressources?.filter(
+const legalFramework3 = (ressources || []).filter(
   (ressource) => ressource.data.Pays_id === country.id,
 );
-const organismes = organismesElectoraux?.filter(
+const organismes = (organismesElectoraux || []).filter(
   (organisme) => organisme.data.Pays_id === country.id,
 );
 
-const electionEvents3 = elections
-  ?.filter((election) => election.data.Pays_id === country.id)
+const electionEvents3 = (elections || [])
+  .filter((election) => election.data.Pays_id === country.id)
   .sort((a, b) => {
     const dateA = new Date(a.data.dateElection).getTime();
     const dateB = new Date(b.data.dateElection).getTime();
@@ -117,17 +117,21 @@ const legalFramework = {
     })),
   timeline: [
     {
-      year: parseInt(
-        country.electoralFramework?.constitution?.match(/\d{4}/)?.[0] ||
-          new Date().getFullYear(),
-      ),
+      year: (() => {
+        const constitution = legalFramework3?.find((r) =>
+          r.data.type?.toLowerCase().includes("constitution"),
+        );
+        if (constitution) return constitution.data.year;
+        const match = (country as any).electoralFramework?.constitution?.match(/\d{4}/);
+        return match ? parseInt(match[0]) : new Date().getFullYear();
+      })(),
       event: `Adoption de la Constitution actuelle`,
-      type: "constitution",
+      type: "constitution" as const,
     },
     {
       year: country.lastElection.year,
       event: `Dernière élection ${country.lastElection.type.toLowerCase()}`,
-      type: "election-law",
+      type: "election-law" as const,
     },
   ],
 };
@@ -296,20 +300,6 @@ const socialLinks = [
 ];
 
 // Simuler des articles récents
-const recentArticles = [
-  {
-    title: `Préparation des élections de ${country.lastElection.nextElectionYear} au ${country.name}`,
-    date: new Date().toLocaleDateString("fr-FR"),
-    excerpt: `Les préparatifs pour les prochaines élections ${country.lastElection.type.toLowerCase()} au ${country.name} ont commencé...`,
-  },
-  {
-    title: `Analyse du système électoral ${country.name.toLowerCase()}`,
-    date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString(
-      "fr-FR",
-    ),
-    excerpt: `Une étude approfondie du système électoral ${country.name.toLowerCase()} révèle des défis et des opportunités...`,
-  },
-];
 ---
 
 <Layout title={`${country.name} - Informations Électorales`} pageType="detail">
@@ -428,7 +418,7 @@ const recentArticles = [
           >
             <FaGlobeAfrica className="mr-2" /> Informations
           </h2>
-          <CountryCard client:load country={CountryInterface} />
+          <CountryCard client:load country={CountryInterface as any} />
         </div>
 
         <!-- Élections à venir -->
@@ -439,36 +429,37 @@ const recentArticles = [
             <FaCalendarAlt className="mr-2" /> Prochaine Élection
           </h2>
 
-          {
-            upcomingElections.map((election) => (
-              <div class="bg-farafina-secondary/5 rounded-lg p-4">
-                <div class="flex justify-between items-center mb-3">
-                  <span class="font-semibold text-farafina-dark">
-                    {election.type}
-                  </span>
-                  <span class="text-sm text-gray-500">
-                    {new Date(election.date).getFullYear()}
-                  </span>
+        {
+          upcomingElections.filter(e => e.date).map((election) => (
+            <div class="bg-farafina-secondary/5 rounded-lg p-4">
+              <div class="flex justify-between items-center mb-3">
+                <span class="font-semibold text-farafina-dark">
+                  {election.type}
+                </span>
+                <span class="text-sm text-gray-500">
+                  {new Date(election.date!).getFullYear()}
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-600">
+                  <span class="font-medium">Jours restants:</span>
                 </div>
-                <div class="flex items-center justify-between">
-                  <div class="text-sm text-gray-600">
-                    <span class="font-medium">Jours restants:</span>
-                  </div>
-                  <div class="text-2xl font-bold text-farafina-secondary">
-                    {election.daysRemaining}
-                  </div>
-                </div>
-                <div class="mt-4">
-                  <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div
-                      class="bg-farafina-secondary h-2.5 rounded-full"
-                      style={`width: ${100 - (election.daysRemaining / 365) * 100}%`}
-                    />
-                  </div>
+                <div class="text-2xl font-bold text-farafina-secondary">
+                  {election.daysRemaining}
                 </div>
               </div>
-            ))
-          }
+              <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    class="bg-farafina-secondary h-2.5 rounded-full"
+                    style={`width: ${100 - ((election.daysRemaining || 0) / 365) * 100}%`}
+                  />
+                </div>
+              </div>
+            </div>
+          ))
+        }
+
 
           <div class="mt-4">
             <a
@@ -638,10 +629,9 @@ const recentArticles = [
         </h2>
         <LegalFramework
           client:visible
-          documents={legalFramework?.documents || legalFramework.documents}
-          timeline={electoralOrganism?.vote || electoralOrganism.vote}
-          organisations={organisation}
-          electoralOrganism={electoralOrganism?.vote || electoralOrganism.vote}
+          documents={legalFramework.documents}
+          timeline={legalFramework.timeline as any}
+          organisations={organisation as any}
         />
       </div>
     </div>
@@ -651,98 +641,97 @@ const recentArticles = [
       <h2 class="text-xl font-bold text-farafina-accent mb-6 flex items-center">
         <FaCalendarAlt className="mr-2" /> Chronologie Électorale
       </h2>
-      <ElectionTimeline
-        client:visible
-        events={electionEvents}
-        countryName={country.name}
-      />
-    </div>
-
-    <!-- Liste des défis électoraux -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-farafina-accent flex items-center">
-          <FaExclamationTriangle className="mr-2" /> Les défis électoraux
-        </h2>
-        <a
-          href="/elections/challenges"
-          class="text-farafina-accent hover:text-farafina-accent/80 transition-colors text-sm font-medium"
-        >
-          Voir tous les défis →
-        </a>
+        <ElectionTimeline
+          client:visible
+          events={electionEvents as any}
+          countryName={country.name}
+        />
       </div>
 
-      <div class="space-y-6">
-        <div class="grid grid-cols-3 gap-6">
-          <div class="text-sm p-5 text-gray-500">
-            <h4>Type de défi</h4>
-          </div>
-          <div class="text-sm p-2 text-gray-500">
-            <h4>Description</h4>
-          </div>
-          <div class="text-sm text-gray-500"></div>
+      <!-- Liste des défis électoraux -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-farafina-accent flex items-center">
+            <FaExclamationTriangle className="mr-2" /> Les défis électoraux
+          </h2>
+          <a
+            href="/elections/challenges"
+            class="text-farafina-accent hover:text-farafina-accent/80 transition-colors text-sm font-medium"
+          >
+            Voir tous les défis →
+          </a>
         </div>
-        {(() => {
-          // Récupérer tous les défis et les trier par date
-          const allDefis = electionEvents
-            .flatMap(event => event.defis.map(defi => ({...defi, dateElection: event.date})))
-            .sort((a, b) => new Date(b.dateElection).getTime() - new Date(a.dateElection).getTime());
 
-          const initialCount = 2;
-          const visibleDefis = allDefis.slice(0, initialCount);
-          const remainingDefis = allDefis.slice(initialCount);
+        <div class="space-y-6">
+          <div class="grid grid-cols-3 gap-6">
+            <div class="text-sm p-5 text-gray-500">
+              <h4>Type de défi</h4>
+            </div>
+            <div class="text-sm p-2 text-gray-500">
+              <h4>Description</h4>
+            </div>
+            <div class="text-sm text-gray-500"></div>
+          </div>
+          {(() => {
+            // Récupérer tous les défis et les trier par date
+            const allDefis = electionEvents
+              .flatMap(event => event.defis.map(defi => ({...defi, dateElection: event.date})))
+              .sort((a, b) => new Date(b.dateElection).getTime() - new Date(a.dateElection).getTime());
 
-          return (
-            <>
-              {visibleDefis.map((challenge) => (
-                <div
-                  key={challenge.libelle}
-                  class="border border-red-100 rounded-lg p-5 hover:shadow-md transition-shadow"
-                >
-                  <div class="grid grid-cols-3 gap-6">
-                    <p class="font-medium text-farafina-accent">
-                      {challenge.type} - {new Date(challenge.dateElection).toLocaleDateString('fr-FR')}
-                    </p>
-                    <p class="text-gray-700">{challenge.libelle}</p>
-                    <div class="flex justify-end">
-                      <a
-                        href={challenge.url}
-                        target="_blank"
-                        class="text-farafina-accent hover:text-farafina-accent/80 transition-colors"
-                      >
-                        Voir l'analyse complète →
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            const initialCount = 2;
+            const visibleDefis = allDefis.slice(0, initialCount);
+            const remainingDefis = allDefis.slice(initialCount);
 
-              {remainingDefis.length > 0 && (
-                <div class="hidden" id="defis-more">
-                  {remainingDefis.map((challenge) => (
-                    <div
-                      key={challenge.libelle}
-                      class="border border-red-100 rounded-lg p-5 hover:shadow-md transition-shadow"
-                    >
-                      <div class="grid grid-cols-3 gap-6">
-                        <p class="font-medium text-farafina-accent">
-                          {challenge.type} - {new Date(challenge.dateElection).toLocaleDateString('fr-FR')}
-                        </p>
-                        <p class="text-gray-700">{challenge.libelle}</p>
-                        <div class="flex justify-end">
-                          <a
-                            href={challenge.url}
-                            target="_blank"
-                            class="text-farafina-accent hover:text-farafina-accent/80 transition-colors"
-                          >
-                            Voir l'analyse complète →
-                          </a>
-                        </div>
+            return (
+              <>
+                {visibleDefis.map((challenge) => (
+                  <div
+                    class="border border-red-100 rounded-lg p-5 hover:shadow-md transition-shadow"
+                  >
+                    <div class="grid grid-cols-3 gap-6">
+                      <p class="font-medium text-farafina-accent">
+                        {challenge.type} - {new Date(challenge.dateElection).toLocaleDateString('fr-FR')}
+                      </p>
+                      <p class="text-gray-700">{challenge.libelle}</p>
+                      <div class="flex justify-end">
+                        <a
+                          href={challenge.url}
+                          target="_blank"
+                          class="text-farafina-accent hover:text-farafina-accent/80 transition-colors"
+                        >
+                          Voir l'analyse complète →
+                        </a>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+
+                {remainingDefis.length > 0 && (
+                  <div class="hidden" id="defis-more">
+                    {remainingDefis.map((challenge) => (
+                      <div
+                        class="border border-red-100 rounded-lg p-5 hover:shadow-md transition-shadow"
+                      >
+                        <div class="grid grid-cols-3 gap-6">
+                          <p class="font-medium text-farafina-accent">
+                            {challenge.type} - {new Date(challenge.dateElection).toLocaleDateString('fr-FR')}
+                          </p>
+                          <p class="text-gray-700">{challenge.libelle}</p>
+                          <div class="flex justify-end">
+                            <a
+                              href={challenge.url}
+                              target="_blank"
+                              class="text-farafina-accent hover:text-farafina-accent/80 transition-colors"
+                            >
+                              Voir l'analyse complète →
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
 
               {remainingDefis.length > 0 && (
                 <button

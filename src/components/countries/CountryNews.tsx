@@ -56,7 +56,7 @@ const CountryNews: React.FC<CountryNewsProps> = ({
 
         setNewsItems(
           data.items.sort(
-            (a, b) =>
+            (a: NewsItem, b: NewsItem) =>
               new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
           ),
         );

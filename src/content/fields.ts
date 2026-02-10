@@ -11,7 +11,6 @@ export const paysData = [
   "électeurs_femmes",
   "modèle_gestion_élections",
   "système_politique",
-  "modèle_gestion_élections",
   "Organe de validation des candidatures",
   "Organe validation candidatures législatives",
   "Présidentiel - Régime de vote",
@@ -81,7 +80,6 @@ export const organismesElectorauxData = [
 export const organisationsData = [
   "Id",
   "nom",
-  "zones couvertes",
   "Zone",
   "Statut",
   "Type d’organisation -  institutions",
@@ -91,7 +89,6 @@ export const organisationsData = [
   "zones couvertes",
   "domaines d'expertise",
   "mobilisation observateurs",
-  "annee de creation",
   "siteweb",
   "telephone",
   "email",

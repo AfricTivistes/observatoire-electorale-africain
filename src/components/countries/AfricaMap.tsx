@@ -4,10 +4,11 @@ import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 const geoUrl = "/africa.json";
 
 interface AfricaMapProps {
-  selectedCountry: string; // ID du pays sélectionné
+  selectedCountry?: string; // ID du pays sélectionné
+  onCountryClick?: (countryCode: string) => void;
 }
 
-const AfricaMap: React.FC<AfricaMapProps> = ({ selectedCountry }) => {
+const AfricaMap: React.FC<AfricaMapProps> = ({ selectedCountry, onCountryClick }) => {
   return (
     <div className="relative w-full h-[400px] bg-gray-50 rounded-lg overflow-hidden">
       <ComposableMap
@@ -20,27 +21,29 @@ const AfricaMap: React.FC<AfricaMapProps> = ({ selectedCountry }) => {
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => {
-              const isSenegal = geo.properties.code === selectedCountry;
+              const countryCode = geo.properties.code;
+              const isSelected = countryCode === selectedCountry;
 
               return (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill={isSenegal ? "#e74c3c" : "#ccc"} // Couleur du Sénégal
-                  stroke={isSenegal ? "#c0392b" : "#333"} // Bordure du Sénégal
+                  onClick={() => onCountryClick && onCountryClick(countryCode)}
+                  fill={isSelected ? "#6EC770" : "#ccc"} 
+                  stroke={isSelected ? "#5ab35c" : "#333"}
                   style={{
                     default: {
                       outline: "none",
-                      filter: isSenegal
-                        ? "drop-shadow(0 0 3px rgba(231, 76, 60, 0.7))"
+                      filter: isSelected
+                        ? "drop-shadow(0 0 3px rgba(110, 199, 112, 0.7))"
                         : "none",
                     },
                     hover: {
-                      fill: isSenegal ? "#c0392b" : "#aaa",
+                      fill: isSelected ? "#5ab35c" : "#aaa",
                       outline: "none",
                     },
                     pressed: {
-                      fill: "#2980b9",
+                      fill: "#2D83F5",
                       outline: "none",
                     },
                   }}

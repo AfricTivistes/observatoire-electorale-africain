@@ -6,10 +6,11 @@
       "scripts": {
             "dev": "astro dev",
             "start": "astro dev",
-            "build": "astro build",
+            "build": "astro build && npm run postbuild",
             "postbuild": "pagefind --site dist",
             "preview": "astro preview",
-            "typecheck": "astro check"
+            "typecheck": "astro check",
+            "postinstall": "node patches/apply-patches.mjs"
       },
       "dependencies": {
             "@astrojs/check": "^0.9.4",
@@ -21,7 +22,8 @@
             "astro": "^5.5.5",
             "astro-heroicons": "^2.1.5-1",
             "astro-icon": "^1.1.2",
-            "axios": "^1.8.4",
+            "astro-nocodb": "^0.1.1",
+            "axios": "^1.13.5",
             "chart.js": "^4.4.6",
             "d3-geo": "^3.1.1",
             "dotenv": "^16.4.7",

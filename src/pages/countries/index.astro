@@ -1,7 +1,7 @@
 ---
 import Layout from "../../layouts/MainLayout.astro";
 import CountryFilterWrapper from "../../components/countries/CountryFilterWrapper";
-import AfricaMap from "../../components/countries/AfricaMap";
+import AfricaMap from "../../components/countries/AfricaMap.tsx";
 import { FaGlobeAfrica, FaVoteYea, FaUsers, FaSearch } from "react-icons/fa";
 import CountriesHero from "@/components/countries/CountriesHero.astro";
 
@@ -19,13 +19,13 @@ const totalRegistered = resultatsElections.reduce(
   0,
 );
 
-const totalPopulation = pays.reduce((sum, country) => sum + country.data.population, 0,);
+const totalPopulation = pays.reduce((sum, country) => sum + country.data.population, 0);
 
 const totalVotes = resultatsElections.reduce(
   (sum, resultat) => sum + (resultat.data?.participation || 0),
   0,
 );
-const avgTurnout = (totalVotes / totalRegistered) * 100;
+const avgTurnout = resultatsElections.length > 0 ? totalVotes / resultatsElections.length : 0;
 
 const upcomingElections = elections
   .filter(
@@ -98,7 +98,7 @@ const politicalSystemsMap = pays.reduce((acc, country) => {
   const system = country.data.politicalSystem || 'Inconnu';
   acc[system] = (acc[system] || 0) + 1;
   return acc;
-}, {});
+}, {} as Record<string, number>);
 
 const politicalSystems = Object.keys(politicalSystemsMap).map(system => ({
   name: system,
@@ -219,7 +219,7 @@ const countriesWithLastElection = pays.map((country) => ({
           Carte des pays africains
         </h2>
         <div class="h-[400px] mb-6">
-          <AfricaMap client:load />
+          <AfricaMap client:load selectedCountry="" />
         </div>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
           {

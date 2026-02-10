@@ -23,10 +23,10 @@ interface Country {
   name: string;
   population: number;
   lastElection: {
-    type: string | undefined;
+    type: string;
     date: string | undefined;
-    turnout: number | undefined;
-    year: number | undefined;
+    turnout: number;
+    year: number;
   };
   politicalSystem: string | undefined;
   demographics: {
