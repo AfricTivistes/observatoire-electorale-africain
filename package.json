@@ -3,14 +3,19 @@
       "version": "0.1.0",
       "private": true,
       "type": "module",
+      "packageManager": "pnpm@10.26.1",
       "scripts": {
+            "preinstall": "node -e \"if(process.env.npm_execpath?.indexOf('pnpm')===-1)throw new Error('Use pnpm: npm run install will NOT work, use pnpm install instead')\"",
             "dev": "astro dev",
             "start": "astro dev",
             "build": "astro build && npm run postbuild",
             "postbuild": "pagefind --site dist",
             "preview": "astro preview",
-            "typecheck": "astro check",
+            "typecheck": "NODE_OPTIONS='--max-old-space-size=4096' astro check",
             "postinstall": "node patches/apply-patches.mjs"
+      },
+      "pnpm": {
+            "onlyBuiltDependencies": ["sharp", "esbuild"]
       },
       "dependencies": {
             "@astrojs/check": "^0.9.4",
@@ -32,6 +37,7 @@
             "react-dom": "^18.3.1",
             "react-icons": "^4.12.0",
             "react-simple-maps": "^3.0.0",
+            "sharp": "0.34.5",
             "tailwindcss": "^3.4.15"
       },
       "devDependencies": {
