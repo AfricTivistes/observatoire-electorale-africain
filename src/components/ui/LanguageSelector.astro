@@ -45,7 +45,11 @@ function setCookie(name, value, days = 365) {
 
 function saveLanguageToStorage(lang) {
   try {
-    localStorage.setItem('selected-lang', lang);
+    if (lang) {
+      localStorage.setItem('selected-lang', lang);
+    } else {
+      localStorage.removeItem('selected-lang');
+    }
   } catch (e) {}
 }
 
@@ -57,40 +61,12 @@ function getLanguageFromStorage() {
   }
 }
 
-function getBrowserLanguage() {
-  const browserLang = navigator.language || navigator.userLanguage;
-  const langCode = browserLang.split('-')[0].toLowerCase();
-  return supportedLanguages.includes(langCode) ? langCode : null;
-}
-
-function translatePage(lang) {
-  if (!lang || !window.google || !window.google.translate) return false;
-  
-  const element = document.querySelector('.goog-te-combo');
-  if (element) {
-    element.value = lang;
-    element.dispatchEvent(new Event('change', { bubbles: true }));
-    return true;
-  }
-  return false;
-}
-
 function changeLanguage(lang) {
   if (!lang) return;
   
-  if (lang === googleTranslateConfig.lang) {
-    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
-    saveLanguageToStorage('');
-    window.location.reload();
-    return;
-  }
-  
   setCookie('googtrans', `/${googleTranslateConfig.lang}/${lang}`);
   saveLanguageToStorage(lang);
-  
-  if (!translatePage(lang)) {
-    window.location.reload();
-  }
+  window.location.reload();
 }
 
 function initGoogleTranslate() {
@@ -130,10 +106,6 @@ function applySavedLanguage() {
   if (select) {
     select.value = targetLang;
   }
-  
-  setTimeout(() => {
-    translatePage(targetLang);
-  }, 1000);
 }
 
 function googleTranslateInit() {
