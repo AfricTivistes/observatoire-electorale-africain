@@ -5,9 +5,9 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<div class:list={["language-selector", className]}>
-  <select id="google-lang-select" class="lang-select">
-    <option value="" disabled selected>🌐 Langue</option>
+<div class:list={["language-selector", className]} translate="no">
+  <select id="google-lang-select" class="lang-select notranslate" translate="no">
+    <option value="" disabled>🌐 Langue</option>
     <option value="en">🇬🇧 English</option>
     <option value="fr">🇫🇷 Français</option>
     <option value="ar">🇸🇦 العربية</option>
@@ -42,6 +42,20 @@ function setCookie(name, value, days = 365) {
   document.cookie = `${name}=${value}; expires=${expires}; path=/`;
 }
 
+function saveLanguageToStorage(lang) {
+  try {
+    localStorage.setItem('selected-lang', lang);
+  } catch (e) {}
+}
+
+function getLanguageFromStorage() {
+  try {
+    return localStorage.getItem('selected-lang');
+  } catch (e) {
+    return null;
+  }
+}
+
 function getBrowserLanguage() {
   const browserLang = navigator.language || navigator.userLanguage;
   const langCode = browserLang.split('-')[0].toLowerCase();
@@ -64,7 +78,7 @@ function changeLanguage(lang) {
   if (!lang) return;
   
   setCookie('googtrans', `/${googleTranslateConfig.lang}/${lang}`);
-  setCookie('googtrans', `/${googleTranslateConfig.lang}/${lang}`);
+  saveLanguageToStorage(lang);
   
   if (!translatePage(lang)) {
     window.location.reload();
@@ -91,12 +105,14 @@ function initGoogleTranslate() {
 }
 
 function applySavedLanguage() {
-  let targetLang = null;
+  let targetLang = getLanguageFromStorage();
   
-  const savedLang = getCookie('googtrans');
-  if (savedLang && savedLang.includes('/')) {
-    const parts = savedLang.split('/');
-    targetLang = parts[parts.length - 1];
+  if (!targetLang) {
+    const savedLang = getCookie('googtrans');
+    if (savedLang && savedLang.includes('/')) {
+      const parts = savedLang.split('/');
+      targetLang = parts[parts.length - 1];
+    }
   }
   
   if (!targetLang || !supportedLanguages.includes(targetLang)) {
@@ -133,6 +149,17 @@ function googleTranslateInit() {
 document.addEventListener('DOMContentLoaded', () => {
   const select = document.getElementById('google-lang-select');
   if (select) {
+    const initialLang = getLanguageFromStorage() || (() => {
+      const savedLang = getCookie('googtrans');
+      if (savedLang && savedLang.includes('/')) {
+        const parts = savedLang.split('/');
+        return parts[parts.length - 1];
+      }
+      return null;
+    })();
+    if (initialLang && supportedLanguages.includes(initialLang)) {
+      select.value = initialLang;
+    }
     select.addEventListener('change', (e) => changeLanguage(e.target.value));
   }
   
