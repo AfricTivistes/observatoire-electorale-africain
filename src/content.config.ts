@@ -1,4 +1,5 @@
-import { z, reference } from "astro:content";
+import { reference } from "astro:content";
+import { z } from "astro/zod";
 import { nocodbCollections } from 'astro-nocodb/loaders';
 import {
   paysData,
@@ -8,7 +9,7 @@ import {
   organismesElectorauxData,
   organisationsData,
   ressourcesData,
-} from "./fields";
+} from "./content/fields";
 
 /* ---------------------------
    Utilitaires généraux

@@ -1,53 +1,47 @@
 {
-  "$ref": "#/definitions/defisElections",
-  "definitions": {
-    "defisElections": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "libelleDefis": {
-          "type": "string"
-        },
-        "typeDefi": {
-          "type": "string"
-        },
-        "zone": {
-          "type": "string"
-        },
-        "code_pays": {
-          "type": "string"
-        },
-        "nomPays": {
-          "type": "string"
-        },
-        "sourceDefi": {
-          "type": "string"
-        },
-        "ResultatsElections": {
-          "type": "string"
-        },
-        "resultats": {
-          "type": "string"
-        },
-        "$schema": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "id",
-        "libelleDefis",
-        "typeDefi",
-        "zone",
-        "code_pays",
-        "nomPays",
-        "sourceDefi",
-        "ResultatsElections",
-        "resultats"
-      ],
-      "additionalProperties": false
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "libelleDefis": {
+      "type": "string"
+    },
+    "typeDefi": {
+      "type": "string"
+    },
+    "zone": {
+      "type": "string"
+    },
+    "code_pays": {
+      "type": "string"
+    },
+    "nomPays": {
+      "type": "string"
+    },
+    "sourceDefi": {
+      "type": "string"
+    },
+    "ResultatsElections": {
+      "type": "string"
+    },
+    "resultats": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "id",
+    "libelleDefis",
+    "typeDefi",
+    "zone",
+    "code_pays",
+    "nomPays",
+    "sourceDefi",
+    "ResultatsElections",
+    "resultats"
+  ]
 }

@@ -1,56 +1,47 @@
 {
-  "$ref": "#/definitions/ressources",
-  "definitions": {
-    "ressources": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        },
-        "code": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "year": {
-          "type": "number"
-        },
-        "description": {
-          "type": "string"
-        },
-        "Pays_id": {
-          "type": "string"
-        },
-        "fichier": {
-          "type": "string"
-        },
-        "slug": {
-          "type": "string",
-          "pattern": "^[a-z0-9-]+$",
-          "errorMessage": {
-            "pattern": "Slug invalide"
-          }
-        },
-        "$schema": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "id",
-        "title",
-        "code",
-        "type",
-        "year",
-        "description",
-        "Pays_id",
-        "fichier"
-      ],
-      "additionalProperties": false
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "year": {
+      "type": "number"
+    },
+    "description": {
+      "type": "string"
+    },
+    "Pays_id": {
+      "type": "string"
+    },
+    "fichier": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "$schema": {
+      "type": "string"
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "id",
+    "title",
+    "code",
+    "type",
+    "year",
+    "description",
+    "Pays_id",
+    "fichier"
+  ]
 }

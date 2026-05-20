@@ -1,226 +1,212 @@
 {
-  "$ref": "#/definitions/pays",
-  "definitions": {
-    "pays": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "code": {
-          "type": "string"
-        },
-        "heure_modif": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "langue": {
-          "type": "string"
-        },
-        "population": {
-          "type": "number"
-        },
-        "ressources": {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    },
+    "heure_modif": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "langue": {
+      "type": "string"
+    },
+    "population": {
+      "type": "number"
+    },
+    "ressources": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
                 "type": "string"
               },
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "collection": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "id",
-                  "collection"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "slug": {
-                    "type": "string"
-                  },
-                  "collection": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "slug",
-                  "collection"
-                ],
-                "additionalProperties": false
+              "collection": {
+                "type": "string"
               }
+            },
+            "required": [
+              "id",
+              "collection"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "collection": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "slug",
+              "collection"
             ]
           }
-        },
-        "politicalSystem": {
+        ]
+      }
+    },
+    "politicalSystem": {
+      "type": "string"
+    },
+    "modele": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string"
+    },
+    "vote": {
+      "type": "object",
+      "properties": {
+        "presidentialVote": {
           "type": "string"
         },
-        "modele": {
+        "presidentialResults": {
           "type": "string"
         },
-        "region": {
+        "presidentialscrutinMode": {
           "type": "string"
         },
-        "vote": {
-          "type": "object",
-          "properties": {
-            "presidentialVote": {
-              "type": "string"
-            },
-            "presidentialResults": {
-              "type": "string"
-            },
-            "presidentialscrutinMode": {
-              "type": "string"
-            },
-            "legislativeVote": {
-              "type": "string"
-            },
-            "legislativeResults": {
-              "type": "string"
-            },
-            "legislativeScrutinMode": {
-              "type": "string"
-            },
-            "validationBody": {
-              "type": "string"
-            },
-            "legislativeValidationBody": {
-              "type": "string"
-            },
-            "disputesManagementBody": {
-              "type": "string"
-            },
-            "provisionalResultsBody": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "presidentialVote",
-            "presidentialResults",
-            "presidentialscrutinMode",
-            "legislativeVote",
-            "legislativeResults",
-            "legislativeScrutinMode",
-            "validationBody",
-            "legislativeValidationBody",
-            "disputesManagementBody",
-            "provisionalResultsBody"
-          ],
-          "additionalProperties": false
+        "legislativeVote": {
+          "type": "string"
         },
-        "lastElection": {
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string"
-            },
-            "year": {
-              "type": "number"
-            },
-            "turnout": {
-              "type": "number"
-            },
-            "nextElectionYear": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "type",
-            "year",
-            "turnout",
-            "nextElectionYear"
-          ],
-          "additionalProperties": false
+        "legislativeResults": {
+          "type": "string"
         },
-        "demographics": {
-          "type": "object",
-          "properties": {
-            "gender": {
-              "type": "object",
-              "properties": {
-                "male": {
-                  "type": "number"
-                },
-                "female": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "male",
-                "female"
-              ],
-              "additionalProperties": false
-            },
-            "genderRatio": {
-              "type": "object",
-              "properties": {
-                "male": {
-                  "type": "number"
-                },
-                "female": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "male",
-                "female"
-              ],
-              "additionalProperties": false
-            },
-            "voterRegistration": {
-              "type": "object",
-              "properties": {
-                "registered": {
-                  "type": "number"
-                },
-                "population": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "registered",
-                "population"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "required": [
-            "gender",
-            "genderRatio",
-            "voterRegistration"
-          ],
-          "additionalProperties": false
+        "legislativeScrutinMode": {
+          "type": "string"
         },
-        "$schema": {
+        "validationBody": {
+          "type": "string"
+        },
+        "legislativeValidationBody": {
+          "type": "string"
+        },
+        "disputesManagementBody": {
+          "type": "string"
+        },
+        "provisionalResultsBody": {
           "type": "string"
         }
       },
       "required": [
-        "id",
-        "code",
-        "heure_modif",
-        "name",
-        "langue",
-        "population",
-        "vote",
-        "lastElection",
-        "demographics"
-      ],
-      "additionalProperties": false
+        "presidentialVote",
+        "presidentialResults",
+        "presidentialscrutinMode",
+        "legislativeVote",
+        "legislativeResults",
+        "legislativeScrutinMode",
+        "validationBody",
+        "legislativeValidationBody",
+        "disputesManagementBody",
+        "provisionalResultsBody"
+      ]
+    },
+    "lastElection": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "year": {
+          "type": "number"
+        },
+        "turnout": {
+          "type": "number"
+        },
+        "nextElectionYear": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "year",
+        "turnout",
+        "nextElectionYear"
+      ]
+    },
+    "demographics": {
+      "type": "object",
+      "properties": {
+        "gender": {
+          "type": "object",
+          "properties": {
+            "male": {
+              "type": "number"
+            },
+            "female": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "male",
+            "female"
+          ]
+        },
+        "genderRatio": {
+          "type": "object",
+          "properties": {
+            "male": {
+              "type": "number"
+            },
+            "female": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "male",
+            "female"
+          ]
+        },
+        "voterRegistration": {
+          "type": "object",
+          "properties": {
+            "registered": {
+              "type": "number"
+            },
+            "population": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "registered",
+            "population"
+          ]
+        }
+      },
+      "required": [
+        "gender",
+        "genderRatio",
+        "voterRegistration"
+      ]
+    },
+    "$schema": {
+      "type": "string"
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "id",
+    "code",
+    "heure_modif",
+    "name",
+    "langue",
+    "population",
+    "vote",
+    "lastElection",
+    "demographics"
+  ]
 }
